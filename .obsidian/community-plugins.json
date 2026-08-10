@@ -6,5 +6,7 @@
   "calendar",
   "table-editor-obsidian",
   "editing-toolbar",
-  "obsidian-meta-bind-plugin"
+  "obsidian-meta-bind-plugin",
+  "obsidian-icon-folder",
+  "highlightr-plugin"
 ]
