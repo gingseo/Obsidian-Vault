@@ -9,20 +9,27 @@
 | `Wiki/` | 개념·용어 정리 | 노트 하나 = 개념 하나, `[[링크]]`로 상호 연결 |
 | `Companies/` | 종목/산업 분석 | 노트 하나 = 종목 또는 산업군 하나 |
 | `Reviews/` | 책/강의 리뷰 | 노트 하나 = 자료 하나. frontmatter `Type`(책/강의), `Status`(읽는 중/완료) |
-| `News Journal/` | 뉴스·이슈 저널 (자동화 대상) | **월별 누적**, 파일명 `YYYY-MM.md` |
+| `News Journal/` | 뉴스·이슈 저널 (자동화 대상) | **일자별 파일**, 월 폴더 안에 저장 |
 | `Trade Log/` | 매매일지 | 거래 1건 = 노트 1개, 거래 발생 시에만 작성 |
 
 ## News Journal 작성 규칙
 
-파일: `Finance/News Journal/YYYY-MM.md`. 파일이 없으면 최상단에 `# YYYY-MM 뉴스 / 이슈 저널` 제목을 넣고 새로 만든다.
+### 파일 구조
 
-**기존 내용은 절대 덮어쓰거나 삭제하지 않는다.** 항상 추가(append)만 한다.
+```
+Finance/News Journal/
+  2026-08/
+    2026-08-07.md              ← 매일 기록
+    2026-08-08.md
+    _Weekly-2026-08-09.md      ← 주간 리뷰 (해당 일요일 날짜)
+    _Monthly-2026-08.md        ← 월간 리뷰 (그 달 폴더에 저장, "지난달"을 정리)
+```
 
-### 날짜 헤딩
+- 매일 기록: `Finance/News Journal/YYYY-MM/YYYY-MM-DD.md`. 월 폴더(`YYYY-MM/`)가 없으면 새로 만든다. 파일이 이미 있으면 **절대 덮어쓰지 않는다** — 그날 안에 추가로 기록할 내용이 있으면 파일 끝에 이어 붙인다. 파일 최상단은 `# YYYY-MM-DD` 제목으로 시작한다.
+- 주간 리뷰: `Finance/News Journal/YYYY-MM/_Weekly-YYYY-MM-DD.md` (YYYY-MM-DD는 리뷰 시점의 일요일 날짜, 그 날짜가 속한 월 폴더에 저장). 제목은 `# 주간 리뷰 (YYYY-MM-DD 기준 최근 1주)`.
+- 월간 리뷰: `Finance/News Journal/YYYY-MM/_Monthly-YYYY-MM.md` (YYYY-MM은 리뷰가 생성되는 새 달, 즉 그 폴더 자신의 월). 제목은 `# 지난달 리뷰 (YYYY-MM, 전달 기준)`. 이미 파일이 있으면 중복 생성하지 않는다.
 
-- 매일 기록: 오늘 날짜 헤딩 `## YYYY-MM-DD`이 이미 있으면 그 아래에 추가, 없으면 파일 끝에 새로 만든다.
-- 주간 리뷰: 해당 일요일 날짜 헤딩 아래, 소제목 `### 주간 리뷰 (YYYY-MM-DD 기준 최근 1주)`로 구분한다.
-- 월간 리뷰: 새 달 파일 최상단, 제목 바로 아래(날짜 헤딩보다 위)에 `## 지난달 리뷰 (YYYY-MM, 전달 기준)` 섹션을 넣는다. 이미 있으면 중복 추가하지 않는다.
+파일명이 밑줄(`_`)로 시작하는 `_Weekly-*`, `_Monthly-*`는 날짜별 기록이 아닌 리뷰 파일임을 나타낸다.
 
 ### 오늘의 경제 뉴스 작성 형식
 
@@ -95,17 +102,17 @@
 
 ```dataview
 LIST
-FROM #삼성전자
+FROM "Finance/News Journal" AND #삼성전자
 SORT file.name DESC
 ```
 
 ```dataview
 LIST
-FROM #방산
+FROM "Finance/News Journal" AND #방산
 SORT file.name DESC
 ```
 
-이 문서 자체나 `News Journal` 폴더 안 별도 노트에 위와 같은 쿼리 블록을 추가하면, 태그가 붙은 모든 날짜의 언급을 자동으로 모아 보여준다.
+`Finance/News Journal/_Index.md`에 위와 같은 쿼리 블록이 이미 있다. 새 태그를 쓰기 시작하면 그 문서에 쿼리를 추가해도 된다.
 
 ## Trade Log 작성 규칙
 
