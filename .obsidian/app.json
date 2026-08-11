@@ -1,5 +1,7 @@
 {
   "newFileLocation": "current",
   "attachmentFolderPath": "./_",
-  "promptDelete": false
+  "promptDelete": false,
+  "autoPairMarkdown": true,
+  "autoPairBrackets": false
 }
