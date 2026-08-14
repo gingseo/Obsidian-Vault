@@ -3,5 +3,6 @@
   "attachmentFolderPath": "./_",
   "promptDelete": false,
   "autoPairMarkdown": true,
-  "autoPairBrackets": false
+  "autoPairBrackets": false,
+  "alwaysUpdateLinks": true
 }

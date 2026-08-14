@@ -2,7 +2,6 @@
   "heatmap-calendar",
   "dataview",
   "templater-obsidian",
-  "obsidian-tasks-plugin",
   "calendar",
   "table-editor-obsidian",
   "editing-toolbar",
@@ -10,5 +9,15 @@
   "obsidian-icon-folder",
   "highlightr-plugin",
   "obsidian-git",
-  "periodic-notes"
+  "periodic-notes",
+  "pdf-plus",
+  "obsidian-markmind",
+  "project-manager",
+  "project-browser",
+  "juggl",
+  "quickadd",
+  "obsidian-tracker",
+  "obsidian-day-planner",
+  "obsidian-tasks-plugin",
+  "obsidian-emoji-toolbar"
 ]

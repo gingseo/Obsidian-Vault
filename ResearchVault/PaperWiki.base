@@ -1,0 +1,104 @@
+filters:
+  and:
+    - file.folder.startsWith("wiki/papers")
+    - not file.name.endsWith("-source")
+views:
+  - type: table
+    name: 전체 논문
+    order:
+      - file.name
+      - title
+      - status
+      - task
+      - direction
+      - venue
+      - year
+  - type: table
+    name: 미처리 (Claude가 아직 안 읽음)
+    filters:
+      and:
+        - status == "unread"
+    order:
+      - file.name
+      - title
+      - venue
+      - year
+      - source
+  - type: table
+    name: 내가 아직 안 읽음
+    filters:
+      and:
+        - user_read == false
+    order:
+      - file.name
+      - title
+      - added
+      - task
+      - venue
+      - year
+  - type: table
+    name: 읽음 (리뷰 전)
+    filters:
+      and:
+        - status == "read"
+    order:
+      - file.name
+      - title
+      - task
+      - venue
+      - year
+  - type: table
+    name: 리뷰 완료
+    filters:
+      and:
+        - status == "reviewed"
+    order:
+      - file.name
+      - title
+      - task
+      - direction
+      - venue
+      - year
+  - type: table
+    name: Foundational 논문
+    filters:
+      and:
+        - direction.contains("foundational")
+    order:
+      - file.name
+      - title
+      - task
+      - venue
+      - year
+  - type: table
+    name: Task별
+    order:
+      - task
+      - file.name
+      - title
+      - direction
+      - venue
+      - year
+  - type: table
+    name: Q1만
+    filters:
+      and:
+        - jcr_quartile == "Q1"
+    order:
+      - file.name
+      - title
+      - venue
+      - jcr_quartile
+      - task
+      - year
+  - type: table
+    name: JCR 등급 확인 필요
+    filters:
+      and:
+        - jcr_quartile == null
+    order:
+      - file.name
+      - title
+      - venue
+      - task
+      - year
