@@ -17,7 +17,6 @@ created: 2026-08-05
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">전체 장면(full-scene) 위성 이미지를 패치로 나눈 뒤, 경량 query 메커니즘(CFD)으로 타겟이 있을 만한 패치만 걸러 배경 연산을 없애고, super-resolution 보조 브랜치(FSR)로 backbone이 고해상도 특징을 학습하도록 유도해, 정보 손실·연산 비용·샘플 불균형 세 문제를 동시에 완화하는 FFSSTD-Net.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[ffsstd-net-source]]
 
 # 문제 정의
 

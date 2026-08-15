@@ -17,7 +17,6 @@ created: 2026-08-04
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Faster R-CNN 기반 tiny-object detector의 FPN(P2)과 RoI head에 각각 주파수 영역(2D-DFT/2D-DCT) 기반 plug-and-play attention 모듈(MSFFEM, CAREM)을 추가해 spatial 특징의 약점을 보완하고, few-shot 카테고리 불균형은 다중 방향 flip 증강(SAS)으로 완화해 AI-TOD에서 24.8% AP를 달성한 원격탐사 tiny-object detection 논문.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[FANet-source]]
 
 # 문제 정의
 

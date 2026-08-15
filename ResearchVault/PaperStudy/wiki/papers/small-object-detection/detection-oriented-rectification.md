@@ -17,7 +17,6 @@ created: 2026-08-04
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Small object의 열화(degradation) 패턴을 학습 가능한 basis로 명시적으로 분해·학습한 뒤, 그 지식을 동적 prompt로 삼아 탐지 지향적(task-oriented)으로 feature를 rectify하는 DORA(Detection-Oriented RectificAtion) 프레임워크로, 다양한 detector에 plug-in 방식으로 결합해 SOD 성능을 일관되게 끌어올린다.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[detection-oriented-rectification-source]]
 
 # 문제 정의
 

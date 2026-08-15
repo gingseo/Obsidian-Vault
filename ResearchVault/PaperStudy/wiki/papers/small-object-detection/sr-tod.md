@@ -17,7 +17,6 @@ created: 2026-08-04
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">탐지기 neck의 저수준 feature map(P2)에서 원본 이미지를 재구성하는 self-reconstruction head를 붙이고, 원본과 재구성 이미지의 차이(difference map)가 정보 손실이 심한 영역=tiny object 위치와 강하게 상관된다는 점을 발견해, 이를 별도 supervision 없이 tiny object feature 강화의 prior로 쓰는 SR-TOD 프레임워크.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[sr-tod-source]]
 
 # 문제 정의
 

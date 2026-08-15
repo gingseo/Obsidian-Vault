@@ -17,7 +17,6 @@ created: 2026-08-04
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Feature reconstruction 기반 비지도 이상 탐지(UAD)에서 그동안 pattern collapse를 막기 위해 반드시 고정(frozen)해야 했던 ImageNet 사전학습 encoder를, contrastive learning의 세 요소(global cosine distance, stop-gradient, dual-encoder contrastive pair)를 접목해 decoder와 함께 end-to-end로 안전하게 최적화함으로써 도메인 편향 문제를 해결한 방법.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[ReContrast-source]]
 
 # 문제 정의
 

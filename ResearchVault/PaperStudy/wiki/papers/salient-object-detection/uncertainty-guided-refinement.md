@@ -17,7 +17,6 @@ created: 2026-08-04
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">경계 가이던스(boundary guidance) 대신 예측 saliency map 자체에서 결정론적으로 유도한 불확실성 맵으로 attention을 마스킹해, 저채도(unsaturated)·아티팩트 영역을 반복적으로 정제하는 UGRAN(Uncertainty Guided Refinement Attention Network)을 제안한 논문.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[uncertainty-guided-refinement-source]]
 
 # 문제 정의
 

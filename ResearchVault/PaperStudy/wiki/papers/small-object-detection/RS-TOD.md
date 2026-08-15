@@ -17,7 +17,6 @@ created: 2026-08-04
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">YOLOv8n에 channel+spatial attention 모듈 RSAM을 각 detection head 앞에 삽입하고, shallow feature를 활용하는 160×160 해상도의 tiny-object 전용 detection head를 추가해, 원격탐사 영상(SODA-A/AI-TOD/TinyPerson)에서 tiny object detection 성능을 baseline 대비 큰 폭으로 끌어올린 경량 모델.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[RS-TOD-source]]
 
 # 문제 정의
 

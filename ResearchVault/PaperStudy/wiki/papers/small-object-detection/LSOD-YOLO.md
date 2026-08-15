@@ -17,7 +17,6 @@ created: 2026-08-04
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">YOLOv8s의 P5 검출 헤드를 제거하고 대신 P2 헤드를 cross-layer connection과 함께 추가하는 LCOR을 중심으로, SPPFL(LSKA)·C2f-N(NAM)·Dysample을 결합해 VisDrone2019에서 파라미터를 65.5% 줄이면서도 mAP0.5를 오히려 끌어올린 경량 소형 객체 검출 모델.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[LSOD-YOLO-source]]
 
 # 문제 정의
 

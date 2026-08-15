@@ -1,7 +1,6 @@
 filters:
   and:
     - file.folder.startsWith("wiki/papers")
-    - not file.name.endsWith("-source")
 views:
   - type: table
     name: 전체 논문

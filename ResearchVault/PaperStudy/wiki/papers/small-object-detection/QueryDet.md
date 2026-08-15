@@ -17,7 +17,6 @@ created: 2026-08-05
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">저해상도 feature map에서 소형 객체가 있을 만한 대략적 위치를 먼저 예측(query)하고, 그 위치 주변에만 고해상도 feature map에서 sparse convolution으로 detection head를 적용해, 정확도 손실 없이 고해상도 feature의 연산 비용을 99% 가까이 줄이는 Cascade Sparse Query(CSQ) 프레임워크.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[QueryDet-source]]
 
 # 문제 정의
 

@@ -17,7 +17,6 @@ created: 2026-08-05
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Diffusion model의 forward process가 닫힌 형태 해를 갖는다는 성질을 이용해, latent space에서 단 한 번의 디노이징 스텝만으로 재구성 오차(LaRE)를 추출하고, 이 오차를 공간·채널 두 관점에서 attention으로 결합해 이미지 feature를 정제함으로써, 기존 방법 대비 8배 빠르면서 정확도는 크게 앞서는 diffusion 생성 이미지 탐지 방법.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[lare2-source]]
 
 # 문제 정의
 

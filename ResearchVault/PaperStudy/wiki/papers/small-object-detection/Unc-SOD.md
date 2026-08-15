@@ -17,7 +17,6 @@ created: 2026-08-04
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Two-stage small object detector의 RPN에 uncertainty branch를 추가해 sample scarcity 문제를 동적으로 완화하고, 두 단계에서 쓰이는 feature 간 불일치(hierarchy-level uncertainty)를 Perception-and-Interaction으로 보정하는 프레임워크.</mark>
 
-원문 요약(Abstract/Introduction/Main Contribution/Conclusion 번역): [[Unc-SOD-source]]
 
 # 문제 정의
 
