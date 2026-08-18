@@ -12,7 +12,7 @@ description: ResearchVault/PaperStudy/Raw/Inbox/에 새로 추가된 논문 PDF�
 1. `ResearchVault/PaperStudy/Raw/Inbox/`를 확인한다. PDF가 없으면 "처리할 새 논문 없음"이라고 짧게 보고하고 끝낸다.
 2. PDF가 있으면 `ResearchVault/MD_Files/Schema.md` 전체를 읽고, 그 문서에 정의된 규칙을 정확히 따른다 — 특히 "폴더·파일 네이밍 규칙", "새 논문 처리 워크플로우" 섹션의 1~13단계, "Papers/ — 논문 노트"의 본문 구성 템플릿과 하이라이트 규칙, "읽어볼 만한 논문 작성 규칙", "reading-list.md" 갱신 규칙을 빠짐없이 지킨다.
 3. 여러 편이 동시에 있으면 각각 순서대로(또는 필요하면 background Agent로 병렬) 처리한다.
-4. 각 논문 노트의 frontmatter에 `user_read: false`와 `added: <YYYY-MM-DD>` 필드를 반드시 채운다. `added`는 해당 PDF가 `Raw/Inbox/`에 들어온 날짜 — 파일의 mtime을 확인해서 채운다(`stat`으로 확인).
+4. 각 논문 노트의 frontmatter에 `status: in-progress`와 `added: <YYYY-MM-DD>` 필드를 반드시 채운다. `status`는 항상 `in-progress`로 시작한다(사용자가 직접 다 읽고 `done`으로 바꾸는 값이므로 다른 값으로 채우지 않는다). `added`는 해당 PDF가 `Raw/Inbox/`에 들어온 날짜 — 파일의 mtime을 확인해서 채운다(`stat`으로 확인).
 5. 모든 처리가 끝나면 다음을 요약해서 보고한다:
    - 이번에 처리한 논문 편수와 제목 목록
    - 각 논문의 task 분류

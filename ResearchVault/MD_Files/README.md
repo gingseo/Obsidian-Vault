@@ -28,7 +28,7 @@ PaperWiki.base            Obsidian Bases 뷰 정의 (상태/task/방향성 테�
 2. 이 폴더(PaperWiki)에서 Claude Code를 열고 `/process-papers`라고만 입력한다 (긴 프롬프트를 매번 안 써도 됨 — `.claude/skills/process-papers/`에 등록된 스킬). 또는 직접 "Raw/에 새로 추가한 논문 읽고 Schema.md 규칙대로 반영해줘"라고 요청해도 동일하게 동작한다.
 3. Claude Code가 알아서:
    - PDF를 `{년도}_{venue}_{제목}.pdf`로 리네임하고, task를 판단해 `Raw/<Task>/`로 옮기고
-   - `Papers/`에 논문 노트를 생성하고 (`task`, `direction`, `user_read`, `added` 속성 포함)
+   - `Papers/`에 논문 노트를 생성하고 (`task`, `direction`, `status: in-progress`, `added` 속성 포함)
    - 관련된 `Concepts/` 문서를 찾아 갱신하거나 새로 만들고
    - 필요하면 `Comparisons/`에 비교 문서를 채우고
    - `reading-list.md`와 해당 `Moc/<Task>_Moc.md`도 갱신한다.
@@ -38,14 +38,14 @@ PaperWiki.base            Obsidian Bases 뷰 정의 (상태/task/방향성 테�
 
 ## 처리 여부 확인하기
 
-**Claude Code가 처리했는지**와 **내가 실제로 읽었는지**는 서로 다른 축이다 — 둘 다 확인할 수 있다.
+**Claude Code가 노트를 만들었는지**와 **내가 실제로 읽었는지**는 다른 축이지만, 후자만 `status` 속성 하나로 관리한다.
 
-- **Claude Code 처리 여부**
-  - 폴더로 보기: `Raw/Inbox/`에 파일이 남아있으면 아직 미처리, `Raw/<Task>/`로 옮겨졌으면 처리 완료.
-  - 속성으로 보기: `status`(`unread`/`read`/`reviewed`) 속성.
-- **내가 실제로 읽었는지**: `user_read` 속성(`true`/`false`). Claude Code는 새 노트를 만들 때 항상 `false`로 시작하고, 이 값을 스스로 `true`로 바꾸지 않는다 — 직접 다 읽고 나서 frontmatter에서 `true`로 바꿔야 한다. `added` 속성은 그 논문 PDF를 `Raw/Inbox/`에 처음 넣은 날짜.
+- **Claude Code 처리 여부**: 폴더로 확인한다 — `Raw/Inbox/`에 파일이 남아있으면 아직 미처리, `Raw/<Task>/`로 옮겨졌으면 노트가 만들어진 것.
+- **내가 실제로 읽었는지**: `status` 속성으로 관리한다. 이 값은 Project Manager 플러그인(볼트 전체 프로젝트/작업 관리)의 상태값 체계를 그대로 공유한다 — `to-do`(아직 안 봄) / `in-progress`(Claude Code가 노트를 만든 직후 기본값, 아직 다 안 읽음) / `additional-study-needed`(한 번 읽었지만 더 깊이 볼 필요 있음) / `done`(다 읽고 이해함). Claude Code는 새 노트를 만들 때 항상 `in-progress`로 시작하고, 이 값을 스스로 `done`으로 바꾸지 않는다 — 직접 다 읽고 나서 frontmatter에서 바꿔야 한다. `added` 속성은 그 논문 PDF를 `Raw/Inbox/`에 처음 넣은 날짜.
 
-Obsidian에서 `PaperWiki.base` 파일을 열면 Notion 데이터베이스 뷰처럼 테이블로 필터링할 수 있다 (전체 / 미처리(Claude) / 내가 아직 안 읽음 / 리뷰 완료 / Foundational 논문 / Task별). Obsidian 버전이 오래되어 Bases가 없다면 설정 > 코어 플러그인에서 "Bases"를 켠다.
+여러 연구 프로젝트에서 같은 논문을 다시 다룰 수 있으므로, "이 논문을 얼마나 읽었는지"의 단일 진실 공급원은 항상 이 논문 노트의 `status`다. Project Manager의 프로젝트 안에 이 논문을 다루는 작업(task)을 만들 때는 별도 task 노트를 새로 만들지 않고, 필요하면 이 논문 노트를 `[[링크]]`로 참조만 한다.
+
+Obsidian에서 `PaperWiki.base` 파일을 열면 Notion 데이터베이스 뷰처럼 테이블로 필터링할 수 있다 (전체 / 해야할 것 / 진행 중 / 추가 공부 요청 / 완료 / Foundational 논문 / Task별). Obsidian 버전이 오래되어 Bases가 없다면 설정 > 코어 플러그인에서 "Bases"를 켠다.
 
 ## 다음에 읽을 논문 찾기
 

@@ -7,12 +7,13 @@ jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement]
 tags: [paper, small-object-detection, yolo, lightweight, attention-mechanism, uav]
-status: read
-user_read: false
+status: in-progress
 added: 2026-07-01
-source: "raw/small-object-detection/2025_ESWA_LSOD-YOLO.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2025_ESWA_LSOD-YOLO.pdf"
 created: 2026-08-04
 ---
+
+#paper #small-object-detection #yolo #lightweight #attention-mechanism #uav
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">YOLOv8s의 P5 검출 헤드를 제거하고 대신 P2 헤드를 cross-layer connection과 함께 추가하는 LCOR을 중심으로, SPPFL(LSKA)·C2f-N(NAM)·Dysample을 결합해 VisDrone2019에서 파라미터를 65.5% 줄이면서도 mAP0.5를 오히려 끌어올린 경량 소형 객체 검출 모델.</mark>

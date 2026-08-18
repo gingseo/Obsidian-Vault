@@ -7,12 +7,13 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [novel-approach, foundational]
 tags: [paper, small-object-detection, sparse-convolution, inference-acceleration, feature-pyramid, query-mechanism]
-status: read
-user_read: false
+status: in-progress
 added: 2026-08-05
-source: "raw/small-object-detection/2022_CVPR_QueryDet.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2022_CVPR_QueryDet.pdf"
 created: 2026-08-05
 ---
+
+#paper #small-object-detection #sparse-convolution #inference-acceleration #feature-pyramid #query-mechanism
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">저해상도 feature map에서 소형 객체가 있을 만한 대략적 위치를 먼저 예측(query)하고, 그 위치 주변에만 고해상도 feature map에서 sparse convolution으로 detection head를 적용해, 정확도 손실 없이 고해상도 feature의 연산 비용을 99% 가까이 줄이는 Cascade Sparse Query(CSQ) 프레임워크.</mark>

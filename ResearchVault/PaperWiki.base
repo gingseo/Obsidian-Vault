@@ -1,22 +1,28 @@
 filters:
   and:
-    - file.folder.startsWith("Papers")
+    - file.folder.startsWith("ResearchVault/PaperStudy/Papers")
 views:
   - type: table
     name: 전체 논문
     order:
       - file.name
       - title
+      - year
+      - venue
+      - jcr_quartile
       - status
       - task
       - direction
-      - venue
-      - year
+      - added
+      - tags
+      - source
+    columnSize:
+      note.title: 227
   - type: table
-    name: 미처리 (Claude가 아직 안 읽음)
+    name: 해야할 것
     filters:
       and:
-        - status == "unread"
+        - status == "to-do"
     order:
       - file.name
       - title
@@ -24,10 +30,10 @@ views:
       - year
       - source
   - type: table
-    name: 내가 아직 안 읽음
+    name: 진행 중
     filters:
       and:
-        - user_read == false
+        - status == "in-progress"
     order:
       - file.name
       - title
@@ -36,10 +42,10 @@ views:
       - venue
       - year
   - type: table
-    name: 읽음 (리뷰 전)
+    name: 추가 공부 요청
     filters:
       and:
-        - status == "read"
+        - status == "additional-study-needed"
     order:
       - file.name
       - title
@@ -47,10 +53,10 @@ views:
       - venue
       - year
   - type: table
-    name: 리뷰 완료
+    name: 완료
     filters:
       and:
-        - status == "reviewed"
+        - status == "done"
     order:
       - file.name
       - title

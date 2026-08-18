@@ -81,8 +81,7 @@ jcr_quartile: Q1 | Q2 | Q3 | Q4 | null
 task: [<task1>, <task2>, ...]
 direction: [<direction1>, <direction2>, ...]
 tags: [paper, <세부 주제 태그...>]
-status: unread | read | reviewed
-user_read: false
+status: to-do | in-progress | additional-study-needed | done
 added: <YYYY-MM-DD>
 source: "Raw/<Task>/<리네임된 파일명>"
 created: <YYYY-MM-DD>
@@ -91,7 +90,11 @@ created: <YYYY-MM-DD>
 
 - `task`: 이 논문이 다루는 과제. `Raw/<Task>/` 폴더명과 동일한 값을 쓴다 (여러 개면 배열).
 - `direction`: 이 논문이 연구 흐름에서 어떤 역할을 하는지 나타내는 **다중 선택 개방형** 태그. 한 논문이 여러 방향성에 동시에 해당될 수 있다 (예: 처음엔 새로운 시도였지만 지금은 foundational이기도 함). 아래 "direction 카테고리" 절 참고.
-- `status`와 `user_read`는 별개다. `status`는 **Claude Code가 이 논문을 처리한 정도**(읽고 요약했는지, 리뷰까지 했는지)를 나타내고, `user_read`는 **사용자 본인이 이 노트를 실제로 읽었는지**를 나타낸다. Claude Code는 새 논문 노트를 만들 때 `user_read`를 항상 `false`로 시작한다 — 이 값을 임의로 `true`로 바꾸지 않는다. 사용자가 직접 `true`로 바꾸는 값이다.
+- `status`: 이 논문을 실제로 읽고 이해한 진행 상태를 나타낸다. Project Manager 플러그인(볼트 전체 프로젝트 관리)의 상태값 체계를 그대로 공유한다 — 여러 연구 프로젝트에서 같은 논문을 다시 다룰 수 있으므로, "읽었는지"의 단일 진실 공급원은 이 논문 노트 하나이고 Project Manager의 task 노트는 필요할 때 이 노트를 `[[링크]]`로 참조만 한다(별도 task 노트를 만들지 않는 게 기본).
+  - `to-do`: 아직 손대지 않음.
+  - `in-progress`: 새로 처리 중 — Claude Code가 분석 노트를 막 생성했을 때의 기본값이 이 상태다. 사용자가 아직 논문을 다 읽지 않았어도 이 상태로 둔다.
+  - `additional-study-needed`: 한 번 읽었지만 더 깊이 공부가 필요하다고 판단됨.
+  - `done`: 사용자가 실제로 다 읽고 이해를 마침. Claude Code는 이 값을 스스로 `done`으로 바꾸지 않는다 — 사용자가 직접 다 읽고 나서 바꾸는 값이다.
 - `added`: 이 논문을 `Raw/Inbox/`에 처음 넣은 날짜(=Obsidian vault에 추가한 날짜). `created`(노트를 작성한 날짜)와 다를 수 있다 — PDF를 넣어두고 며칠 뒤에 처리했다면 두 날짜가 어긋난다. `Raw/Inbox/`에 있던 PDF 파일의 수정 시각(mtime)을 확인해 채운다.
 - `jcr_quartile`: 이 논문이 실린 저널/학회의 등급. **절대로 추측해서 채우지 않는다.** 규칙:
   - **학회 논문**(NeurIPS, CVPR, ICCV, ECCV, ICML, ICLR처럼 이 분야에서 명백히 top-tier로 통용되는 학회)은 `Q1`로 표기해도 된다 — 이건 업계에서 널리 인정되는 사실이라 확신 가능하다. 그 외 애매한 학회는 함부로 등급을 매기지 않는다.
@@ -101,7 +104,11 @@ created: <YYYY-MM-DD>
 
 ### 본문 구성 — 분석 노트 (`<Slug>.md`)
 
+frontmatter 바로 아래, `# 한 줄 요약` 헤딩보다도 위에 frontmatter의 `tags` 배열을 `#해시태그` 형태로 한 줄 옮겨 적는다 (예: `#paper #object-detection #transformer`). frontmatter의 속성 패널은 hover 미리보기에서 항상 렌더링되는 게 아니라서, 본문 첫 줄에도 명시적으로 둬야 미리보기에서 바로 태그를 확인할 수 있다. `tags` 배열이 바뀌면 이 줄도 함께 갱신한다.
+
 ```markdown
+#paper #<세부 주제 태그...>
+
 # 한 줄 요약
 (노랑 하이라이트) 이 논문을 한 문장으로.
 
@@ -426,7 +433,7 @@ updated: <YYYY-MM-DD>
 1. `Raw/Inbox/`에 있는 각 PDF를 읽는다.
 2. PDF 내용을 바탕으로 이 논문의 task를 판단한다 (기존 `Raw/<Task>/` 폴더 중 맞는 게 있으면 그걸 쓰고, 없으면 새 task 폴더명을 정한다).
 3. "PDF 파일명 규칙"대로 `{년도}_{venue}_{제목}.pdf`로 리네임하고 `Raw/<Task>/`로 이동한다 (`Raw/Inbox/`에는 남기지 않는다).
-4. `Papers/<Task>/<Slug>.md`(분석 노트)를 만든다. `source`에 이동 후 PDF 경로(`Raw/<Task>/<리네임된 파일명>`)를 채우고, `task`, `direction` 속성을 채운다. `status`는 `read`(아직 내 연구 관점 리뷰 전) 또는 `reviewed`(평가까지 마침)로 판단해 채운다. `user_read: false`, `added`(PDF의 `Raw/Inbox/` 진입 날짜, mtime 기준)도 함께 채운다. `jcr_quartile`은 위 Frontmatter 절의 규칙대로 채운다 — 학회가 명백한 top-tier면 `Q1`, 저널이거나 등급을 모르면 `null`로 두고 나중에 사용자에게 물어볼 목록에 추가한다(추측 금지). 분석 노트 템플릿(콜아웃·bullet 규칙 포함)을 따른다.
+4. `Papers/<Task>/<Slug>.md`(분석 노트)를 만든다. `source`에 이동 후 PDF 경로(`Raw/<Task>/<리네임된 파일명>`)를 채우고, `task`, `direction` 속성을 채운다. `status`는 항상 `in-progress`로 시작한다(사용자가 직접 다 읽고 나서 `done`으로 바꾸는 값이므로, 새로 처리했다고 `done`으로 채우지 않는다). `added`(PDF의 `Raw/Inbox/` 진입 날짜, mtime 기준)도 함께 채운다. `jcr_quartile`은 위 Frontmatter 절의 규칙대로 채운다 — 학회가 명백한 top-tier면 `Q1`, 저널이거나 등급을 모르면 `null`로 두고 나중에 사용자에게 물어볼 목록에 추가한다(추측 금지). 분석 노트 템플릿(콜아웃·bullet 규칙 포함)을 따른다.
 5. `grep -r "#pending:<이번 논문의 슬러그>" .`(PaperStudy/ 안에서 실행)를 실행해서, 기존 노트 중 이 논문을 미완성 링크(`#pending:` 마커)로 남겨둔 곳이 있는지 확인한다. 있으면 해당 문장을 실제 `[[wiki-link]]`로 갱신하고 마커를 지운다.
 6. 논문에서 "독립적으로 설명할 가치가 있는" 개념/기법(핵심 기여인 기법·아이디어)이 있는지 판단한다 — 재사용 여부와 무관하게, 이 논문 1편만 보고 판단한다.
    - 그런 개념이 있고 `Concepts/`에 이미 있으면: 해당 concept 문서의 "등장 논문"에 이번 논문을 추가하고, 필요하면 "변형/발전" 섹션을 갱신한다.

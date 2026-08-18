@@ -7,12 +7,13 @@ jcr_quartile: Q2
 task: [small-object-detection]
 direction: [novel-approach]
 tags: [paper, small-object-detection, sar, remote-sensing, vision-language-model, clip, diffusion-model, label-assignment, bounding-box-regression]
-status: read
-user_read: false
+status: in-progress
 added: 2026-08-05
-source: "raw/small-object-detection/2025_RemoteSensing_CDATOD-Diff.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2025_RemoteSensing_CDATOD-Diff.pdf"
 created: 2026-08-05
 ---
+
+#paper #small-object-detection #sar #remote-sensing #vision-language-model #clip #diffusion-model #label-assignment #bounding-box-regression
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">CLIP의 이미지-텍스트 의미 정보를 조건으로 diffusion denoising 과정을 통해 GT 박스 주변 anchor 샘플링 포인트를 생성함으로써 소형 객체의 양성 샘플 부족을 완화하고, corner distance와 IoU를 객체 크기에 따라 적응적으로 가중합하는 BC-IoU loss로 회귀 불안정성을 줄이는 CDATOD-Diff 프레임워크.</mark>

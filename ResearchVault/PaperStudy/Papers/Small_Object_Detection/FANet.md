@@ -7,12 +7,13 @@ jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement]
 tags: [paper, small-object-detection, remote-sensing, frequency-domain, attention, two-stage-detector, class-imbalance]
-status: read
-user_read: false
+status: in-progress
 added: 2026-07-01
-source: "raw/small-object-detection/2025_RemoteSensing_FANet.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2025_RemoteSensing_FANet.pdf"
 created: 2026-08-04
 ---
+
+#paper #small-object-detection #remote-sensing #frequency-domain #attention #two-stage-detector #class-imbalance
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Faster R-CNN 기반 tiny-object detector의 FPN(P2)과 RoI head에 각각 주파수 영역(2D-DFT/2D-DCT) 기반 plug-and-play attention 모듈(MSFFEM, CAREM)을 추가해 spatial 특징의 약점을 보완하고, few-shot 카테고리 불균형은 다중 방향 flip 증강(SAS)으로 완화해 AI-TOD에서 24.8% AP를 달성한 원격탐사 tiny-object detection 논문.</mark>

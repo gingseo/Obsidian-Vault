@@ -7,12 +7,13 @@ jcr_quartile: "Q1"
 task: [small-object-detection]
 direction: [novel-approach, improvement]
 tags: [paper, small-object-detection, feature-enhancement, information-entropy, gaussian-mixture, plug-and-play]
-status: read
-user_read: false
+status: in-progress
 added: 2026-07-01
-source: "raw/small-object-detection/2025_CVPR_Feature-Information-Driven-Position-Gaussian.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2025_CVPR_Feature-Information-Driven-Position-Gaussian.pdf"
 created: 2026-08-04
 ---
+
+#paper #small-object-detection #feature-enhancement #information-entropy #gaussian-mixture #plug-and-play
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Tiny object의 극도로 약한 feature 표현을 "픽셀 단위 정보량"이라는 정보이론적 관점에서 비지도로 찾아낸 information map과, 객체 위치·크기 기반 Gaussian Mixture로 지도학습되는 position distribution map, 이 두 가지로 동시에 강화하는 plug-and-play feature enhancement 모듈.</mark>

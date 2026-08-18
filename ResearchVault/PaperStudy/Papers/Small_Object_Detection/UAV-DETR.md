@@ -7,12 +7,13 @@ jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement]
 tags: [paper, small-object-detection, uav, detr, frequency-domain, feature-fusion, real-time-detection]
-status: read
-user_read: false
+status: in-progress
 added: 2025-05-26
-source: "raw/small-object-detection/2025_arXiv_UAV-DETR.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2025_arXiv_UAV-DETR.pdf"
 created: 2026-08-04
 ---
+
+#paper #small-object-detection #uav #detr #frequency-domain #feature-fusion #real-time-detection
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">RT-DETR을 기반으로 공간(spatial)·주파수(frequency) 도메인 정보를 함께 활용하는 세 모듈(MSFF-FE, FD, SAC)과 Inner-SIoU loss를 추가해, UAV 영상의 소형·가려진 객체 탐지 정확도를 실시간성을 어느 정도 유지하면서 개선한 end-to-end DETR 계열 탐지기.</mark>

@@ -7,12 +7,13 @@ jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement]
 tags: [paper, small-object-detection, remote-sensing, yolo, attention-module, detection-head]
-status: read
-user_read: false
+status: in-progress
 added: 2026-07-01
-source: "raw/small-object-detection/2025_RSASE_RS-TOD.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2025_RSASE_RS-TOD.pdf"
 created: 2026-08-04
 ---
+
+#paper #small-object-detection #remote-sensing #yolo #attention-module #detection-head
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">YOLOv8n에 channel+spatial attention 모듈 RSAM을 각 detection head 앞에 삽입하고, shallow feature를 활용하는 160×160 해상도의 tiny-object 전용 detection head를 추가해, 원격탐사 영상(SODA-A/AI-TOD/TinyPerson)에서 tiny object detection 성능을 baseline 대비 큰 폭으로 끌어올린 경량 모델.</mark>

@@ -7,12 +7,13 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [foundational, novel-approach]
 tags: [paper, object-detection, transformer, set-prediction, bipartite-matching, end-to-end, panoptic-segmentation]
-status: read
-user_read: false
+status: in-progress
 added: 2026-08-12
-source: "raw/small-object-detection/2020_ECCV_DETR.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2020_ECCV_DETR.pdf"
 created: 2026-08-12
 ---
+
+#paper #object-detection #transformer #set-prediction #bipartite-matching #end-to-end #panoptic-segmentation
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">객체 탐지를 anchor·NMS 같은 수작업 구성요소 없이 직접적인 집합 예측(direct set prediction) 문제로 재정의해, CNN backbone + transformer encoder-decoder + 이분 매칭(bipartite matching) 기반 집합 손실만으로 end-to-end 학습되는 최초의 DETR 프레임워크.</mark>

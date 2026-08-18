@@ -7,12 +7,13 @@ jcr_quartile: null
 task: [salient-object-detection]
 direction: [novel-approach, improvement]
 tags: [paper, salient-object-detection, uncertainty, attention, fine-grained-prediction, dynamic-inference]
-status: read
-user_read: false
+status: in-progress
 added: 2026-04-16
-source: "raw/salient-object-detection/2025_TIP_Uncertainty-Guided-Refinement.pdf"
+source: "PaperStudy/Raw/Salient_Object_Detection/2025_TIP_Uncertainty-Guided-Refinement.pdf"
 created: 2026-08-04
 ---
+
+#paper #salient-object-detection #uncertainty #attention #fine-grained-prediction #dynamic-inference
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">경계 가이던스(boundary guidance) 대신 예측 saliency map 자체에서 결정론적으로 유도한 불확실성 맵으로 attention을 마스킹해, 저채도(unsaturated)·아티팩트 영역을 반복적으로 정제하는 UGRAN(Uncertainty Guided Refinement Attention Network)을 제안한 논문.</mark>

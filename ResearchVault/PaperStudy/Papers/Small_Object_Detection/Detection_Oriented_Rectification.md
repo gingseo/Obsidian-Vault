@@ -7,12 +7,13 @@ jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement, novel-approach]
 tags: [paper, small-object-detection, restoration, degradation-modeling, mixture-of-experts, multi-task-learning]
-status: read
-user_read: false
+status: in-progress
 added: 2026-07-01
-source: "raw/small-object-detection/2026_TPAMI_Detection-Oriented-Rectification.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2026_TPAMI_Detection-Oriented-Rectification.pdf"
 created: 2026-08-04
 ---
+
+#paper #small-object-detection #restoration #degradation-modeling #mixture-of-experts #multi-task-learning
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Small object의 열화(degradation) 패턴을 학습 가능한 basis로 명시적으로 분해·학습한 뒤, 그 지식을 동적 prompt로 삼아 탐지 지향적(task-oriented)으로 feature를 rectify하는 DORA(Detection-Oriented RectificAtion) 프레임워크로, 다양한 detector에 plug-in 방식으로 결합해 SOD 성능을 일관되게 끌어올린다.</mark>

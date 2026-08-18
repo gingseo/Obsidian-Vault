@@ -7,12 +7,13 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 tags: [paper, small-object-detection, remote-sensing, full-scene-image, focus-detection, super-resolution, region-filtering]
-status: read
-user_read: false
+status: in-progress
 added: 2026-08-05
-source: "raw/small-object-detection/2026_TGRS_FFSSTD-Net.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2026_TGRS_FFSSTD-Net.pdf"
 created: 2026-08-05
 ---
+
+#paper #small-object-detection #remote-sensing #full-scene-image #focus-detection #super-resolution #region-filtering
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">전체 장면(full-scene) 위성 이미지를 패치로 나눈 뒤, 경량 query 메커니즘(CFD)으로 타겟이 있을 만한 패치만 걸러 배경 연산을 없애고, super-resolution 보조 브랜치(FSR)로 backbone이 고해상도 특징을 학습하도록 유도해, 정보 손실·연산 비용·샘플 불균형 세 문제를 동시에 완화하는 FFSSTD-Net.</mark>

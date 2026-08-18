@@ -7,12 +7,13 @@ jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement]
 tags: [paper, small-object-detection, uncertainty, two-stage-detector, rpn]
-status: read
-user_read: false
+status: in-progress
 added: 2026-07-01
-source: "raw/small-object-detection/2026_TIP_Unc-SOD.pdf"
+source: "PaperStudy/Raw/Small_Object_Detection/2026_TIP_Unc-SOD.pdf"
 created: 2026-08-04
 ---
+
+#paper #small-object-detection #uncertainty #two-stage-detector #rpn
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Two-stage small object detector의 RPN에 uncertainty branch를 추가해 sample scarcity 문제를 동적으로 완화하고, 두 단계에서 쓰이는 feature 간 불일치(hierarchy-level uncertainty)를 Perception-and-Interaction으로 보정하는 프레임워크.</mark>
