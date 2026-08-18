@@ -1,0 +1,36 @@
+---
+title: "Small/Tiny Object Detection 접근법 비교"
+tags: [comparison, small-object-detection]
+papers: [[[Unc-SOD]], [[Detection_Oriented_Rectification]], [[FANet]], [[Feature_Info_Driven_Gaussian]], [[LSOD-YOLO]], [[RS-TOD]], [[UAV-DETR]], [[SR-TOD]], [[QueryDet]], [[FFSSTDNet]], [[CDATOD-Diff]], [[DETR]]]
+created: 2026-08-04
+updated: 2026-08-12
+---
+
+# 비교 축
+작은 객체 탐지 성능을 어디에 개입해서 끌어올리는지 — feature 표현 강화, label assignment/sampling, 연산 가속(sparse computation), 아키텍처 경량화, end-to-end 구조 개선 중 어느 축에 해당하는지로 분류한다.
+
+# 비교표
+
+| 논문                                   | 개입 지점                             | 핵심 방법                                                                                                           | Baseline                    | 대표 벤치마크/지표                                                   | 비고                                                             |
+| ------------------------------------ | --------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------- |
+| [[Unc-SOD]]                          | Label assignment (RPN sampling)   | 예측 박스를 Gaussian으로 모델링해 instance-level uncertainty를 IoU 대신 동적 positive 기준으로 사용 + 두 pyramid level feature 융합(P&I) | Faster R-CNN                | SODA-D AP 28.9→31.0, SODA-A AP 32.5→34.8                     | 5개 벤치마크에서 일관된 개선, 다른 detector(Cascade R-CNN 등)로도 이식 검증         |
+| [[Detection_Oriented_Rectification]] | Feature 복원                        | 작은 객체의 열화 패턴을 명시적으로 학습(degradation basis)한 뒤, MoE 스타일 동적 prompt로 탐지 지향적 feature rectification 수행                | 다수 detector(plug-in)        | SODA-D AP 28.9→30.8 (Faster R-CNN), COCO AP 42.3→44.3 (TOOD) | pixel fidelity가 아니라 "탐지에 유리한 방향"으로 복원한다는 점이 SR-TOD류와 다름        |
+| [[FANet]]                            | Feature 강화 (주파수 영역)               | FPN과 RoI head에 DFT/DCT 기반 attention 모듈(MSFFEM, CAREM) 삽입 + 다방향 flip 증강(SAS)                                     | Faster R-CNN, RFLA 등        | AI-TOD AP 20.6→24.8                                          | 원격탐사(항공뷰) 특화, 공간 domain이 아니라 주파수 domain에서 정보를 취함               |
+| [[Feature_Info_Driven_Gaussian]]     | Feature 강화 (정보이론+위치)              | information map(정보량 기반)과 position Gaussian Mixture map 두 가지로 feature를 동시 강화                                     | 다수 detector(plug-in)        | VisDrone/AI-TOD/AI-TODv2에서 일관된 AP 개선                         | "위치를 어디에 둘지"와 "얼마나 강조할지"를 분리해서 모델링                             |
+| [[SR-TOD]]                           | Feature 강화 (self-reconstruction)  | neck에 self-reconstruction head를 붙여 원본-재구성 difference map을 생성, 정보 손실이 큰(=작은 물체가 있을 확률이 높은) 영역을 강조                | 다수 detector(plug-in)        | DroneSwarms/VisDrone2019/AI-TOD에서 개선                         | 생성 모델 없이 reconstruction 자체의 부산물(difference)만 활용 — 가장 가벼운 방식    |
+| [[RS-TOD]]                           | Feature 강화 (attention) + 헤드 추가    | RSAM(채널+공간 attention)을 각 detection head 앞에 삽입, 160×160 고해상도 tiny-object 전용 head 추가                              | YOLOv8n                     | SODA-A mAP50 60.10, AI-TOD mAP50 59.84                       | 원격탐사 특화. 헤드를 아예 새로 추가한다는 점에서 FANet/SR-TOD와 다름                  |
+| [[LSOD-YOLO]]                        | 아키텍처 경량화                          | P5 검출층 제거 + cross-layer connection(LCOR)으로 고해상도 P2 정보 보존, 기존 경량화 기법(LSKA/NAM/DySample) 재조합                      | YOLOv8s                     | VisDrone mAP0.5 +2.5%p, 파라미터 −65.5%                          | 성능 개선보다 "성능 유지하며 경량화"가 핵심 목표. 유일하게 FLOPs/FPS를 정면으로 다룸          |
+| [[UAV-DETR]]                         | End-to-end 구조 개선                  | 공간+주파수 도메인을 함께 쓰는 3개 모듈(MSFF-FE, FD, SAC)을 RT-DETR에 추가                                                          | RT-DETR                     | VisDrone AP 26.7→29.8                                        | 유일한 DETR 계열(anchor-free, NMS-free). 실시간성과 성능의 트레이드오프를 명시적으로 보고 |
+| [[QueryDet]]                         | 연산 가속 (sparse computation)        | 저해상도 feature 예측으로 고해상도 sparse convolution 위치를 좁히는 Cascade Sparse Query                                          | RetinaNet/FCOS/Faster R-CNN | COCO FPS 4.85→14.88(정확도 손실 거의 없음), VisDrone FPS 1.16→2.75    | 유일하게 "정확도 개선"이 아니라 "동일 정확도를 더 빠르게"가 목표. Feature 강화 계열과 직교적     |
+| [[FFSSTDNet]]                       | Feature 강화(SR) + 연산 가속(patch 필터링) | CFD 모듈로 배경 patch를 걸러 연산량 절감 + FSR 모듈(학습시에만 존재하는 auxiliary reconstruction branch)로 backbone 고해상도 학습 유도           | 다수 detector(plug-in)        | FAIR1M mAP 43.88→46.25, Fps +20~30%                          | Full-scene 위성 이미지 특화. Feature 강화와 연산 가속 두 축을 동시에 다루는 유일한 논문    |
+| [[CDATOD-Diff]]                      | Label assignment + 회귀 손실          | RFLA의 Gaussian receptive field 매칭을 CLIP 의미 정보로 조건화한 diffusion denoising으로 확장 + 스케일 적응 corner-IoU 손실(BC-IoU)     | FCOS                        | AI-TOD AP 16.3(RFLA)→19.4, MSAR-1.0 AP 63.4→64.1             | SAR 영상 특화. 이 위키에서 VLM(CLIP)을 label assignment에 결합한 첫 사례        |
+
+# 분석
+- **DETR은 비교표에서 제외**: [[DETR]]은 이 비교축(기존 detector에 어떻게 개입하는지)의 대상이 아니라 표의 UAV-DETR이 최종적으로 기반하는 계보의 출발점(순수 foundational 아키텍처)이라 위 표에는 넣지 않았다. 나머지 11편이 "무엇에 개입하는가"를 다루는 반면, DETR은 애초에 "개입할 기존 파이프라인(anchor, NMS) 자체를 없앤" 논문이라는 점에서 층위가 다르다.
+- **공통 경향**: 11편 중 8편이 "기존 detector에 plug-in 모듈을 추가"하는 방식(FANet, feature-info-driven-gaussian, sr-tod, rs-tod, detection-oriented-rectification, unc-sod, ffsstd-net, cdatod-diff)이며, 새 아키텍처를 처음부터 설계한 논문은 없다 — 이 분야는 지금 대부분 "기존 백본/헤드를 어떻게 보강할 것인가"에 집중되어 있다.
+- **Feature 강화 계열 내부의 차이**: FANet(주파수), feature-info-driven-gaussian(정보량+위치), sr-tod(reconstruction 부산물), rs-tod(공간 attention), ffsstd-net(SR 기반 auxiliary branch)는 모두 "약한 feature를 어떻게 보강할지"를 다루지만 신호를 얻는 소스가 다르다 — 이 다섯 편을 하나로 묶어 "어떤 신호가 실제로 tiny object의 위치/존재를 가장 잘 드러내는가"라는 질문으로 다시 비교해볼 가치가 있다.
+- **연산 가속(sparse computation) 축이 새로 생김**: querydet과 ffsstd-net(CFD 모듈)은 "무엇을 계산할지"를 좁혀 연산량 자체를 줄인다는 공통점이 있다 — querydet은 FPN 레벨 간 sparse convolution, ffsstd-net은 patch 단위 필터링으로 구현 층위는 다르지만 동일한 coarse-to-fine 사상을 공유한다. 나머지 논문들이 대부분 "정확도"만 보고하는 데 비해 이 두 편은 FPS/연산 비용을 정면으로 다룬다는 점에서 lsod-yolo(경량화 축)와 목적의식이 겹친다.
+- **label assignment 축에 cdatod-diff 추가**: unc-sod에 이어 cdatod-diff도 "어떤 prior를 positive로 볼지"를 동적으로 바꾸는 계열에 속한다. 다만 unc-sod는 예측 박스의 uncertainty를, cdatod-diff는 CLIP의 의미 정보를 기준으로 삼는다는 점에서 신호의 출처가 다르다 — 두 방법을 결합하면 "기하학적으로도, 의미적으로도 타당한" 샘플링이 가능할 수 있다.
+- **원격탐사(항공뷰)·SAR 특화 vs 범용**: FANet, rs-tod, uav-detr, ffsstd-net은 원격탐사/드론뷰 이미지에, cdatod-diff는 SAR 영상에 특화되어 있고, 나머지(unc-sod, detection-oriented-rectification, feature-info-driven-gaussian, sr-tod, lsod-yolo, querydet)는 SODA-D 같은 지상 시나리오까지 포괄하는 범용 벤치마크를 함께 본다. 항공뷰 특화 논문들은 공통적으로 "주파수 도메인" 정보를 쓰는 경향이 있다(FANet, uav-detr) — 항공 이미지의 반복적/주기적 텍스처 특성과 관련 있을 가능성. SAR는 이번에 cdatod-diff로 처음 다뤄진 센서 도메인.
+- **경량화·연산 효율 축 확장**: lsod-yolo(파라미터 경량화)에 이어 querydet·ffsstd-net(연산 가속)까지 더해지며 "정확도"만이 아니라 "효율"을 정면으로 다루는 논문이 세 편으로 늘었다 — 실제 배포(엣지/실시간) 관점에서 이 세 편을 하나의 갈래로 놓고 비교할 가치가 있다.
+- **DETR → RT-DETR → UAV-DETR 계보**: DETR이 2020년에 처음 지적한 "소형 객체(APS) 성능 열세"라는 한계는 이 위키의 거의 모든 feature 강화 논문이 (다른 아키텍처에서) 다루는 문제와 동일한 문제의식이다. UAV-DETR은 RT-DETR(DETR의 실시간화 후속작)을 기반으로 주파수 도메인 모듈을 추가해 이 한계에 대응하지만, 원조 DETR 자체에 이 위키의 feature 강화 기법(reconstruction, 정보이론 기반 등)을 직접 적용한 사례는 아직 없다.
