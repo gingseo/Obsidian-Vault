@@ -8,28 +8,31 @@ Claude Code가 논문 PDF를 읽고 자동으로 정리·유지해주는 개인 
 Raw/
   Inbox/                아직 처리 안 한 원본 PDF (다운받으면 여기에 넣는다)
   <Task>/                처리 완료 후 이동되는 task별 폴더 (예: Small_Object_Detection/)
-Wiki/
-  Papers/
-    <Task>/                Raw/<Task>/와 동일한 폴더 구조. 논문 노트 (논문 1편 = 파일 1개)
-  Concepts/              개념/기법 노트 (task로 나누지 않고 한 곳에 모음)
-  Comparisons/            논문 간 비교 문서 (task로 나누지 않고 한 곳에 모음)
-Schema.md                Wiki/, Raw/ 규칙 (Claude Code가 따르는 규칙)
+Papers/
+  <Task>/                Raw/<Task>/와 동일한 폴더 구조. 논문 노트 (논문 1편 = 파일 1개)
+Concepts/              개념/기법 노트 (task로 나누지 않고 한 곳에 모음)
+Comparisons/            논문 간 비교 문서 (task로 나누지 않고 한 곳에 모음)
+Moc/                    Map of Content — task별 서사/맥락 허브 + 전체 홈
+reading-list.md          task별로 정리된 "읽어볼 만한 논문" 모음
+Schema.md                Raw/, Papers/ 등 규칙 (Claude Code가 따르는 규칙)
 PaperWiki.base            Obsidian Bases 뷰 정의 (상태/task/방향성 테이블)
 ```
+
+`Papers/`, `Concepts/`, `Comparisons/`, `Moc/`, `reading-list.md`는 모두 이 폴더(PaperStudy) 바로 아래에 있다 — 하위 depth를 줄이기 위해 별도 `Wiki/` 폴더로 묶지 않는다.
 
 폴더·파일명 대소문자·구분자 규칙(단어별 대문자 시작 + `_` 구분, 논문 슬러그의 약어 대문자 규칙 등)은 `Schema.md`의 "폴더·파일 네이밍 규칙" 절을 따른다.
 
 ## 사용법
 
 1. 새로 읽고 싶은 논문의 PDF를 `Raw/Inbox/`에 넣는다.
-2. 이 폴더(PaperWiki)에서 Claude Code를 열고 `/process-papers`라고만 입력한다 (긴 프롬프트를 매번 안 써도 됨 — `.claude/skills/process-papers/`에 등록된 스킬). 또는 직접 "Raw/에 새로 추가한 논문 읽고 Schema.md 규칙대로 Wiki/에 반영해줘"라고 요청해도 동일하게 동작한다.
+2. 이 폴더(PaperWiki)에서 Claude Code를 열고 `/process-papers`라고만 입력한다 (긴 프롬프트를 매번 안 써도 됨 — `.claude/skills/process-papers/`에 등록된 스킬). 또는 직접 "Raw/에 새로 추가한 논문 읽고 Schema.md 규칙대로 반영해줘"라고 요청해도 동일하게 동작한다.
 3. Claude Code가 알아서:
    - PDF를 `{년도}_{venue}_{제목}.pdf`로 리네임하고, task를 판단해 `Raw/<Task>/`로 옮기고
-   - `Wiki/Papers/`에 논문 노트를 생성하고 (`task`, `direction`, `user_read`, `added` 속성 포함)
-   - 관련된 `Wiki/Concepts/` 문서를 찾아 갱신하거나 새로 만들고
-   - 필요하면 `Wiki/Comparisons/`에 비교 문서를 채우고
-   - `Wiki/reading-list.md`와 해당 `Wiki/Moc/<Task>_Moc.md`도 갱신한다.
-4. Obsidian으로 `Wiki/` 폴더를 열어 그래프 뷰/백링크로 탐색한다.
+   - `Papers/`에 논문 노트를 생성하고 (`task`, `direction`, `user_read`, `added` 속성 포함)
+   - 관련된 `Concepts/` 문서를 찾아 갱신하거나 새로 만들고
+   - 필요하면 `Comparisons/`에 비교 문서를 채우고
+   - `reading-list.md`와 해당 `Moc/<Task>_Moc.md`도 갱신한다.
+4. Obsidian으로 이 폴더(PaperStudy)를 열어 그래프 뷰/백링크로 탐색한다.
 
 완전 자동(정해진 시간마다 알아서 실행)은 지원하지 않는다 — Claude Code의 로컬 파일 접근과 "매일 정해진 시간에 알아서 실행"이 동시에 되는 방법이 없어서(클라우드 스케줄은 GitHub 등 원격 저장소 동기화가 필요), 매번 `/process-papers`로 수동 요청하는 방식을 택했다.
 
@@ -46,7 +49,7 @@ Obsidian에서 `PaperWiki.base` 파일을 열면 Notion 데이터베이스 뷰�
 
 ## 다음에 읽을 논문 찾기
 
-`Wiki/reading-list.md`를 열면 각 논문 노트가 추천한 "읽어볼 만한 논문"이 task별로 한곳에 모여있다. 참고문헌 기반 추천(원문 그대로, 신뢰도 높음)과 자유 추천("(검증 필요)" 표시 + 검색 키워드 포함, 검증 필요)이 구분되어 있다. 이 목록에 있던 논문을 실제로 읽어서 위키에 넣으면 자동으로 목록에서 빠진다.
+`reading-list.md`를 열면 각 논문 노트가 추천한 "읽어볼 만한 논문"이 task별로 한곳에 모여있다. 참고문헌 기반 추천(원문 그대로, 신뢰도 높음)과 자유 추천("(검증 필요)" 표시 + 검색 키워드 포함, 검증 필요)이 구분되어 있다. 이 목록에 있던 논문을 실제로 읽어서 위키에 넣으면 자동으로 목록에서 빠진다.
 
 ## direction 속성이란
 

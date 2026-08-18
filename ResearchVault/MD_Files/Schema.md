@@ -1,6 +1,6 @@
 # PaperWiki Schema
 
-이 문서는 `Raw/`, `Wiki/` 아래 문서를 생성·수정할 때 지켜야 하는 규칙이다.
+이 문서는 `Raw/`, `Papers/`, `Concepts/`, `Comparisons/`, `Moc/` 등 아래 문서를 생성·수정할 때 지켜야 하는 규칙이다.
 Claude Code에게 위키 업데이트를 요청할 때, 이 문서가 유일한 규칙 소스다.
 
 ## 폴더 구조
@@ -9,23 +9,24 @@ Claude Code에게 위키 업데이트를 요청할 때, 이 문서가 유일한 
 Raw/
   Inbox/                아직 처리 안 한 원본 PDF (다운받으면 여기에 넣는다)
   <Task>/                처리 완료 후 이동되는 task별 폴더 (예: Object_Detection/, Anomaly_Detection/)
-Wiki/
-  Papers/
-    <Task>/                Raw/<Task>/와 동일한 task 폴더 구조. 논문 1편 = 파일 1개(분석 노트)
-  Concepts/              개념/기법 1개 = 파일 1개 (여러 논문에서 공유되는 개념, task로 나누지 않음)
-  Comparisons/            논문 2편 이상을 특정 축으로 비교하는 문서 (task로 나누지 않음)
-  Moc/                    Map of Content — task별 서사/맥락 허브 + 전체 홈
-  reading-list.md          task별로 정리된 "읽어볼 만한 논문" 모음. 논문을 실제로 읽어 Wiki/Papers/에 노트가 생기면 여기서는 제거한다
+Papers/
+  <Task>/                Raw/<Task>/와 동일한 task 폴더 구조. 논문 1편 = 파일 1개(분석 노트)
+Concepts/              개념/기법 1개 = 파일 1개 (여러 논문에서 공유되는 개념, task로 나누지 않음)
+Comparisons/            논문 2편 이상을 특정 축으로 비교하는 문서 (task로 나누지 않음)
+Moc/                    Map of Content — task별 서사/맥락 허브 + 전체 홈
+reading-list.md          task별로 정리된 "읽어볼 만한 논문" 모음. 논문을 실제로 읽어 Papers/에 노트가 생기면 여기서는 제거한다
 README.md                사용법
 Schema.md                이 문서
 PaperWiki.base            Obsidian Bases 뷰 정의
 ```
 
+`Papers/`, `Concepts/`, `Comparisons/`, `Moc/`, `reading-list.md`는 모두 `PaperStudy/` 바로 아래에 있다 (예전에는 `Wiki/` 하위 폴더였으나, 하위 depth를 줄이기 위해 `PaperStudy/` 바로 아래로 옮겼다).
+
 - 새 PDF는 항상 `Raw/Inbox/`에 넣는다.
 - 처리 완료되면 PDF 파일 자체를 `Raw/<Task>/`로 **이동**한다 (`Raw/Inbox/`에는 남기지 않는다). "처리됐는지"는 이제 폴더 위치로도 바로 보인다 — `Raw/Inbox/`에 남아있으면 미분류, `Raw/<Task>/`에 있으면 처리 완료.
 - `<Task>` 폴더명은 논문의 목적/과제를 가리키며, 아래 "폴더·파일 네이밍 규칙"을 따른다 (예: `Object_Detection`, `Anomaly_Detection`, `Segmentation`, `Loss_Function`). 기존에 없던 task면 새 폴더를 만든다. 폐쇄 목록이 아니다 — 논문을 보고 적절한 task가 없으면 새로 만든다.
-- 논문 하나가 여러 task에 걸치면(드묾) 가장 핵심적인 task 폴더 하나에만 파일을 두고, `Wiki/Papers/` 노트의 `task` 속성에는 해당되는 task를 전부 적는다.
-- `Wiki/Papers/`도 `Raw/`와 동일한 task별 하위 폴더 구조를 따른다 (`Wiki/Papers/<Task>/<논문-슬러그>.md`). 새 task 폴더가 `Raw/`에 생기면 `Wiki/Papers/`에도 동일한 이름으로 만든다. `Wiki/Concepts/`와 `Wiki/Comparisons/`는 여러 task에 걸치는 경우가 많으므로 task로 나누지 않고 폴더 하나에 모아둔다.
+- 논문 하나가 여러 task에 걸치면(드묾) 가장 핵심적인 task 폴더 하나에만 파일을 두고, `Papers/` 노트의 `task` 속성에는 해당되는 task를 전부 적는다.
+- `Papers/`도 `Raw/`와 동일한 task별 하위 폴더 구조를 따른다 (`Papers/<Task>/<논문-슬러그>.md`). 새 task 폴더가 `Raw/`에 생기면 `Papers/`에도 동일한 이름으로 만든다. `Concepts/`와 `Comparisons/`는 여러 task에 걸치는 경우가 많으므로 task로 나누지 않고 폴더 하나에 모아둔다.
 
 ## 폴더·파일 네이밍 규칙
 
@@ -43,7 +44,7 @@ PaperWiki.base            Obsidian Bases 뷰 정의
 ## 공통 규칙
 
 - 모든 문서는 Obsidian `[[wiki-link]]` 문법으로 서로 연결한다. 링크 대상 파일이 아직 없으면 만들지 말지 판단하고(아래 concepts 규칙 참고), 없는 링크를 남발하지 않는다.
-- 아직 위키에 없는 논문을 언급하며 "나중에 링크 걸 대상"으로 남겨둘 때는 반드시 `#pending:<논문-슬러그>` 마커를 그 문장에 붙인다 (예: `RFLA #pending:rfla`). 이 마커는 나중에 그 논문이 실제로 추가될 때 `grep -r "#pending:<슬러그>" Wiki/`로 미완성 링크를 찾아 갱신하기 위한 것이다 — 전체 위키를 다시 읽지 않고 문자열 검색만으로 찾을 수 있게 하는 장치이므로, 마커 없이 "아직 없음"이라고만 적어두지 않는다.
+- 아직 위키에 없는 논문을 언급하며 "나중에 링크 걸 대상"으로 남겨둘 때는 반드시 `#pending:<논문-슬러그>` 마커를 그 문장에 붙인다 (예: `RFLA #pending:rfla`). 이 마커는 나중에 그 논문이 실제로 추가될 때 `grep -r "#pending:<슬러그>" .`(PaperStudy/ 안에서 실행)로 미완성 링크를 찾아 갱신하기 위한 것이다 — 전체 위키를 다시 읽지 않고 문자열 검색만으로 찾을 수 있게 하는 장치이므로, 마커 없이 "아직 없음"이라고만 적어두지 않는다.
 - 내용은 한국어로 쓴다. 논문 제목, 저자명, 고유 용어(모델명, 메서드명)는 원문(영문) 그대로 둔다.
 - 각 문서 frontmatter의 `tags`는 소문자 kebab-case로 통일한다 (파일명·폴더명 네이밍 규칙과는 별개로, tags 값 자체는 기존처럼 소문자를 유지한다).
 - 근거 없는 내용을 만들어내지 않는다. PDF에서 확인 안 되는 정보는 채우지 말고 빈칸으로 둔다.
@@ -64,7 +65,7 @@ PaperWiki.base            Obsidian Bases 뷰 정의
 
 논문 1편당 파일 **1개**: 분석 노트(`<Slug>.md`)만 만든다. 원문 요약(Abstract/Introduction/Conclusion 번역) 파일은 만들지 않는다 — 사용자가 원문을 직접 읽고 정리하는 쪽을 선호한다.
 
-파일명: `Wiki/Papers/<Task>/<논문-슬러그>.md` (슬러그는 예: 저자 성 + 핵심 키워드, 또는 잘 알려진 약칭. 리네임한 PDF의 제목 부분을 재사용해도 된다)
+파일명: `Papers/<Task>/<논문-슬러그>.md` (슬러그는 예: 저자 성 + 핵심 키워드, 또는 잘 알려진 약칭. 리네임한 PDF의 제목 부분을 재사용해도 된다)
 
 **슬러그 대소문자 규칙**: 논문에 저자가 스스로 붙인 short title(예: "QueryDet: Cascaded Sparse Query for..."처럼 제목 앞부분에 오는 약칭)이 있으면, 그 표기를 대소문자까지 정확히 그대로 슬러그로 쓴다 (`FANet`, `LSOD-YOLO`, `QueryDet`, `RS-TOD`, `UAV-DETR`, `Unc-SOD`, `ReContrast`처럼). 전부 소문자로 뭉뚱그리지 않는다 — 실제 논문에서 쓰는 표기가 그 자체로 식별성을 갖기 때문이다(예: `ReContrast`를 `recontrast`로 쓰면 다른 논문 제목의 일부처럼 보일 수 있다). 원문에 명시적 short title이 없으면(예: 제목이 일반 서술형 문장인 논문) 슬러그는 위 "폴더·파일 네이밍 규칙"의 일반 서술형 이름 규칙(`Word_Word`, 예: `Detection_Oriented_Rectification`)을 따른다. 애매하면 PDF를 다시 확인해 저자가 스스로 어떻게 부르는지(본문에서 반복 사용하는 모델/프레임워크 이름) 찾아보고, 그래도 불명확하면 사용자에게 묻는다 — 나중에 슬러그를 바꾸면 위키 전체의 `[[링크]]`를 전수 갱신해야 하는 비용이 크므로 처음에 정확히 정하는 편이 낫다.
 
@@ -237,11 +238,11 @@ Obsidian 콜아웃은 제목 뒤에 `-`를 붙이면 기본적으로 접힌 상�
 - **참고문헌 기반**: 이 논문이 실제로 인용한 문헌 중, 사용자의 연구 방향과 특히 관련 있어 보이는 것을 추천한다. 저자·제목·연도·참고문헌 번호를 원문 그대로 정확히 옮긴다 — 이 항목은 원문에 있는 사실이므로 허구 위험이 없다.
 - **자유 추천**: 참고문헌에 없어도 관련 있다고 판단되는 논문을 추천할 수 있다. 다만 이건 모델의 사전지식에 의존하므로 제목·저자·정확한 존재 여부가 틀릴 수 있다 — 반드시 "(검증 필요)"라고 표시하고, 사용자가 직접 검색해 확인할 수 있도록 구체적인 검색 키워드를 함께 제공한다. 논문 제목을 확신 없이 지어내지 않는다.
 - 추천마다 왜 읽어볼 만한지 한 줄 이유를 붙인다 (예: "이 논문의 X 기법이 확장한 원조 방법이라 배경 이해에 도움", "같은 문제를 다른 도메인에서 다룸").
-- 이 섹션에 추천을 추가했으면, 같은 항목을 `Wiki/reading-list.md`의 해당 task 섹션에도 추가한다 (아래 "reading-list.md" 절 참고).
+- 이 섹션에 추천을 추가했으면, 같은 항목을 `reading-list.md`의 해당 task 섹션에도 추가한다 (아래 "reading-list.md" 절 참고).
 
 ## reading-list.md — 읽을 논문 모음
 
-`Wiki/reading-list.md`는 여러 논문 노트에 흩어진 "읽어볼 만한 논문" 추천을 task별로 한곳에 모은 단일 파일이다. "다음에 뭘 읽을지" 고민할 때 이 파일 하나만 보면 되도록 하는 것이 목적이다.
+`reading-list.md`는 여러 논문 노트에 흩어진 "읽어볼 만한 논문" 추천을 task별로 한곳에 모은 단일 파일이다. "다음에 뭘 읽을지" 고민할 때 이 파일 하나만 보면 되도록 하는 것이 목적이다.
 
 ### 구성
 
@@ -259,7 +260,7 @@ Obsidian 콜아웃은 제목 뒤에 `-`를 붙이면 기본적으로 접힌 상�
 ### 갱신 규칙
 
 - 새 논문 노트에 "읽어볼 만한 논문" 항목을 추가할 때마다, 해당 task 섹션에 동일한 항목을 체크박스(`- [ ]`)로 추가하고 어느 논문 노트에서 추천했는지(`출처: [[...]]`) 남긴다.
-- 이미 `reading-list.md`에 있는 논문을 나중에 실제로 `Raw/Inbox/`에 넣어 처리하면(즉 `Wiki/Papers/`에 그 논문의 정식 노트가 새로 생기면), `reading-list.md`에서 해당 항목을 **삭제**한다 (체크만 하고 남겨두지 않는다 — 목록이 "아직 안 읽은 것"만 남도록 유지한다).
+- 이미 `reading-list.md`에 있는 논문을 나중에 실제로 `Raw/Inbox/`에 넣어 처리하면(즉 `Papers/`에 그 논문의 정식 노트가 새로 생기면), `reading-list.md`에서 해당 항목을 **삭제**한다 (체크만 하고 남겨두지 않는다 — 목록이 "아직 안 읽은 것"만 남도록 유지한다).
 - task 섹션이 없으면 새로 만든다.
 
 ## direction 카테고리
@@ -283,7 +284,7 @@ Obsidian 콜아웃은 제목 뒤에 `-`를 붙이면 기본적으로 접힌 상�
 
 새 논문을 처리하다가 이미 존재하는 개념을 다시 언급하면, 새 concept 문서를 만들지 말고 기존 문서의 "등장 논문" 목록에 추가 갱신한다.
 
-파일명: `Wiki/Concepts/<개념-슬러그>.md` (슬러그는 위 "폴더·파일 네이밍 규칙"의 일반 서술형 이름 규칙을 따른다, 예: `Latent_Reconstruction_Error`)
+파일명: `Concepts/<개념-슬러그>.md` (슬러그는 위 "폴더·파일 네이밍 규칙"의 일반 서술형 이름 규칙을 따른다, 예: `Latent_Reconstruction_Error`)
 
 ### Frontmatter
 
@@ -317,7 +318,7 @@ updated: <YYYY-MM-DD>
 
 논문 2편 이상을 공통 축(예: 같은 문제를 푸는 다른 접근, 같은 벤치마크 성능, 시계열적 후속 관계)으로 비교할 가치가 있을 때 만든다. 모든 새 논문마다 만들 필요는 없다 — 명확히 비교되는 대상이 있을 때만.
 
-파일명: `Wiki/Comparisons/<비교-주제-슬러그>.md` (슬러그는 위 "폴더·파일 네이밍 규칙"의 일반 서술형 이름 규칙을 따른다, 예: `Small_Object_Detection_Approaches`)
+파일명: `Comparisons/<비교-주제-슬러그>.md` (슬러그는 위 "폴더·파일 네이밍 규칙"의 일반 서술형 이름 규칙을 따른다, 예: `Small_Object_Detection_Approaches`)
 
 ### Frontmatter
 
@@ -349,15 +350,15 @@ updated: <YYYY-MM-DD>
 
 ## Moc/ — Map of Content
 
-`Wiki/Papers/`나 `PaperWiki.base`가 "무엇이 있는지"를 테이블로 보여준다면, MOC는 **그 사이의 맥락과 서사**를 담는 곳이다. 단순히 논문 목록을 나열하지 않는다 — 그건 Bases 테이블이 이미 더 잘한다.
+`Papers/`나 `PaperWiki.base`가 "무엇이 있는지"를 테이블로 보여준다면, MOC는 **그 사이의 맥락과 서사**를 담는 곳이다. 단순히 논문 목록을 나열하지 않는다 — 그건 Bases 테이블이 이미 더 잘한다.
 
 MOC는 두 계층으로 구성한다.
 
-### Task MOC — `Wiki/Moc/<Task>_Moc.md`
+### Task MOC — `Moc/<Task>_Moc.md`
 
-`Raw/`, `Wiki/Papers/`에 존재하는 task 폴더마다 하나씩 만든다 (예: `Wiki/Moc/Small_Object_Detection_Moc.md`).
+`Raw/`, `Papers/`에 존재하는 task 폴더마다 하나씩 만든다 (예: `Moc/Small_Object_Detection_Moc.md`).
 
-파일명: `Wiki/Moc/<Task>_Moc.md`
+파일명: `Moc/<Task>_Moc.md`
 
 #### Frontmatter
 
@@ -397,7 +398,7 @@ updated: <YYYY-MM-DD>
 - [[다른-Task_Moc]] (겹치거나 인접한 분야가 있으면)
 ```
 
-### 홈 MOC — `Wiki/Moc/000-Home.md`
+### 홈 MOC — `Moc/000-Home.md`
 
 전체 위키의 진입점. 한 번만 만들고 이후 갱신한다.
 
@@ -414,33 +415,33 @@ updated: <YYYY-MM-DD>
 ```
 
 ### 갱신 규칙
-- 새 논문이 `Wiki/Papers/<Task>/`에 추가될 때마다, 해당 `<Task>_Moc.md`가 없으면 새로 만들고, 있으면 "지금까지 다룬 흐름"·"이 분야를 관통하는 개념" 섹션을 갱신한다 (아래 워크플로우 8번 참고).
+- 새 논문이 `Papers/<Task>/`에 추가될 때마다, 해당 `<Task>_Moc.md`가 없으면 새로 만들고, 있으면 "지금까지 다룬 흐름"·"이 분야를 관통하는 개념" 섹션을 갱신한다 (아래 워크플로우 8번 참고).
 - 이전에 없던 task 폴더가 새로 생기면 `000-Home.md`의 "Task별 MOC" 목록에도 추가한다.
 - 단순 논문 나열이 되지 않도록 주의한다 — "지금까지 다룬 흐름"은 항상 논문 간 관계·서사를 한 줄이라도 포함해야 한다. 관계를 못 쓰겠으면(정말 처음 추가되는 논문이라) 다음 논문이 들어올 때 채운다.
 
 ## 새 논문 처리 워크플로우
 
-`Raw/Inbox/`에 새 PDF가 추가되고 "Raw/에 새로 추가한 논문 읽고 Wiki/에 반영해줘" 요청을 받으면:
+`Raw/Inbox/`에 새 PDF가 추가되고 "Raw/에 새로 추가한 논문 읽고 Papers/에 반영해줘" 요청을 받으면:
 
 1. `Raw/Inbox/`에 있는 각 PDF를 읽는다.
 2. PDF 내용을 바탕으로 이 논문의 task를 판단한다 (기존 `Raw/<Task>/` 폴더 중 맞는 게 있으면 그걸 쓰고, 없으면 새 task 폴더명을 정한다).
 3. "PDF 파일명 규칙"대로 `{년도}_{venue}_{제목}.pdf`로 리네임하고 `Raw/<Task>/`로 이동한다 (`Raw/Inbox/`에는 남기지 않는다).
-4. `Wiki/Papers/<Task>/<Slug>.md`(분석 노트)를 만든다. `source`에 이동 후 PDF 경로(`Raw/<Task>/<리네임된 파일명>`)를 채우고, `task`, `direction` 속성을 채운다. `status`는 `read`(아직 내 연구 관점 리뷰 전) 또는 `reviewed`(평가까지 마침)로 판단해 채운다. `user_read: false`, `added`(PDF의 `Raw/Inbox/` 진입 날짜, mtime 기준)도 함께 채운다. `jcr_quartile`은 위 Frontmatter 절의 규칙대로 채운다 — 학회가 명백한 top-tier면 `Q1`, 저널이거나 등급을 모르면 `null`로 두고 나중에 사용자에게 물어볼 목록에 추가한다(추측 금지). 분석 노트 템플릿(콜아웃·bullet 규칙 포함)을 따른다.
-5. `grep -r "#pending:<이번 논문의 슬러그>" Wiki/`를 실행해서, 기존 노트 중 이 논문을 미완성 링크(`#pending:` 마커)로 남겨둔 곳이 있는지 확인한다. 있으면 해당 문장을 실제 `[[wiki-link]]`로 갱신하고 마커를 지운다.
+4. `Papers/<Task>/<Slug>.md`(분석 노트)를 만든다. `source`에 이동 후 PDF 경로(`Raw/<Task>/<리네임된 파일명>`)를 채우고, `task`, `direction` 속성을 채운다. `status`는 `read`(아직 내 연구 관점 리뷰 전) 또는 `reviewed`(평가까지 마침)로 판단해 채운다. `user_read: false`, `added`(PDF의 `Raw/Inbox/` 진입 날짜, mtime 기준)도 함께 채운다. `jcr_quartile`은 위 Frontmatter 절의 규칙대로 채운다 — 학회가 명백한 top-tier면 `Q1`, 저널이거나 등급을 모르면 `null`로 두고 나중에 사용자에게 물어볼 목록에 추가한다(추측 금지). 분석 노트 템플릿(콜아웃·bullet 규칙 포함)을 따른다.
+5. `grep -r "#pending:<이번 논문의 슬러그>" .`(PaperStudy/ 안에서 실행)를 실행해서, 기존 노트 중 이 논문을 미완성 링크(`#pending:` 마커)로 남겨둔 곳이 있는지 확인한다. 있으면 해당 문장을 실제 `[[wiki-link]]`로 갱신하고 마커를 지운다.
 6. 논문에서 "독립적으로 설명할 가치가 있는" 개념/기법(핵심 기여인 기법·아이디어)이 있는지 판단한다 — 재사용 여부와 무관하게, 이 논문 1편만 보고 판단한다.
-   - 그런 개념이 있고 `Wiki/Concepts/`에 이미 있으면: 해당 concept 문서의 "등장 논문"에 이번 논문을 추가하고, 필요하면 "변형/발전" 섹션을 갱신한다.
+   - 그런 개념이 있고 `Concepts/`에 이미 있으면: 해당 concept 문서의 "등장 논문"에 이번 논문을 추가하고, 필요하면 "변형/발전" 섹션을 갱신한다.
    - 그런 개념이 있고 아직 없으면: 지금 이 논문 1편에만 등장하더라도 새 concept 문서를 만든다.
    - 논문 안에서만 의미 있는 부수적 디테일이면 concept으로 만들지 않는다.
-7. 이번 논문이 기존 논문과 비교할 가치가 있으면(같은 문제, 같은 벤치마크, 직접적 후속작 등) `Wiki/Comparisons/`에 문서를 만들거나 기존 비교 문서를 갱신한다.
+7. 이번 논문이 기존 논문과 비교할 가치가 있으면(같은 문제, 같은 벤치마크, 직접적 후속작 등) `Comparisons/`에 문서를 만들거나 기존 비교 문서를 갱신한다.
 8. comparison만 애매하면 만들지 않는다 — 나중에 다른 논문이 들어와 근거가 쌓이면 그때 만든다. (concept은 위 6번 기준으로 그때그때 판단한다.)
-9. `Wiki/Moc/<Task>_Moc.md`를 갱신한다 — 없으면 새로 만들고, 있으면 "지금까지 다룬 흐름"에 이번 논문을 추가하고 다른 논문과의 관계를 서술한다. 새로 만든 concept/comparison이 있으면 해당 섹션에도 링크를 추가한다. task 폴더가 이번에 처음 생겼다면 `Wiki/Moc/000-Home.md`의 "Task별 MOC" 목록에도 추가한다.
+9. `Moc/<Task>_Moc.md`를 갱신한다 — 없으면 새로 만들고, 있으면 "지금까지 다룬 흐름"에 이번 논문을 추가하고 다른 논문과의 관계를 서술한다. 새로 만든 concept/comparison이 있으면 해당 섹션에도 링크를 추가한다. task 폴더가 이번에 처음 생겼다면 `Moc/000-Home.md`의 "Task별 MOC" 목록에도 추가한다.
 10. 이번 논문이 다루는 내용 중, 아직 위키에 없는 다른 논문을 언급하며 나중에 링크할 대상으로 남겨야 하는 경우(예: 비교 대상으로 인용되지만 PDF가 없는 논문) `#pending:<그-논문-슬러그>` 마커를 붙여 남긴다.
-11. 논문 노트의 "읽어볼 만한 논문" 섹션을 채운다("읽어볼 만한 논문" 작성 규칙 참고). 여기 추가한 항목은 `Wiki/reading-list.md`의 해당 task 섹션에도 동일하게 추가한다.
-12. 이번에 처리한 논문이 `Wiki/reading-list.md`에 이미 있던 항목이라면(즉 예전에 추천되어 대기 중이던 논문을 지금 실제로 읽은 것이라면), 그 항목을 `Wiki/reading-list.md`에서 삭제한다.
+11. 논문 노트의 "읽어볼 만한 논문" 섹션을 채운다("읽어볼 만한 논문" 작성 규칙 참고). 여기 추가한 항목은 `reading-list.md`의 해당 task 섹션에도 동일하게 추가한다.
+12. 이번에 처리한 논문이 `reading-list.md`에 이미 있던 항목이라면(즉 예전에 추천되어 대기 중이던 논문을 지금 실제로 읽은 것이라면), 그 항목을 `reading-list.md`에서 삭제한다.
 13. 이번에 처리한 논문 중 `jcr_quartile`이 `null`로 남은 저널 논문(등급 확인 필요)이 있으면, 처리 완료 보고의 마지막에 "JCR 등급을 확인해 주세요"라는 목록으로 venue와 함께 사용자에게 물어본다. 사용자가 답을 주면 해당 논문 노트의 `jcr_quartile`을 갱신한다.
 
 ## 상태 확인하기 (Bases)
 
-Obsidian의 **Bases** 플러그인을 쓰면 Notion 데이터베이스 뷰처럼 `Wiki/Papers/`를 테이블로 보면서 `status`, `task`, `direction`, `jcr_quartile` 컬럼으로 필터·정렬할 수 있다. `PaperWiki.base` 파일이 이 뷰들을 미리 정의해 둔 것이므로, Obsidian에서 그 파일을 열면 바로 확인 가능하다. "Q1만" 뷰로 Q1 논문만, "JCR 등급 확인 필요" 뷰로 등급 미상 논문만 걸러볼 수 있다.
+Obsidian의 **Bases** 플러그인을 쓰면 Notion 데이터베이스 뷰처럼 `Papers/`를 테이블로 보면서 `status`, `task`, `direction`, `jcr_quartile` 컬럼으로 필터·정렬할 수 있다. `PaperWiki.base` 파일이 이 뷰들을 미리 정의해 둔 것이므로, Obsidian에서 그 파일을 열면 바로 확인 가능하다. "Q1만" 뷰로 Q1 논문만, "JCR 등급 확인 필요" 뷰로 등급 미상 논문만 걸러볼 수 있다.
 
 폴더 자체로도 확인 가능하다 — `Raw/Inbox/`에 파일이 남아있으면 아직 위키에 반영 안 된 논문, `Raw/<Task>/`에 있으면 처리 완료.

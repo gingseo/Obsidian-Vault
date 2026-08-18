@@ -1,11 +1,11 @@
 ---
 name: process-papers
-description: ResearchVault/PaperStudy/Raw/Inbox/에 새로 추가된 논문 PDF를 읽고 ResearchVault/MD_Files/Schema.md 규칙대로 Wiki/에 반영한다. "raw 정리해줘", "새 논문 처리해줘", "인박스 확인해줘" 같은 요청에 사용.
+description: ResearchVault/PaperStudy/Raw/Inbox/에 새로 추가된 논문 PDF를 읽고 ResearchVault/MD_Files/Schema.md 규칙대로 Papers/ 등에 반영한다. "raw 정리해줘", "새 논문 처리해줘", "인박스 확인해줘" 같은 요청에 사용.
 ---
 
 # 논문 처리
 
-`ResearchVault/PaperStudy/Raw/Inbox/`를 확인하고, 있는 PDF를 모두 `ResearchVault/MD_Files/Schema.md`의 "새 논문 처리 워크플로우" 섹션에 정의된 순서대로 처리한다. 아래 절차와 `Schema.md` 본문에서 언급하는 `Raw/`, `Wiki/`는 각각 `ResearchVault/PaperStudy/Raw/`, `ResearchVault/PaperStudy/Wiki/`를 가리킨다. 폴더·파일명은 `Schema.md`의 "폴더·파일 네이밍 규칙"(단어별 대문자 시작 + `_` 구분, 논문 슬러그의 약어 대문자 규칙 등)을 따른다.
+`ResearchVault/PaperStudy/Raw/Inbox/`를 확인하고, 있는 PDF를 모두 `ResearchVault/MD_Files/Schema.md`의 "새 논문 처리 워크플로우" 섹션에 정의된 순서대로 처리한다. 아래 절차와 `Schema.md` 본문에서 언급하는 `Raw/`, `Papers/`, `Concepts/`, `Comparisons/`, `Moc/`는 모두 `ResearchVault/PaperStudy/` 바로 아래를 가리킨다 (`Wiki/`라는 중간 폴더는 없다). 폴더·파일명은 `Schema.md`의 "폴더·파일 네이밍 규칙"(단어별 대문자 시작 + `_` 구분, 논문 슬러그의 약어 대문자 규칙 등)을 따른다.
 
 ## 절차
 
