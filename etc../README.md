@@ -1,16 +1,23 @@
 # GingseoLife 볼트 가이드
 
-라이프스타일 기록·트래킹용 Obsidian 볼트. 이 문서는 볼트 전체 구조와 사용법을 담는다. Finance 폴더의 자동화 규칙은 [Finance/SCHEMA.md](Life/Finance/SCHEMA.md)를 참고.
+라이프스타일 기록·트래킹용 Obsidian 볼트. 이 문서는 볼트 전체 구조와 사용법을 담는다. Finance 폴더의 자동화 규칙은 [Finance/SCHEMA.md](../Life/Finance/SCHEMA.md)를 참고.
 
 ## 폴더 구조
 
 | 폴더 | 용도 |
 | --- | --- |
-| `Daily Note/` | 매일 생성되는 일일 노트. 건강·학습 기록 |
-| `Journal/` | 월별 누적 저널. 다짐/생각을 날짜 헤딩 아래 자유서술 |
-| `Finance/` | 경제 공부 허브 (개인 지출 아님) — Wiki/Companies/Reviews/News Journal/Trade Log |
-| `HeatMap/` | Health/Learning 히트맵 캘린더 대시보드 |
-| `Templete/` | 각 폴더용 Templater 템플릿 원본 |
+| `Life/Daily Note/` | 매일 생성되는 일일 노트. 건강·학습 기록 |
+| `Life/Daily Note/HeatMap/` | Health/Learning 히트맵 캘린더 대시보드 |
+| `Life/Finance/` | 경제 공부 허브 (개인 지출 아님) — Wiki/Companies/Trade Log |
+| `Life/Review(책, 강의)/` | 책/강의 리뷰 |
+| `Life/How2Live/` | 생활 지혜·공부 메모 |
+| `Life/기억할 문구/` | 인용구·문장 모음 |
+| `News Journal/` (볼트 최상위) | 뉴스·이슈 저널. Finance에서 독립해 최상위로 분리됨 |
+| `ResearchVault/` | 논문/연구 위키 (별도 시스템, `ResearchVault/MD_Files/Schema.md` 참고) |
+| `etc../` | 자주 열어보지 않는 템플릿·가이드류. `Templete/` 템플릿 원본, 이 README 포함 |
+
+> [!note] `Journal/`(월별 누적 다짐/생각 기록)은 폐지됨
+> News Journal과는 별개로 있던 개인 저널 폴더였으나 더 이상 사용하지 않는다. Templater/Daily Notes 설정에서도 매핑을 제거했다.
 
 ## 필수 플러그인
 
@@ -18,16 +25,16 @@
 | --- | --- |
 | Templater | 새 노트 생성 시 날짜 등 자동 치환. 폴더별 템플릿 매핑 사용 |
 | Meta Bind | 노트 본문에 입력창(토글/숫자/드롭다운)을 삽입해 값을 frontmatter 속성에 자동 저장 |
-| Dataview | Wiki/Companies/Reviews `_Index.md`의 노트 목록 자동 집계 |
+| Dataview | Wiki/Companies/Review `_Index.md`의 노트 목록 자동 집계 |
 | Heatmap Calendar | HeatMap 폴더의 dataviewjs 블록에서 사용하는 캘린더 렌더러 |
 | Calendar | Daily Note 캘린더 뷰 |
 
 ## Daily Note 사용법
 
-**새 노트 만들기**: 코어 Daily Notes 플러그인의 "오늘의 일일 노트 열기"(리본 아이콘)를 사용한다. Templater 폴더 매핑(`Daily Note` 폴더 → `Templete/Daily Note.md`)이 걸려 있어 자동으로 템플릿이 채워진다.
+**새 노트 만들기**: 코어 Daily Notes 플러그인의 "오늘의 일일 노트 열기"(리본 아이콘)를 사용한다. Templater 폴더 매핑(`Life/Daily Note` 폴더 → `etc../Templete/Daily Note.md`)이 걸려 있어 자동으로 템플릿이 채워진다.
 
 > [!warning] "Templater: Create new note from template" 명령은 쓰지 않는다
-> 이 명령은 폴더 매핑을 무시하고 `Templete` 폴더에 `Untitled`로 파일을 만든다. 반드시 코어 Daily Notes 경로로 생성할 것.
+> 이 명령은 폴더 매핑을 무시하고 `etc../Templete` 폴더에 `Untitled`로 파일을 만든다. 반드시 코어 Daily Notes 경로로 생성할 것.
 
 ### 속성(frontmatter) 목록
 
@@ -54,17 +61,13 @@
 - `VIEW[...][math:속성명]`처럼 계산식을 다른 속성에 자동 저장하려면 타입을 `number`가 아니라 **`math`**로 지정해야 한다.
 - 설정 > Meta Bind > Excluded folders가 비어 있어야 템플릿 폴더에서도 미리보기가 된다.
 
-## Journal 사용법
+## Finance / News Journal 사용법
 
-`Journal/YYYY-MM.md` 형태로 월 단위 누적. 새 달 노트는 `Journal` 폴더에 새 노트를 만들면 Templater가 자동으로 `# YYYY-MM` 제목과 오늘 날짜 헤딩을 채운다. 이후 매일 손으로 `## YYYY-MM-DD` 헤딩을 추가하고 그 아래 자유롭게 기록한다. 특정 생각이 길어지면 `[[페이지명]]`으로 별도 노트를 만들어 링크만 남긴다.
-
-## Finance 사용법
-
-개인 지출이 아니라 **경제 공부·트래킹** 전용. 하위 폴더 역할과 자동화(클라우드 스케줄) 관련 세부 규칙은 [Finance/SCHEMA.md](Life/Finance/SCHEMA.md)를 참고한다.
+`Life/Finance/`는 개인 지출이 아니라 **경제 공부·트래킹** 전용 (Wiki/Companies/Trade Log). `News Journal/`은 뉴스·이슈 저널로, Finance 하위가 아니라 볼트 최상위 폴더로 독립되어 있다 (자동화 대상이라 별도 관리가 편해서 분리함). 하위 폴더 역할과 자동화(클라우드 스케줄) 관련 세부 규칙은 [Finance/SCHEMA.md](../Life/Finance/SCHEMA.md)를 참고한다.
 
 ## HeatMap 사용법
 
-`HeatMap/Health.md`, `HeatMap/Learning.md`는 각각 dataviewjs 블록으로 `Daily Note` 폴더를 스캔해서 히트맵 캘린더를 그린다. 텍스트 단계값(하/중/상 등)은 블록 내부의 매핑 객체(`intensityMap` 등)로 숫자 intensity로 변환된다. 새 단계값을 추가하면 이 매핑도 같이 갱신해야 한다.
+`Life/Daily Note/HeatMap/Health.md`, `Life/Daily Note/HeatMap/Learning.md`는 각각 dataviewjs 블록으로 `Life/Daily Note` 폴더를 스캔해서 히트맵 캘린더를 그린다. 텍스트 단계값(하/중/상 등)은 블록 내부의 매핑 객체(`intensityMap` 등)로 숫자 intensity로 변환된다. 새 단계값을 추가하면 이 매핑도 같이 갱신해야 한다.
 
 히트맵 캘린더는 **데이터 안에서 상대적 스케일**로 색상 강도를 계산한다 — 기록이 하루뿐이면 무조건 가장 진한 색으로 보이는 게 정상이며, 기록이 쌓일수록 상대적으로 조정된다.
 

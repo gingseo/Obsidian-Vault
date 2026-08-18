@@ -6,7 +6,7 @@
 
 ```dataview
 TABLE file.mtime as "수정일"
-FROM "Finance/News Journal"
+FROM "News Journal"
 WHERE file.name != "_Index"
 SORT file.name DESC
 LIMIT 20
@@ -16,7 +16,7 @@ LIMIT 20
 
 ```dataview
 LIST
-FROM "Finance/News Journal" AND #삼성전자
+FROM "News Journal" AND #삼성전자
 SORT file.name DESC
 ```
 
@@ -24,6 +24,6 @@ SORT file.name DESC
 
 ```dataview
 LIST
-FROM "Finance/News Journal" AND #방산
+FROM "News Journal" AND #방산
 SORT file.name DESC
 ```

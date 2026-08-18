@@ -1,23 +1,25 @@
 # Finance 폴더 작성 스키마
 
-이 문서는 `Finance/` 폴더에 노트를 작성(사람이든 클라우드 routine이든)할 때 따르는 규칙이다. **클라우드 스케줄(routine)은 실행 시 이 문서를 먼저 읽고 아래 규칙에 맞춰 작성한다.**
+이 문서는 `Life/Finance/` 폴더(및 별도로 독립한 `News Journal/`)에 노트를 작성(사람이든 클라우드 routine이든)할 때 따르는 규칙이다. **클라우드 스케줄(routine)은 실행 시 이 문서를 먼저 읽고 아래 규칙에 맞춰 작성한다.**
 
 ## 폴더별 역할
 
 | 폴더 | 역할 | 파일 단위 |
 | --- | --- | --- |
-| `Wiki/` | 개념·용어 정리 | 노트 하나 = 개념 하나, `[[링크]]`로 상호 연결 |
-| `Companies/` | 종목/산업 분석 | 노트 하나 = 종목 또는 산업군 하나 |
-| `Reviews/` | 책/강의 리뷰 | 노트 하나 = 자료 하나. frontmatter `Type`(책/강의), `Status`(읽는 중/완료) |
-| `News Journal/` | 뉴스·이슈 저널 (자동화 대상) | **일자별 파일**, 월 폴더 안에 저장 |
-| `Trade Log/` | 매매일지 | 거래 1건 = 노트 1개, 거래 발생 시에만 작성 |
+| `Life/Finance/Wiki/` | 개념·용어 정리 | 노트 하나 = 개념 하나, `[[링크]]`로 상호 연결 |
+| `Life/Finance/Companies/` | 종목/산업 분석 | 노트 하나 = 종목 또는 산업군 하나 |
+| `Life/Review(책, 강의)/` | 책/강의 리뷰 | 노트 하나 = 자료 하나. frontmatter `Type`(책/강의), `Status`(읽는 중/완료) |
+| `News Journal/` (볼트 최상위, Finance 밖) | 뉴스·이슈 저널 (자동화 대상) | **일자별 파일**, 월 폴더 안에 저장 |
+| `Life/Finance/Trade Log/` | 매매일지 | 거래 1건 = 노트 1개, 거래 발생 시에만 작성 |
 
 ## News Journal 작성 규칙
+
+`News Journal/`은 `Finance/` 하위가 아니라 볼트 최상위 폴더다 (경제 공부 허브와 분리해 독립시킴).
 
 ### 파일 구조
 
 ```
-Finance/News Journal/
+News Journal/
   2026-08/
     2026-08-07.md              ← 매일 기록
     2026-08-08.md
@@ -25,9 +27,9 @@ Finance/News Journal/
     _Monthly-2026-08.md        ← 월간 리뷰 (그 달 폴더에 저장, "지난달"을 정리)
 ```
 
-- 매일 기록: `Finance/News Journal/YYYY-MM/YYYY-MM-DD.md`. 월 폴더(`YYYY-MM/`)가 없으면 새로 만든다. 파일이 이미 있으면 **절대 덮어쓰지 않는다** — 그날 안에 추가로 기록할 내용이 있으면 파일 끝에 이어 붙인다. 파일 최상단은 `# YYYY-MM-DD` 제목으로 시작한다.
-- 주간 리뷰: `Finance/News Journal/YYYY-MM/_Weekly-YYYY-MM-DD.md` (YYYY-MM-DD는 리뷰 시점의 일요일 날짜, 그 날짜가 속한 월 폴더에 저장). 제목은 `# 주간 리뷰 (YYYY-MM-DD 기준 최근 1주)`.
-- 월간 리뷰: `Finance/News Journal/YYYY-MM/_Monthly-YYYY-MM.md` (YYYY-MM은 리뷰가 생성되는 새 달, 즉 그 폴더 자신의 월). 제목은 `# 지난달 리뷰 (YYYY-MM, 전달 기준)`. 이미 파일이 있으면 중복 생성하지 않는다.
+- 매일 기록: `News Journal/YYYY-MM/YYYY-MM-DD.md`. 월 폴더(`YYYY-MM/`)가 없으면 새로 만든다. 파일이 이미 있으면 **절대 덮어쓰지 않는다** — 그날 안에 추가로 기록할 내용이 있으면 파일 끝에 이어 붙인다. 파일 최상단은 `# YYYY-MM-DD` 제목으로 시작한다.
+- 주간 리뷰: `News Journal/YYYY-MM/_Weekly-YYYY-MM-DD.md` (YYYY-MM-DD는 리뷰 시점의 일요일 날짜, 그 날짜가 속한 월 폴더에 저장). 제목은 `# 주간 리뷰 (YYYY-MM-DD 기준 최근 1주)`.
+- 월간 리뷰: `News Journal/YYYY-MM/_Monthly-YYYY-MM.md` (YYYY-MM은 리뷰가 생성되는 새 달, 즉 그 폴더 자신의 월). 제목은 `# 지난달 리뷰 (YYYY-MM, 전달 기준)`. 이미 파일이 있으면 중복 생성하지 않는다.
 
 파일명이 밑줄(`_`)로 시작하는 `_Weekly-*`, `_Monthly-*`는 날짜별 기록이 아닌 리뷰 파일임을 나타낸다.
 
@@ -102,23 +104,23 @@ Finance/News Journal/
 
 ```dataview
 LIST
-FROM "Finance/News Journal" AND #삼성전자
+FROM "News Journal" AND #삼성전자
 SORT file.name DESC
 ```
 
 ```dataview
 LIST
-FROM "Finance/News Journal" AND #방산
+FROM "News Journal" AND #방산
 SORT file.name DESC
 ```
 
-`Finance/News Journal/_Index.md`에 위와 같은 쿼리 블록이 이미 있다. 새 태그를 쓰기 시작하면 그 문서에 쿼리를 추가해도 된다.
+`News Journal/_Index.md`에 위와 같은 쿼리 블록이 이미 있다. 새 태그를 쓰기 시작하면 그 문서에 쿼리를 추가해도 된다.
 
 ## Trade Log 작성 규칙
 
 파일명: `YYYY-MM-DD 티커 매수/매도.md`. frontmatter는 `Date`, `Ticker`, `Action`, `Price`, `Quantity`를 채운다. 매매 이유와 회고는 본문 콜아웃에 자유 기록.
 
-## Wiki / Companies / Reviews 작성 규칙
+## Wiki / Companies / Review 작성 규칙
 
 - 새 개념·종목·자료를 다룰 때, 이미 관련 노트가 있으면 새로 만들지 말고 `[[링크]]`만 추가한다.
 - 각 폴더의 `_Index.md`는 Dataview 쿼리로 자동 목록화되므로 직접 수정하지 않는다.
