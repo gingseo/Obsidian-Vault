@@ -1,5 +1,4 @@
 [
-  "heatmap-calendar",
   "dataview",
   "templater-obsidian",
   "calendar",
@@ -15,9 +14,6 @@
   "project-manager",
   "project-browser",
   "juggl",
-  "quickadd",
   "obsidian-tracker",
-  "obsidian-day-planner",
-  "obsidian-tasks-plugin",
-  "obsidian-emoji-toolbar"
+  "obsidian-day-planner"
 ]

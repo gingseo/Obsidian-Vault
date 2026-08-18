@@ -1,6 +1,6 @@
 # GingseoLife 볼트 가이드
 
-라이프스타일 기록·트래킹용 Obsidian 볼트. 이 문서는 볼트 전체 구조와 사용법을 담는다. Finance 폴더의 자동화 규칙은 [Finance/SCHEMA.md](Finance/SCHEMA.md)를 참고.
+라이프스타일 기록·트래킹용 Obsidian 볼트. 이 문서는 볼트 전체 구조와 사용법을 담는다. Finance 폴더의 자동화 규칙은 [Finance/SCHEMA.md](Life/Finance/SCHEMA.md)를 참고.
 
 ## 폴더 구조
 
@@ -60,7 +60,7 @@
 
 ## Finance 사용법
 
-개인 지출이 아니라 **경제 공부·트래킹** 전용. 하위 폴더 역할과 자동화(클라우드 스케줄) 관련 세부 규칙은 [Finance/SCHEMA.md](Finance/SCHEMA.md)를 참고한다.
+개인 지출이 아니라 **경제 공부·트래킹** 전용. 하위 폴더 역할과 자동화(클라우드 스케줄) 관련 세부 규칙은 [Finance/SCHEMA.md](Life/Finance/SCHEMA.md)를 참고한다.
 
 ## HeatMap 사용법
 
