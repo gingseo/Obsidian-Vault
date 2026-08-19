@@ -1,16 +1,28 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-rs-tod-gwovwgdzjk"
 title: "RS-TOD: Tiny object detection model in Remote Sensing Imagery"
-authors: [Rakhi Nautiyal, Maroti Deshmukh]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-07-01"
+due: ""
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2025
 venue: "Remote Sensing Applications: Society and Environment (Elsevier)"
 jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement]
-tags: [paper, small-object-detection, remote-sensing, yolo, attention-module, detection-head]
-status: in-progress
-added: 2026-07-01
-source: "PaperStudy/Raw/Small_Object_Detection/2025_RSASE_RS-TOD.pdf"
-created: 2026-08-04
+paper_tags: [paper, small-object-detection, remote-sensing, yolo, attention-module, detection-head]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2025_RSASE_RS-TOD.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:09:08.271Z"
 ---
 
 #paper #small-object-detection #remote-sensing #yolo #attention-module #detection-head
@@ -186,3 +198,5 @@ created: 2026-08-04
 - 참고문헌 기반: B. Cao, H. Yao, P. Zhu, Q. Hu, "Visible and Clear: Finding Tiny Objects in Difference Map" (ECCV, 2025 — 논문 내 인용 표기는 Cao et al., 2025) — 이미 위키에 [[SR-TOD]]로 등록된 논문. RS-TOD의 Table 8에서 AI-TOD 비교 대상("DetectoRS w/ SR-TOD")으로 직접 인용되어, RS-TOD와 실측 비교가 가능한 가장 가까운 대안적 feature 강화 접근.
 - 참고문헌 기반: C. Xu, J. Wang, W. Yang, H. Yu, L. Yu, G.-S. Xia, "Detecting tiny objects in aerial images: A normalized Wasserstein distance and a new benchmark" (ISPRS J. Photogramm. Remote Sens., 2022) — RS-TOD가 Table 8에서 "RetinaNet w/ NWD-RKA"로 비교하는 label-assignment 계열 대표 논문. RSAM 같은 feature 강화 축과는 다른 축(assignment metric)에서 tiny object 문제를 다뤄, [[Unc-SOD]] 노트에서 이미 추천된 RFLA와 함께 label-assignment 계열 배경 이해에 도움.
 - 자유 추천(검증 필요): CBAM(Convolutional Block Attention Module)의 원 논문 — 검색 키워드: `CBAM convolutional block attention module ECCV 2018`. RS-TOD 본문이 RSAM을 SE Block, CBAM과 직접 비교하며 설계 근거로 삼고 있어, RSAM의 3-level pooling·skip connection이 실제로 CBAM 대비 어떤 구조적 차이인지 원 논문으로 확인할 가치가 있다.
+
+Project: [[논문 읽기|논문 읽기]]

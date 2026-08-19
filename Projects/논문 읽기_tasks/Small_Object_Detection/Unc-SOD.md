@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-unc-sod-6pqpf7y57o"
 title: "Unc-SOD: An Uncertainty Learning Framework for Small Object Detection"
-authors: [Xiang Yuan, Gong Cheng, Jiacheng Cheng, Ruixiang Yao, Junwei Han]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-07-01"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2026
 venue: "IEEE TIP"
 jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement]
-tags: [paper, small-object-detection, uncertainty, two-stage-detector, rpn]
-status: in-progress
-added: 2026-07-01
-source: "PaperStudy/Raw/Small_Object_Detection/2026_TIP_Unc-SOD.pdf"
-created: 2026-08-04
+paper_tags: [paper, small-object-detection, uncertainty, two-stage-detector, rpn]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2026_TIP_Unc-SOD.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #small-object-detection #uncertainty #two-stage-detector #rpn
 
 # 한 줄 요약

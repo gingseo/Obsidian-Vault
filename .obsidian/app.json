@@ -4,5 +4,6 @@
   "promptDelete": false,
   "autoPairMarkdown": true,
   "autoPairBrackets": false,
-  "alwaysUpdateLinks": true
+  "alwaysUpdateLinks": true,
+  "focusNewTab": false
 }

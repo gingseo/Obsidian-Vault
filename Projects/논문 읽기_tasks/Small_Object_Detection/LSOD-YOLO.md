@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-lsod-yolo-bwwbsaqyex"
 title: "Precision and speed: LSOD-YOLO for lightweight small object detection"
-authors: [Hezheng Wang, Jiahui Liu, Jian Zhao, Jianzhong Zhang, Dong Zhao]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-07-01"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2025
 venue: "Expert Systems With Applications"
 jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement]
-tags: [paper, small-object-detection, yolo, lightweight, attention-mechanism, uav]
-status: in-progress
-added: 2026-07-01
-source: "PaperStudy/Raw/Small_Object_Detection/2025_ESWA_LSOD-YOLO.pdf"
-created: 2026-08-04
+paper_tags: [paper, small-object-detection, yolo, lightweight, attention-mechanism, uav]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2025_ESWA_LSOD-YOLO.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #small-object-detection #yolo #lightweight #attention-mechanism #uav
 
 # 한 줄 요약

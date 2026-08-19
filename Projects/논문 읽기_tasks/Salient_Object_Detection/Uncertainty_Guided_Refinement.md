@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-uncertainty_guided_refinement-wehh8t8q35"
 title: "Uncertainty-Guided Refinement for Fine-Grained Salient Object Detection"
-authors: [Yao Yuan, Pan Gao, Qun Dai, Jie Qin, Wei Xiang]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-04-16"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2025
 venue: "IEEE TIP"
 jcr_quartile: null
 task: [salient-object-detection]
 direction: [novel-approach, improvement]
-tags: [paper, salient-object-detection, uncertainty, attention, fine-grained-prediction, dynamic-inference]
-status: in-progress
-added: 2026-04-16
-source: "PaperStudy/Raw/Salient_Object_Detection/2025_TIP_Uncertainty-Guided-Refinement.pdf"
-created: 2026-08-04
+paper_tags: [paper, salient-object-detection, uncertainty, attention, fine-grained-prediction, dynamic-inference]
+source: "Projects/논문 읽기_pdf/Salient_Object_Detection/2025_TIP_Uncertainty-Guided-Refinement.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #salient-object-detection #uncertainty #attention #fine-grained-prediction #dynamic-inference
 
 # 한 줄 요약

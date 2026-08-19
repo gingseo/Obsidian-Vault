@@ -1,6 +1,6 @@
 filters:
   and:
-    - file.folder.startsWith("ResearchVault/PaperStudy/Papers")
+    - file.folder.startsWith("Projects/논문 읽기_tasks")
 views:
   - type: table
     name: 전체 논문
@@ -13,11 +13,8 @@ views:
       - status
       - task
       - direction
-      - added
-      - tags
+      - paper_tags
       - source
-    columnSize:
-      note.title: 227
   - type: table
     name: 해야할 것
     filters:
@@ -37,7 +34,6 @@ views:
     order:
       - file.name
       - title
-      - added
       - task
       - venue
       - year
@@ -62,17 +58,6 @@ views:
       - title
       - task
       - direction
-      - venue
-      - year
-  - type: table
-    name: Foundational 논문
-    filters:
-      and:
-        - direction.contains("foundational")
-    order:
-      - file.name
-      - title
-      - task
       - venue
       - year
   - type: table

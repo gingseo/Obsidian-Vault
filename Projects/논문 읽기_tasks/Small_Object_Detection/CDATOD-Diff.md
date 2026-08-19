@@ -1,16 +1,28 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-cdatod-diff-9qzk8ozqjp"
 title: "Vision-Language Guided Semantic Diffusion Sampling for Small Object Detection in Remote Sensing Imagery"
-authors: [Jian Ma, Mingming Bian, Fan Fan, Hui Kuang, Lei Liu, Zhibing Wang, Ting Li, Running Zhang]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-08-05"
+due: ""
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2025
 venue: "Remote Sensing (MDPI)"
 jcr_quartile: Q2
 task: [small-object-detection]
 direction: [novel-approach]
-tags: [paper, small-object-detection, sar, remote-sensing, vision-language-model, clip, diffusion-model, label-assignment, bounding-box-regression]
-status: in-progress
-added: 2026-08-05
-source: "PaperStudy/Raw/Small_Object_Detection/2025_RemoteSensing_CDATOD-Diff.pdf"
-created: 2026-08-05
+paper_tags: [paper, small-object-detection, sar, remote-sensing, vision-language-model, clip, diffusion-model, label-assignment, bounding-box-regression]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2025_RemoteSensing_CDATOD-Diff.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:30:43.654Z"
 ---
 
 #paper #small-object-detection #sar #remote-sensing #vision-language-model #clip #diffusion-model #label-assignment #bounding-box-regression
@@ -163,3 +175,5 @@ created: 2026-08-05
 - 참고문헌 기반: A. Radford et al., "Learning transferable visual models from natural language supervision" (CLIP, ICML 2021) [4] — 이 논문의 CLIP 조건화 전체가 기반하는 원조 논문. Vision-language 정렬의 기본 원리 이해에 필수.
 - 참고문헌 기반: S. Chen, P. Sun, Y. Song, P. Luo, "DiffusionDet: Diffusion model for object detection" (ICCV 2023) [57] — 바운딩 박스 자체를 diffusion target으로 삼는 원조 접근. 이 논문이 "박스가 아닌 anchor 샘플링 포인트를 diffusion으로 정제한다"는 차별점을 이해하려면 대조 비교가 필요.
 - 자유 추천(검증 필요): SAR 도메인 특화 CLIP 사전학습(원격탐사 vision-language foundation model) 관련 연구 — 검색 키워드: `SAR remote sensing CLIP domain-specific pretraining vision-language foundation model 2025`
+
+Project: [[논문 읽기|논문 읽기]]

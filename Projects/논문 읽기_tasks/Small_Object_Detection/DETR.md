@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-detr-j94vuetv7h"
 title: "End-to-End Object Detection with Transformers"
-authors: [Nicolas Carion, Francisco Massa, Gabriel Synnaeve, Nicolas Usunier, Alexander Kirillov, Sergey Zagoruyko]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-08-12"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2020
 venue: "ECCV"
 jcr_quartile: Q1
 task: [small-object-detection]
 direction: [foundational, novel-approach]
-tags: [paper, object-detection, transformer, set-prediction, bipartite-matching, end-to-end, panoptic-segmentation]
-status: in-progress
-added: 2026-08-12
-source: "PaperStudy/Raw/Small_Object_Detection/2020_ECCV_DETR.pdf"
-created: 2026-08-12
+paper_tags: [paper, object-detection, transformer, set-prediction, bipartite-matching, end-to-end, panoptic-segmentation]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2020_ECCV_DETR.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #object-detection #transformer #set-prediction #bipartite-matching #end-to-end #panoptic-segmentation
 
 # 한 줄 요약

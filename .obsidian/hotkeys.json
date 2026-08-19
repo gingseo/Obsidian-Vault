@@ -1,0 +1,46 @@
+{
+  "workspace:goto-tab-1": [],
+  "workspace:goto-tab-2": [],
+  "workspace:goto-tab-3": [],
+  "workspace:goto-tab-4": [],
+  "workspace:goto-tab-5": [],
+  "workspace:goto-tab-6": [],
+  "workspace:goto-tab-7": [],
+  "workspace:goto-tab-8": [],
+  "global-search:open": [],
+  "graph:open": [],
+  "workspace:next-tab": [],
+  "app:open-help": [],
+  "app:go-back": [],
+  "editor:insert-link": [],
+  "workspace:goto-last-tab": [],
+  "editor:open-link-in-new-window": [],
+  "workspace:new-tab": [],
+  "editor:open-link-in-new-leaf": [],
+  "app:open-settings": [],
+  "editor:toggle-highlight": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "H"
+    }
+  ],
+  "app:go-forward": [],
+  "file-explorer:new-file-in-new-pane": [],
+  "editor:open-link-in-new-split": [],
+  "workspace:previous-tab": [],
+  "editor:toggle-comments": [],
+  "workspace:close-window": [],
+  "editor:toggle-checklist-status": [],
+  "editor:follow-link": [],
+  "workspace:undo-close-pane": [],
+  "workspace:edit-file-title": [],
+  "editor:open-search": [],
+  "workspace:close": [],
+  "editor:open-search-replace": [],
+  "editing-toolbar:workplace-fullscreen-focus": [],
+  "editing-toolbar:fullscreen-focus": [],
+  "obsidian-icon-folder:iconize:set-icon-for-file": [],
+  "templater-obsidian:jump-to-next-cursor-location": []
+}

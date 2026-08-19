@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-lare2-d5g9g9ajbw"
 title: "LaRE²: Latent Reconstruction Error Based Method for Diffusion-Generated Image Detection"
-authors: [Yunpeng Luo, Junlong Du, Ke Yan, Shouhong Ding]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-08-05"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2024
 venue: "CVPR"
 jcr_quartile: Q1
 task: [ai-generated-image-detection]
 direction: [novel-approach]
-tags: [paper, ai-generated-image-detection, diffusion-model, reconstruction-error, latent-space, feature-refinement, deepfake-detection]
-status: in-progress
-added: 2026-08-05
-source: "PaperStudy/Raw/AI_Generated_Image_Detection/2024_CVPR_LaRE2.pdf"
-created: 2026-08-05
+paper_tags: [paper, ai-generated-image-detection, diffusion-model, reconstruction-error, latent-space, feature-refinement, deepfake-detection]
+source: "Projects/논문 읽기_pdf/AI_Generated_Image_Detection/2024_CVPR_LaRE2.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #ai-generated-image-detection #diffusion-model #reconstruction-error #latent-space #feature-refinement #deepfake-detection
 
 # 한 줄 요약

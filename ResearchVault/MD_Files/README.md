@@ -4,48 +4,56 @@ Claude Code가 논문 PDF를 읽고 자동으로 정리·유지해주는 개인 
 
 ## 구조
 
-```
-Raw/
-  Inbox/                아직 처리 안 한 원본 PDF (다운받으면 여기에 넣는다)
-  <Task>/                처리 완료 후 이동되는 task별 폴더 (예: Small_Object_Detection/)
-Papers/
-  <Task>/                Raw/<Task>/와 동일한 폴더 구조. 논문 노트 (논문 1편 = 파일 1개)
-Concepts/              개념/기법 노트 (task로 나누지 않고 한 곳에 모음)
-Comparisons/            논문 간 비교 문서 (task로 나누지 않고 한 곳에 모음)
-Moc/                    Map of Content — task별 서사/맥락 허브 + 전체 홈
-reading-list.md          task별로 정리된 "읽어볼 만한 논문" 모음
-Schema.md                Raw/, Papers/ 등 규칙 (Claude Code가 따르는 규칙)
-PaperWiki.base            Obsidian Bases 뷰 정의 (상태/task/방향성 테이블)
-```
+위키 부속 문서(개념/비교/MOC)는 `ResearchVault/PaperStudy/`에, 논문 PDF와 분석 노트 자체는 Project Manager 플러그인과 통합 관리하기 위해 볼트 최상위 `Projects/`에 있다.
 
-`Papers/`, `Concepts/`, `Comparisons/`, `Moc/`, `reading-list.md`는 모두 이 폴더(PaperStudy) 바로 아래에 있다 — 하위 depth를 줄이기 위해 별도 `Wiki/` 폴더로 묶지 않는다.
+```
+ResearchVault/PaperStudy/
+  Concepts/              개념/기법 노트 (task로 나누지 않고 한 곳에 모음)
+  Comparisons/            논문 간 비교 문서 (task로 나누지 않고 한 곳에 모음)
+  Moc/                    Map of Content — task별 서사/맥락 허브 + 전체 홈
+  reading-list.md          task별로 정리된 "읽어볼 만한 논문" 모음
+ResearchVault/MD_Files/
+  Schema.md                모든 규칙 (Claude Code가 따르는 규칙)
+  README.md                이 문서
+
+Projects/
+  논문 읽기.md              Project Manager 프로젝트 노트 (task 구분 없이 논문 전체를 담는 단일 프로젝트)
+  논문 읽기_tasks/
+    <Task>/                  그 task의 논문 분석 노트들. 논문 1편 = 파일 1개
+  논문 읽기_pdf/
+    Inbox/                   아직 처리 안 한 원본 PDF (다운받으면 여기에 넣는다)
+    <Task>/                   처리 완료 후 이동되는 task별 PDF 폴더
+  PaperWiki.base            논문 읽기_tasks/ 전체를 가로질러 보는 Obsidian Bases 뷰 정의
+```
 
 폴더·파일명 대소문자·구분자 규칙(단어별 대문자 시작 + `_` 구분, 논문 슬러그의 약어 대문자 규칙 등)은 `Schema.md`의 "폴더·파일 네이밍 규칙" 절을 따른다.
 
 ## 사용법
 
-1. 새로 읽고 싶은 논문의 PDF를 `Raw/Inbox/`에 넣는다.
-2. 이 폴더(PaperWiki)에서 Claude Code를 열고 `/process-papers`라고만 입력한다 (긴 프롬프트를 매번 안 써도 됨 — `.claude/skills/process-papers/`에 등록된 스킬). 또는 직접 "Raw/에 새로 추가한 논문 읽고 Schema.md 규칙대로 반영해줘"라고 요청해도 동일하게 동작한다.
+1. 새로 읽고 싶은 논문의 PDF를 `Projects/논문 읽기_pdf/Inbox/`에 넣는다.
+2. 이 폴더(PaperWiki)에서 Claude Code를 열고 `/process-papers`라고만 입력한다 (긴 프롬프트를 매번 안 써도 됨 — `.claude/skills/process-papers/`에 등록된 스킬). 또는 직접 "Inbox/에 새로 추가한 논문 읽고 Schema.md 규칙대로 반영해줘"라고 요청해도 동일하게 동작한다.
 3. Claude Code가 알아서:
-   - PDF를 `{년도}_{venue}_{제목}.pdf`로 리네임하고, task를 판단해 `Raw/<Task>/`로 옮기고
-   - `Papers/`에 논문 노트를 생성하고 (`task`, `direction`, `status: in-progress`, `added` 속성 포함)
+   - PDF를 `{년도}_{venue}_{제목}.pdf`로 리네임하고, task를 판단해 `Projects/논문 읽기_pdf/<Task>/`로 옮기고
+   - `Projects/논문 읽기_tasks/<Task>/`에 논문 분석 노트(=task 노트)를 생성한다 (`task`, `direction`, `status: in-progress`, `venue`, `year`, `jcr_quartile` 등 속성 포함)
+   - `Projects/논문 읽기.md`의 `taskIds`와 "## Tasks" 목록에 이 논문을 추가하고
    - 관련된 `Concepts/` 문서를 찾아 갱신하거나 새로 만들고
    - 필요하면 `Comparisons/`에 비교 문서를 채우고
    - `reading-list.md`와 해당 `Moc/<Task>_Moc.md`도 갱신한다.
-4. Obsidian으로 이 폴더(PaperStudy)를 열어 그래프 뷰/백링크로 탐색한다.
+4. Obsidian으로 `Projects/논문 읽기.md`를 열어 Project Manager의 Table/Kanban/Gantt 뷰로 진행 상황을 관리하거나, `Projects/PaperWiki.base`로 전체를 가로질러 필터링한다.
 
 완전 자동(정해진 시간마다 알아서 실행)은 지원하지 않는다 — Claude Code의 로컬 파일 접근과 "매일 정해진 시간에 알아서 실행"이 동시에 되는 방법이 없어서(클라우드 스케줄은 GitHub 등 원격 저장소 동기화가 필요), 매번 `/process-papers`로 수동 요청하는 방식을 택했다.
+
+> [!warning] Project Manager UI에서 논문 task의 title을 편집하지 않는다
+> Task 모달에서 title을 저장하면 파일명이 title 기반 slug로 자동 리네임되고(끄는 설정 없음), PaperWiki 고유 속성(venue/year/jcr_quartile 등)이 통째로 사라지는 사고가 실제로 있었다. title을 고칠 땐 Obsidian 편집기로 파일을 직접 열어 frontmatter만 수정한다. 자세한 내용은 `Schema.md`의 관련 경고 참고.
 
 ## 처리 여부 확인하기
 
 **Claude Code가 노트를 만들었는지**와 **내가 실제로 읽었는지**는 다른 축이지만, 후자만 `status` 속성 하나로 관리한다.
 
-- **Claude Code 처리 여부**: 폴더로 확인한다 — `Raw/Inbox/`에 파일이 남아있으면 아직 미처리, `Raw/<Task>/`로 옮겨졌으면 노트가 만들어진 것.
-- **내가 실제로 읽었는지**: `status` 속성으로 관리한다. 이 값은 Project Manager 플러그인(볼트 전체 프로젝트/작업 관리)의 상태값 체계를 그대로 공유한다 — `to-do`(아직 안 봄) / `in-progress`(Claude Code가 노트를 만든 직후 기본값, 아직 다 안 읽음) / `additional-study-needed`(한 번 읽었지만 더 깊이 볼 필요 있음) / `done`(다 읽고 이해함). Claude Code는 새 노트를 만들 때 항상 `in-progress`로 시작하고, 이 값을 스스로 `done`으로 바꾸지 않는다 — 직접 다 읽고 나서 frontmatter에서 바꿔야 한다. `added` 속성은 그 논문 PDF를 `Raw/Inbox/`에 처음 넣은 날짜.
+- **Claude Code 처리 여부**: 폴더로 확인한다 — `Projects/논문 읽기_pdf/Inbox/`에 파일이 남아있으면 아직 미처리, `Projects/논문 읽기_pdf/<Task>/`로 옮겨졌으면 노트가 만들어진 것.
+- **내가 실제로 읽었는지**: 논문 분석 노트(task 노트)의 `status` 속성으로 관리한다. Project Manager 프로젝트의 "Statuses" 설정과 값을 공유한다 — `to-do`(아직 안 봄) / `in-progress`(Claude Code가 노트를 만든 직후 기본값, 아직 다 안 읽음) / `additional-study-needed`(한 번 읽었지만 더 깊이 볼 필요 있음) / `done`(다 읽고 이해함). Claude Code는 새 노트를 만들 때 항상 `in-progress`로 시작하고, 이 값을 스스로 `done`으로 바꾸지 않는다 — 직접 다 읽고 나서 frontmatter에서 바꾸거나, Project Manager의 Kanban 보드에서 드래그해서 바꾼다. `start` 속성은 그 논문 PDF를 `Inbox/`에 처음 넣은 날짜.
 
-여러 연구 프로젝트에서 같은 논문을 다시 다룰 수 있으므로, "이 논문을 얼마나 읽었는지"의 단일 진실 공급원은 항상 이 논문 노트의 `status`다. Project Manager의 프로젝트 안에 이 논문을 다루는 작업(task)을 만들 때는 별도 task 노트를 새로 만들지 않고, 필요하면 이 논문 노트를 `[[링크]]`로 참조만 한다.
-
-Obsidian에서 `PaperWiki.base` 파일을 열면 Notion 데이터베이스 뷰처럼 테이블로 필터링할 수 있다 (전체 / 해야할 것 / 진행 중 / 추가 공부 요청 / 완료 / Foundational 논문 / Task별). Obsidian 버전이 오래되어 Bases가 없다면 설정 > 코어 플러그인에서 "Bases"를 켠다.
+Obsidian에서 `Projects/PaperWiki.base` 파일을 열면 Notion 데이터베이스 뷰처럼, `Projects/논문 읽기_tasks/` 아래 모든 task 폴더를 가로질러 테이블로 필터링할 수 있다 (전체 / 해야할 것 / 진행 중 / 추가 공부 요청 / 완료 / Task별 / Q1만 / JCR 등급 확인 필요). Obsidian 버전이 오래되어 Bases가 없다면 설정 > 코어 플러그인에서 "Bases"를 켠다. Project Manager 플러그인 자체의 Kanban/Gantt 뷰로도 `Projects/논문 읽기.md`를 열어 관리할 수 있다 — 다만 task/분야별로 나눠 보려면 Bases 쪽이 편하다(Project Manager UI는 커스텀 필드 그룹화·필터링을 지원하지 않음).
 
 ## 다음에 읽을 논문 찾기
 

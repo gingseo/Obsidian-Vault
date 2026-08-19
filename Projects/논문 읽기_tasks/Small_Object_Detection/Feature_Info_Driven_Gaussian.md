@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-feature_info_driven_gaussian-4nq0hyxu3d"
 title: "Feature Information Driven Position Gaussian Distribution Estimation for Tiny Object Detection"
-authors: [Jinghao Bian, Mingtao Feng, Weisheng Dong, Fangfang Wu, Jianqiao Luo, Yaonan Wang, Guangming Shi]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-07-01"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2025
 venue: "CVPR"
 jcr_quartile: "Q1"
 task: [small-object-detection]
 direction: [novel-approach, improvement]
-tags: [paper, small-object-detection, feature-enhancement, information-entropy, gaussian-mixture, plug-and-play]
-status: in-progress
-added: 2026-07-01
-source: "PaperStudy/Raw/Small_Object_Detection/2025_CVPR_Feature-Information-Driven-Position-Gaussian.pdf"
-created: 2026-08-04
+paper_tags: [paper, small-object-detection, feature-enhancement, information-entropy, gaussian-mixture, plug-and-play]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2025_CVPR_Feature-Information-Driven-Position-Gaussian.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #small-object-detection #feature-enhancement #information-entropy #gaussian-mixture #plug-and-play
 
 # 한 줄 요약

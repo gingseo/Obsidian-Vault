@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-detection_oriented_rectification-eakvz8d5p1"
 title: "Breathing New Life into Small Object Detection with Detection-Oriented Rectification"
-authors: [Xiang Yuan, Junwei Han, Gong Cheng]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-07-01"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2026
 venue: "IEEE TPAMI"
 jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement, novel-approach]
-tags: [paper, small-object-detection, restoration, degradation-modeling, mixture-of-experts, multi-task-learning]
-status: in-progress
-added: 2026-07-01
-source: "PaperStudy/Raw/Small_Object_Detection/2026_TPAMI_Detection-Oriented-Rectification.pdf"
-created: 2026-08-04
+paper_tags: [paper, small-object-detection, restoration, degradation-modeling, mixture-of-experts, multi-task-learning]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2026_TPAMI_Detection-Oriented-Rectification.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #small-object-detection #restoration #degradation-modeling #mixture-of-experts #multi-task-learning
 
 # 한 줄 요약

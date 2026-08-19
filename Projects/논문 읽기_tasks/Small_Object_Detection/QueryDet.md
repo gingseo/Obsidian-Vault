@@ -1,16 +1,28 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-querydet-bjcya1z67y"
 title: "QueryDet: Cascaded Sparse Query for Accelerating High-Resolution Small Object Detection"
-authors: [Chenhongyi Yang, Zehao Huang, Naiyan Wang]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-08-05"
+due: ""
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2022
 venue: "CVPR"
 jcr_quartile: Q1
 task: [small-object-detection]
 direction: [novel-approach, foundational]
-tags: [paper, small-object-detection, sparse-convolution, inference-acceleration, feature-pyramid, query-mechanism]
-status: in-progress
-added: 2026-08-05
-source: "PaperStudy/Raw/Small_Object_Detection/2022_CVPR_QueryDet.pdf"
-created: 2026-08-05
+paper_tags: [paper, small-object-detection, sparse-convolution, inference-acceleration, feature-pyramid, query-mechanism]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2022_CVPR_QueryDet.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:07:50.810Z"
 ---
 
 #paper #small-object-detection #sparse-convolution #inference-acceleration #feature-pyramid #query-mechanism
@@ -130,3 +142,5 @@ created: 2026-08-05
 - 참고문헌 기반: M. Najibi, B. Singh, L. S. Davis, "AutoFocus: Efficient multi-scale inference" (ICCV 2019) [33] — QueryDet이 직접 비교하는 가장 유사한 선행 연구(image pyramid 기반 coarse-to-fine). CSQ가 이를 feature pyramid로 옮겨 backbone 중복 연산을 없앤 차별점을 이해하는 데 필수.
 - 참고문헌 기반: B. Zhu, J. Wang, Z. Jiang, F. Zong, S. Liu, Z. Li, J. Sun, "AutoAssign: Differentiable label assignment for dense object detection" (arXiv 2020) [36] — QueryDet의 query head 학습(거리 기반 positive 정의)과 비교할 만한 differentiable label assignment 접근.
 - 자유 추천(검증 필요): Sparse convolution 기반 3D object detection(LiDAR) 연구 — 저자들이 Conclusion에서 향후 3D 확장을 명시적으로 언급함. 검색 키워드: `sparse convolution 3D object detection LiDAR point cloud CVPR`
+
+Project: [[논문 읽기|논문 읽기]]

@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-fanet-aufqv4u9nn"
 title: "FANet: Frequency-Aware Attention-Based Tiny-Object Detection in Remote Sensing Images"
-authors: [Zixiao Wen, Peifeng Li, Yuhan Liu, Jingming Chen, Xiantai Xiang, Yuan Li, Huixian Wang, Yongchao Zhao, Guangyao Zhou]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-07-01"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2025
 venue: "Remote Sensing (MDPI)"
 jcr_quartile: null
 task: [small-object-detection]
 direction: [improvement]
-tags: [paper, small-object-detection, remote-sensing, frequency-domain, attention, two-stage-detector, class-imbalance]
-status: in-progress
-added: 2026-07-01
-source: "PaperStudy/Raw/Small_Object_Detection/2025_RemoteSensing_FANet.pdf"
-created: 2026-08-04
+paper_tags: [paper, small-object-detection, remote-sensing, frequency-domain, attention, two-stage-detector, class-imbalance]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2025_RemoteSensing_FANet.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #small-object-detection #remote-sensing #frequency-domain #attention #two-stage-detector #class-imbalance
 
 # 한 줄 요약

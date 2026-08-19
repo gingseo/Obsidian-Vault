@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-sr-tod-mx52anrm32"
 title: "Visible and Clear: Finding Tiny Objects in Difference Map"
-authors: [Bing Cao, Haiyu Yao, Pengfei Zhu, Qinghua Hu]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-05-18"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2024
 venue: "ECCV"
 jcr_quartile: "Q1"
 task: [small-object-detection]
 direction: [novel-approach]
-tags: [paper, small-object-detection, self-reconstruction, difference-map, feature-enhancement, anti-uav]
-status: in-progress
-added: 2026-05-18
-source: "PaperStudy/Raw/Small_Object_Detection/2024_ECCV_SR-TOD.pdf"
-created: 2026-08-04
+paper_tags: [paper, small-object-detection, self-reconstruction, difference-map, feature-enhancement, anti-uav]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2024_ECCV_SR-TOD.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #small-object-detection #self-reconstruction #difference-map #feature-enhancement #anti-uav
 
 # 한 줄 요약

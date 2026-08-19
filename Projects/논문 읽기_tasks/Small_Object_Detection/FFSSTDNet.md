@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-ffsstdnet-xbe5j57ns9"
 title: "From Fuzzy Global to Clear Local: A Focus and Super-Resolution-Guided Tiny Target Detection Method for Full-Scene Images"
-authors: [Yucong He, Gui Gao, Zhenghuan Xia, Dunyun He, Gang Yang, Xi Zhang, Gaosheng Li]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-08-05"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2026
 venue: "IEEE Transactions on Geoscience and Remote Sensing (TGRS)"
 jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
-tags: [paper, small-object-detection, remote-sensing, full-scene-image, focus-detection, super-resolution, region-filtering]
-status: in-progress
-added: 2026-08-05
-source: "PaperStudy/Raw/Small_Object_Detection/2026_TGRS_FFSSTD-Net.pdf"
-created: 2026-08-05
+paper_tags: [paper, small-object-detection, remote-sensing, full-scene-image, focus-detection, super-resolution, region-filtering]
+source: "Projects/논문 읽기_pdf/Small_Object_Detection/2026_TGRS_FFSSTD-Net.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #small-object-detection #remote-sensing #full-scene-image #focus-detection #super-resolution #region-filtering
 
 # 한 줄 요약

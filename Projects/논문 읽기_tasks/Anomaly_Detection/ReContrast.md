@@ -1,18 +1,31 @@
 ---
+pm-task: true
+projectId: "paperwiki-reading-unified"
+parentId:
+id: "t-recontrast-rkme5u3rtk"
 title: "ReContrast: Domain-Specific Anomaly Detection via Contrastive Reconstruction"
-authors: [Jia Guo, Shuai Lu, Lize Jia, Weihang Zhang, Huiqi Li]
+type: "task"
+status: "in-progress"
+priority: "medium"
+start: "2026-08-04"
+due:
+progress: 0
+assignees: []
+tags: []
+subtaskIds: []
+dependencies: []
 year: 2023
 venue: "NeurIPS"
 jcr_quartile: "Q1"
 task: [anomaly-detection]
 direction: [novel-approach, improvement]
-tags: [paper, anomaly-detection, contrastive-learning, feature-reconstruction, domain-adaptation, mvtec-ad]
-status: in-progress
-added: 2026-08-04
-source: "PaperStudy/Raw/Anomaly_Detection/2023_NeurIPS_ReContrast.pdf"
-created: 2026-08-04
+paper_tags: [paper, anomaly-detection, contrastive-learning, feature-reconstruction, domain-adaptation, mvtec-ad]
+source: "Projects/논문 읽기_pdf/Anomaly_Detection/2023_NeurIPS_ReContrast.pdf"
+createdAt: "2026-08-18T11:00:00.000Z"
+updatedAt: "2026-08-18T11:00:00.000Z"
 ---
 
+Project: [[논문 읽기|논문 읽기]]
 #paper #anomaly-detection #contrastive-learning #feature-reconstruction #domain-adaptation #mvtec-ad
 
 # 한 줄 요약
