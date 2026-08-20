@@ -3,7 +3,7 @@ title: "Small/Tiny Object Detection MOC"
 tags: [moc]
 task: small-object-detection
 created: 2026-08-04
-updated: 2026-08-12
+updated: 2026-08-19
 ---
 
 # 이 분야가 다루는 핵심 질문
@@ -24,6 +24,7 @@ updated: 2026-08-12
 - [[RS-TOD]] — 공간 attention(RSAM) + 전용 고해상도 헤드 추가. FANet/SR-TOD처럼 기존 헤드를 보강하는 대신 헤드 자체를 새로 만든다는 점에서 다른 접근.
 - [[Detection_Oriented_Rectification]] — 다른 feature 강화 논문들과 달리 "복원 목표"가 pixel fidelity가 아니라 탐지 지향적(task-oriented)이라는 점이 핵심 차별점. 열화 패턴을 명시적으로 모델링하는 첫 시도.
 - [[FFSSTDNet]] — sr-tod와 유사하게 학습 시에만 존재하는 auxiliary reconstruction branch(FSR)를 쓰지만, 재구성 오차 자체를 attention prior로 쓰지 않고 backbone feature 품질을 간접적으로 끌어올리는 정규화 역할만 한다는 점에서 구별됨. Full-scene 위성 이미지 특유의 RONI(배경) 연산 비용 문제를 CFD 모듈로 별도 해결.
+- [[ORFENet]] — FFSSTDNet과 마찬가지로 학습 시에만 존재하고 추론 시 완전히 제거되는 auxiliary reconstruction branch(ORB)를 쓰지만, 재구성 target이 원본 이미지가 아니라 GT 박스 기반 이진 foreground/background 마스크라는 점에서 SR-TOD의 difference map보다 훨씬 단순한 self-supervision. 여기에 fine-grained/close-range/distant-context 세 receptive field를 동적 가중합하는 MRFAFEM을 더해, "정보 손실 억제"와 "다중 receptive field 활용"을 한 프레임워크에서 함께 다룬 첫 사례.
 
 **연산 가속(sparse computation) 계열** — 이번 처리에서 새로 생긴 갈래. "어디를 계산할지/어디를 양성 샘플로 볼지"를 좁혀 연산을 줄인다는 공통점이 있다.
 - [[QueryDet]] — 저해상도 feature 예측으로 고해상도 sparse convolution 위치를 좁히는 Cascade Sparse Query. 정확도 손실 없이 고해상도 feature 연산 비용을 74%→1%로 절감. FPN 레벨 간 coarse-to-fine의 원조 격.
@@ -54,7 +55,7 @@ updated: 2026-08-12
 - [[Small_Object_Detection_Approaches]]
 
 # 아직 못 채운 빈틈
-- unc-sod, sr-tod, cdatod-diff 노트에서 반복적으로 비교 대상으로 언급된 RFLA(ECCV 2022) 논문 자체가 아직 위키에 없음 — 여러 논문이 baseline으로 직접 확장하는 핵심 선행 연구라 우선순위가 매우 높음. CFINet 논문도 마찬가지.
+- unc-sod, sr-tod, cdatod-diff, feature-info-driven-gaussian, orfenet 등 다수 논문에서 반복적으로 비교 대상·관련 연구로 언급된 RFLA(ECCV 2022) 논문 자체가 아직 위키에 없음 — 여러 논문이 baseline으로 직접 확장하는 핵심 선행 연구라 우선순위가 매우 높음. CFINet 논문도 마찬가지.
 - DETR은 들어왔지만 YOLO, Faster R-CNN, RT-DETR, FCOS 등 이 위키의 다른 12편이 실제로 baseline으로 삼는 원조 아키텍처 자체는 아직 하나도 없음(모두 #pending 마커나 텍스트 인용으로만 존재) — RT-DETR은 [[UAV-DETR]]에 `#pending:rt-detr`로 마킹되어 있어 우선순위가 높다.
 - 원격탐사/드론뷰(FANet, RS-TOD, UAV-DETR, FFSSTD-Net)와 SAR(CDATOD-Diff), 지상 시나리오(SODA-D 등)를 모두 다루는 unc-sod 외에, 여러 센서 도메인(광학/SAR/적외선)을 직접 비교하는 논문은 없음.
 - 연산 가속 계열(querydet)과 feature 강화 계열을 실제로 결합한 논문은 아직 없음 — MOC 상에서만 결합 가능성을 언급한 상태.
@@ -62,3 +63,4 @@ updated: 2026-08-12
 
 # 관련 MOC
 - [[000-Home]]
+- [[Instance_Segmentation_Moc]] — [[Self_Reconstruction_Difference_Map]] 개념을 공유하는 인접 분야. [[Reconstruction_Error_Guided_Instance_Segmentation]]이 sr-tod의 원리를 detection에서 segmentation으로, 가시광에서 적외선 도메인으로 확장했다.

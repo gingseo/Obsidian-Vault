@@ -63,6 +63,11 @@
 - [ ] M. Zhu, H. Chen, Q. Yan, X. Huang, G. Lin, W. Li, Z. Tu, H. Hu, J. Hu, Y. Wang, "GenImage: A million-scale benchmark for detecting AI-generated image" (2023) [47] — LaRE²의 실험 전체가 기반하는 벤치마크 (출처: [[LaRE2]])
 - [ ] (검증 필요) DIRE 이후 diffusion 생성 이미지 탐지의 2025년 최신 후속 연구 — 검색 키워드: `diffusion generated image detection reconstruction error 2025 generalization` (출처: [[LaRE2]])
 
+## instance-segmentation
+- [ ] D. Li, Y. Sun, Z. Zheng, F. Zhang, B. Sun, C. Yuan, "A real-world large-scale infrared image dataset and multitask learning framework for power line surveillance" (IEEE Trans. Instrum. Meas. 2025) [8] — SR+instance segmentation 멀티태스크 프레임워크(PowerNet). ORD/DFE 접근과 SR 기반 접근의 실증적 차이를 이해하는 데 도움 (출처: [[Reconstruction_Error_Guided_Instance_Segmentation]])
+- [ ] K. P. Alexandridis, J. Deng, A. Nguyen, S. Luo, "Long-tailed instance segmentation using Gumbel optimized loss" (ECCV 2022) [25] — DFE 모듈이 Gumbel-sigmoid 필터링을 도입할 때 근거로 삼은 원 기법 (출처: [[Reconstruction_Error_Guided_Instance_Segmentation]])
+- [ ] (검증 필요) 적외선/열화상 영상에서의 도메인 특이적 노이즈(NUC 보정 잔여 오차, 방사율 차이)가 reconstruction 기반 anomaly/difference 신호에 미치는 영향 관련 연구 — 검색 키워드: `infrared thermal image non-uniformity correction residual noise reconstruction-based detection` (출처: [[Reconstruction_Error_Guided_Instance_Segmentation]])
+
 ## salient-object-detection
 - [ ] J. Zhao, J.-J. Liu, D.-P. Fan, Y. Cao, J. Yang, M.-M. Cheng, "EGNet: Edge guidance network for salient object detection" [32] (ICCV 2019) — 이 논문이 대비축으로 삼는 boundary guidance 계열의 대표 논문이자, URA의 ablation(Table VII)에서 경계 추출 방식으로 직접 채택된 baseline (출처: [[Uncertainty_Guided_Refinement]])
 - [ ] T. Kim, K. Kim, J. Lee, D. Cha, J. Lee, D. Kim, "Revisiting image pyramid structure for high resolution salient object detection" (ISPRN) [42] (ACCV 2022) — SOD에 불확실성 맵 생성을 최초로 도입한 선행 연구, UGRAN의 "명시적 attention 마스크" 방식과 대비되는 기준점 (출처: [[Uncertainty_Guided_Refinement]])

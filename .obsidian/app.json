@@ -5,5 +5,8 @@
   "autoPairMarkdown": true,
   "autoPairBrackets": false,
   "alwaysUpdateLinks": true,
-  "focusNewTab": false
+  "focusNewTab": false,
+  "defaultViewMode": "source",
+  "livePreview": true,
+  "readableLineLength": false
 }

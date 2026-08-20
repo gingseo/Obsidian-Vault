@@ -2,7 +2,7 @@
 title: "Self-Reconstruction Difference Map"
 tags: [concept, object-detection, tiny-object-detection, feature-enhancement, self-supervision]
 created: 2026-08-04
-updated: 2026-08-04
+updated: 2026-08-19
 ---
 
 # 정의
@@ -10,11 +10,12 @@ updated: 2026-08-04
 
 # 등장 논문
 - [[SR-TOD]] — 이 개념을 최초로 제안. FPN의 P2 feature map에서 reconstruction head로 이미지를 복원해 difference map을 얻고, Difference Map Guided Feature Enhancement(DGFE) 모듈을 통해 difference map을 element-wise attention 형태로 tiny object feature 강화에 사용. Pixel-level difference map 외에 FFT 기반 high-frequency difference map도 실험.
+- [[Reconstruction_Error_Guided_Instance_Segmentation]] — 적외선 배전설비 instance segmentation 도메인으로 확장. 단일 FPN 레벨이 아닌 multi-level object reconstruction decoder(ORD)로 원본 이미지를 복원하고, difference map을 Gumbel-sigmoid로 필터링한 뒤 전역 cross-attention(DFE)으로 backbone feature와 융합 — element-wise attention 대신 pixel-to-pixel 전역 상호작용으로 확장한 사례.
 
 # 변형/발전
 - 원조(SR-TOD, ECCV 2024): reconstruction head는 U-Net과 FPN의 구조적 유사성에서 착안한 단순한 Up Block(Transpose Conv + Conv + ReLU) 스택으로 구성되며, MSE reconstruction loss로 학습. Difference map은 학습 가능한 threshold로 이진화(filtration)한 뒤 채널 방향 reweighting과 결합해 attention matrix로 변환.
 - 저자들이 논문 내에서 직접 시도한 변형: pixel-level difference map(원본) vs. high-frequency difference map(FFT로 고주파 성분만 추출 후 차이 계산) — 후자가 near-noise 수준의 매우 작은 물체 신호를 일부 더 죽이는 대신 윤곽선이 더 선명해지는 trade-off 존재.
-- 이후 다른 논문에서의 확장 사례는 아직 위키에 없음(2026-08-04 기준 SR-TOD 1편에만 등장).
+- 확장(Reconstruction Error Guided Instance Segmentation, Sensors 2025): (1) 태스크를 object detection에서 instance segmentation으로 확장, (2) 도메인을 가시광/드론 영상에서 적외선 영상으로 확장, (3) 단일 레벨 reconstruction을 대칭적인 multi-level decoder(ORD)로, (4) element-wise attention 융합을 전역 cross-attention 기반 융합(DFE)으로, (5) fixed/learnable threshold 이진화를 Gumbel-sigmoid 필터링으로 각각 발전시킴. 또한 reconstruction supervision을 배경 억제(object-centric masking)와 결합해 object 영역에만 L1 loss를 적용.
 
 # 관련 개념
 - [[Latent_Reconstruction_Error]] — "재구성이 어려운 정도를 판별 신호로 쓴다"는 원리를 공유하는 다른 도메인(AI 생성 이미지 탐지)의 유사 기법. Feature map→원본 이미지 재구성(이 개념)과 사전학습 diffusion model의 노이즈 예측 오차(LaRE)라는 재구성 대상의 차이가 있다.
