@@ -16,3 +16,4 @@ RSAM은 channel attention과 spatial attention을 함께 사용하는 경량 att
 - 저자들이 논문 내에서 스스로 제시한 향후 발전 방향: 3-level보다 더 세분화된 channel pooling, 또는 다른 attention 메커니즘과의 결합을 통한 일반화 성능 개선.
 
 # 관련 개념
+- SCAM([[FFCA-YOLO]]) — 원격탐사 detection head 주변에 채널+공간 attention을 배치한다는 목적은 같지만, GCNet/SCP 계보의 전역 QK 기반 문맥 모델링이라 RSAM(다단계 pooling 기반)과 구현 메커니즘이 다르다. 별도 concept으로 유지.

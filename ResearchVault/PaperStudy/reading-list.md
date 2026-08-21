@@ -56,6 +56,10 @@
 - [ ] A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, L. Kaiser, I. Polosukhin, "Attention is all you need" (NeurIPS 2017) [47] — DETR의 encoder-decoder 아키텍처가 직접 기반하는 원조 transformer 논문 (출처: [[DETR]])
 - [ ] A. Kirillov, K. He, R. Girshick, C. Rother, P. Dollár, "Panoptic segmentation" (CVPR 2019) [19] — DETR이 확장하는 panoptic segmentation 과제의 정의 논문 (출처: [[DETR]])
 - [ ] (검증 필요) DETR의 느린 수렴 문제를 해결한 후속 연구 분석 — 검색 키워드: `DETR slow convergence analysis sparse attention 2021` (출처: [[DETR]])
+- [ ] Y. Cao, J. Xu, S. Lin, F. Wei, H. Hu, "GCNet: Non-local networks meet squeeze-excitation networks and beyond" (ICCV Workshop 2019) [14] — FFCA-YOLO의 SCAM이 계승한 전역 문맥 모델링의 원조 (출처: [[FFCA-YOLO]])
+- [ ] J. Chen et al., "Run, don't walk: Chasing higher FLOPS for faster neural networks" (CVPR 2023) [51] — L-FFCA-YOLO가 채택한 PConv(FasterNet)의 원조 논문 (출처: [[FFCA-YOLO]])
+- [ ] M. Tan, R. Pang, Q. V. Le, "EfficientDet: Scalable and efficient object detection" (CVPR 2020) [29] — FFCA-YOLO의 FFM이 뼈대로 삼은 BiFPN의 원조 논문 (출처: [[FFCA-YOLO]])
+- [ ] (검증 필요) PConv와 LCOR류 헤드 재배치 경량화 기법을 함께 적용한 하이브리드 경량 원격탐사 detector 연구 — 검색 키워드: `lightweight remote sensing object detection partial convolution head reduction combined` (출처: [[FFCA-YOLO]])
 
 ## ai-generated-image-detection
 - [ ] Z. Wang, J. Bao, W. Zhou, W. Wang, H. Hu, H. Chen, H. Li, "DIRE for diffusion-generated image detection" (2023) [40] — LaRE²가 직접 비교·극복하는 baseline. 모든 개선점이 이 논문 대비 설명되므로 배경 이해에 필수 (출처: [[LaRE2]])

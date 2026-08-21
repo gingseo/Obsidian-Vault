@@ -12,7 +12,7 @@ updated: 2026-08-19
 - 성능 개선은 대부분 연산량 증가를 동반한다 — 실제 배포(엣지/UAV) 관점에서 정확도와 경량화를 동시에 만족할 수 있는가?
 
 # 지금까지 다룬 흐름
-지금까지 읽은 13편 중 12편은 "기존 detector(YOLO, Faster R-CNN, RT-DETR, FCOS)에 plug-in 모듈을 추가"하는 방식이고, 나머지 1편([[DETR]])은 이 위키에서 처음 다루는 순수 foundational 논문이다. 개입 지점에 따라 아래 계열로 나뉜다. 자세한 축별 비교는 [[Small_Object_Detection_Approaches]] 참고.
+지금까지 읽은 14편 중 13편은 "기존 detector(YOLO, Faster R-CNN, RT-DETR, FCOS)에 plug-in 모듈을 추가"하는 방식이고, 나머지 1편([[DETR]])은 이 위키에서 처음 다루는 순수 foundational 논문이다. 개입 지점에 따라 아래 계열로 나뉜다. 자세한 축별 비교는 [[Small_Object_Detection_Approaches]] 참고.
 
 **Foundational 계열** — 이후 흐름 전체의 출발점이 된 원조 논문.
 - [[DETR]] — anchor·NMS 없이 객체 탐지를 직접적인 집합 예측으로 재정의한 최초의 end-to-end transformer 탐지기. [[UAV-DETR]]이 기반하는 RT-DETR의 계보상 원조에 해당하며, "소형 객체 성능이 약하다"는 한계를 스스로 처음 명시한 논문이기도 하다 — 이 위키의 feature 강화 계열 다수가 정확히 이 한계를 다른 아키텍처(YOLO, R-CNN)에서 다루고 있다는 점에서, DETR 계열에도 동일 문제의식이 적용될 여지가 있는지가 흥미로운 교차점.
@@ -25,6 +25,7 @@ updated: 2026-08-19
 - [[Detection_Oriented_Rectification]] — 다른 feature 강화 논문들과 달리 "복원 목표"가 pixel fidelity가 아니라 탐지 지향적(task-oriented)이라는 점이 핵심 차별점. 열화 패턴을 명시적으로 모델링하는 첫 시도.
 - [[FFSSTDNet]] — sr-tod와 유사하게 학습 시에만 존재하는 auxiliary reconstruction branch(FSR)를 쓰지만, 재구성 오차 자체를 attention prior로 쓰지 않고 backbone feature 품질을 간접적으로 끌어올리는 정규화 역할만 한다는 점에서 구별됨. Full-scene 위성 이미지 특유의 RONI(배경) 연산 비용 문제를 CFD 모듈로 별도 해결.
 - [[ORFENet]] — FFSSTDNet과 마찬가지로 학습 시에만 존재하고 추론 시 완전히 제거되는 auxiliary reconstruction branch(ORB)를 쓰지만, 재구성 target이 원본 이미지가 아니라 GT 박스 기반 이진 foreground/background 마스크라는 점에서 SR-TOD의 difference map보다 훨씬 단순한 self-supervision. 여기에 fine-grained/close-range/distant-context 세 receptive field를 동적 가중합하는 MRFAFEM을 더해, "정보 손실 억제"와 "다중 receptive field 활용"을 한 프레임워크에서 함께 다룬 첫 사례.
+- [[FFCA-YOLO]] — reconstruction이나 정보이론이 아니라 순수 attention/융합 설계로 feature를 강화하는 계열. 지역 문맥 확장(FEM), 채널별 학습 가중 다중 스케일 융합(FFM), GCNet/SCP 계보의 전역 문맥 attention(SCAM) 세 모듈을 동시에 배치한 첫 사례 — 다른 논문들이 대체로 한두 지점만 건드리는 것과 달리 세 지점(지역/스케일간/전역)을 한 프레임워크에서 함께 다룬다.
 
 **연산 가속(sparse computation) 계열** — 이번 처리에서 새로 생긴 갈래. "어디를 계산할지/어디를 양성 샘플로 볼지"를 좁혀 연산을 줄인다는 공통점이 있다.
 - [[QueryDet]] — 저해상도 feature 예측으로 고해상도 sparse convolution 위치를 좁히는 Cascade Sparse Query. 정확도 손실 없이 고해상도 feature 연산 비용을 74%→1%로 절감. FPN 레벨 간 coarse-to-fine의 원조 격.
@@ -36,7 +37,8 @@ updated: 2026-08-19
 - [[CDATOD-Diff]] — RFLA의 Gaussian receptive field 매칭을 계층적으로 확장하고, 여기에 CLIP의 크로스모달 의미 정보를 diffusion denoising 조건으로 결합해 "의미적으로 타당한" 양성 샘플을 생성. 이 위키에서 VLM(CLIP)을 label assignment에 결합한 첫 사례.
 
 **아키텍처 경량화 계열**
-- [[LSOD-YOLO]] — 유일하게 "성능 개선"보다 "성능 유지하며 경량화"가 목표. 파라미터 65.5% 감소.
+- [[LSOD-YOLO]] — "성능 유지하며 경량화"가 목표. 저기여도 검출 헤드(P5) 제거 + cross-layer connection으로 구조 자체를 재배치, 파라미터 65.5% 감소.
+- [[FFCA-YOLO]] — L-FFCA-YOLO(경량판)는 PConv로 backbone convolution 연산을 재구성해 정확도 손실 거의 없이 파라미터 30% 감소. LSOD-YOLO와 목표는 같지만 구조 재배치가 아니라 연산 층위의 경량화라는 점에서 접근이 다르다.
 
 **End-to-end 구조 계열**
 - [[UAV-DETR]] — 유일한 DETR(anchor-free, NMS-free) 계열. 위 주파수 도메인 활용과 별개로, 구조 자체가 다른 논문들(대부분 YOLO/R-CNN/FCOS 기반)과 궤를 달리한다.

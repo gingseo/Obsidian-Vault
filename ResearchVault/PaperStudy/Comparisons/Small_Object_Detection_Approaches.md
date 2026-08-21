@@ -1,9 +1,9 @@
 ---
 title: "Small/Tiny Object Detection 접근법 비교"
 tags: [comparison, small-object-detection]
-papers: [[[Unc-SOD]], [[Detection_Oriented_Rectification]], [[FANet]], [[Feature_Info_Driven_Gaussian]], [[LSOD-YOLO]], [[RS-TOD]], [[UAV-DETR]], [[SR-TOD]], [[QueryDet]], [[FFSSTDNet]], [[CDATOD-Diff]], [[DETR]], [[ORFENet]]]
+papers: [[[Unc-SOD]], [[Detection_Oriented_Rectification]], [[FANet]], [[Feature_Info_Driven_Gaussian]], [[LSOD-YOLO]], [[RS-TOD]], [[UAV-DETR]], [[SR-TOD]], [[QueryDet]], [[FFSSTDNet]], [[CDATOD-Diff]], [[DETR]], [[ORFENet]], [[FFCA-YOLO]]]
 created: 2026-08-04
-updated: 2026-08-19
+updated: 2026-08-20
 ---
 
 # 비교 축
@@ -25,13 +25,14 @@ updated: 2026-08-19
 | [[FFSSTDNet]]                       | Feature 강화(SR) + 연산 가속(patch 필터링) | CFD 모듈로 배경 patch를 걸러 연산량 절감 + FSR 모듈(학습시에만 존재하는 auxiliary reconstruction branch)로 backbone 고해상도 학습 유도           | 다수 detector(plug-in)        | FAIR1M mAP 43.88→46.25, Fps +20~30%                          | Full-scene 위성 이미지 특화. Feature 강화와 연산 가속 두 축을 동시에 다루는 유일한 논문    |
 | [[CDATOD-Diff]]                      | Label assignment + 회귀 손실          | RFLA의 Gaussian receptive field 매칭을 CLIP 의미 정보로 조건화한 diffusion denoising으로 확장 + 스케일 적응 corner-IoU 손실(BC-IoU)     | FCOS                        | AI-TOD AP 16.3(RFLA)→19.4, MSAR-1.0 AP 63.4→64.1             | SAR 영상 특화. 이 위키에서 VLM(CLIP)을 label assignment에 결합한 첫 사례        |
 | [[ORFENet]]                          | Feature 강화(자기지도 재구성) + 다중 receptive field | 학습시에만 존재하는 이진 마스크 재구성 branch(ORB)로 정보 손실 억제 + 3개 receptive field(3×3/7×7 DW/21×21 DW)를 동적 가중합하는 MRFAFEM | FCOS(P2)                    | AI-TODv2 AP 17.3→24.8(36 epoch), LEVIR-Ship AP50 83.3(SOTA) | ORB는 FFSSTD-Net의 FSR처럼 추론 시 완전히 제거되나, 재구성 target이 이진 마스크(SR-TOD의 difference map보다 단순) |
+| [[FFCA-YOLO]]                        | Feature 강화(다중 attention) + 아키텍처 경량화 | FEM(atrous multibranch 지역 문맥 확장) + FFM(BiFPN에 채널별 학습 가중 융합 CRC 적용) + SCAM(GCNet/SCP 계열 전역 채널·공간 attention), PConv 기반 경량판(L-FFCA-YOLO) | YOLOv5m                     | VEDAI mAP50 0.723→0.748, AI-TOD mAP50 0.537(HANet)→0.617, USOD mAP50 0.873→0.909 | LSOD-YOLO와 함께 경량화를 다루는 두 번째 논문이지만, 방식이 다르다(헤드 재배치 vs PConv backbone 재구성). 세 모듈 모두 plug-and-play로 다른 detector에도 이식 가능 |
 
 # 분석
 - **DETR은 비교표에서 제외**: [[DETR]]은 이 비교축(기존 detector에 어떻게 개입하는지)의 대상이 아니라 표의 UAV-DETR이 최종적으로 기반하는 계보의 출발점(순수 foundational 아키텍처)이라 위 표에는 넣지 않았다. 나머지 12편이 "무엇에 개입하는가"를 다루는 반면, DETR은 애초에 "개입할 기존 파이프라인(anchor, NMS) 자체를 없앤" 논문이라는 점에서 층위가 다르다.
-- **공통 경향**: 12편 중 9편이 "기존 detector에 plug-in 모듈을 추가"하는 방식(FANet, feature-info-driven-gaussian, sr-tod, rs-tod, detection-oriented-rectification, unc-sod, ffsstd-net, cdatod-diff, orfenet)이며, 새 아키텍처를 처음부터 설계한 논문은 없다 — 이 분야는 지금 대부분 "기존 백본/헤드를 어떻게 보강할 것인가"에 집중되어 있다.
-- **Feature 강화 계열 내부의 차이**: FANet(주파수), feature-info-driven-gaussian(정보량+위치), sr-tod(reconstruction 부산물), rs-tod(공간 attention), ffsstd-net(SR 기반 auxiliary branch), orfenet(이진 마스크 재구성 + 다중 receptive field)은 모두 "약한 feature를 어떻게 보강할지"를 다루지만 신호를 얻는 소스가 다르다 — 이 여섯 편을 하나로 묶어 "어떤 신호가 실제로 tiny object의 위치/존재를 가장 잘 드러내는가"라는 질문으로 다시 비교해볼 가치가 있다. 특히 orfenet은 ablation에서 "다중 소스를 쓴다"는 것 자체의 기여가 "동적으로 가중한다"는 정교화보다 훨씬 크다는 점을 수치로 보여줘(Table III, +0.9 vs +0.2), 이 계열 전체에 반복되는 패턴을 뒷받침한다.
+- **공통 경향**: 13편 중 10편이 "기존 detector에 plug-in 모듈을 추가"하는 방식(FANet, feature-info-driven-gaussian, sr-tod, rs-tod, detection-oriented-rectification, unc-sod, ffsstd-net, cdatod-diff, orfenet, ffca-yolo)이며, 새 아키텍처를 처음부터 설계한 논문은 없다 — 이 분야는 지금 대부분 "기존 백본/헤드를 어떻게 보강할 것인가"에 집중되어 있다.
+- **Feature 강화 계열 내부의 차이**: FANet(주파수), feature-info-driven-gaussian(정보량+위치), sr-tod(reconstruction 부산물), rs-tod(공간 attention), ffsstd-net(SR 기반 auxiliary branch), orfenet(이진 마스크 재구성 + 다중 receptive field), ffca-yolo(atrous 지역 문맥 + 채널별 학습 가중 융합 + GCNet 계열 전역 attention)는 모두 "약한 feature를 어떻게 보강할지"를 다루지만 신호를 얻는 소스가 다르다 — 이 여섯 편을 하나로 묶어 "어떤 신호가 실제로 tiny object의 위치/존재를 가장 잘 드러내는가"라는 질문으로 다시 비교해볼 가치가 있다. 특히 orfenet은 ablation에서 "다중 소스를 쓴다"는 것 자체의 기여가 "동적으로 가중한다"는 정교화보다 훨씬 크다는 점을 수치로 보여줘(Table III, +0.9 vs +0.2), 이 계열 전체에 반복되는 패턴을 뒷받침한다.
 - **연산 가속(sparse computation) 축이 새로 생김**: querydet과 ffsstd-net(CFD 모듈)은 "무엇을 계산할지"를 좁혀 연산량 자체를 줄인다는 공통점이 있다 — querydet은 FPN 레벨 간 sparse convolution, ffsstd-net은 patch 단위 필터링으로 구현 층위는 다르지만 동일한 coarse-to-fine 사상을 공유한다. 나머지 논문들이 대부분 "정확도"만 보고하는 데 비해 이 두 편은 FPS/연산 비용을 정면으로 다룬다는 점에서 lsod-yolo(경량화 축)와 목적의식이 겹친다.
 - **label assignment 축에 cdatod-diff 추가**: unc-sod에 이어 cdatod-diff도 "어떤 prior를 positive로 볼지"를 동적으로 바꾸는 계열에 속한다. 다만 unc-sod는 예측 박스의 uncertainty를, cdatod-diff는 CLIP의 의미 정보를 기준으로 삼는다는 점에서 신호의 출처가 다르다 — 두 방법을 결합하면 "기하학적으로도, 의미적으로도 타당한" 샘플링이 가능할 수 있다.
 - **원격탐사(항공뷰)·SAR 특화 vs 범용**: FANet, rs-tod, uav-detr, ffsstd-net은 원격탐사/드론뷰 이미지에, cdatod-diff는 SAR 영상에 특화되어 있고, 나머지(unc-sod, detection-oriented-rectification, feature-info-driven-gaussian, sr-tod, lsod-yolo, querydet)는 SODA-D 같은 지상 시나리오까지 포괄하는 범용 벤치마크를 함께 본다. 항공뷰 특화 논문들은 공통적으로 "주파수 도메인" 정보를 쓰는 경향이 있다(FANet, uav-detr) — 항공 이미지의 반복적/주기적 텍스처 특성과 관련 있을 가능성. SAR는 이번에 cdatod-diff로 처음 다뤄진 센서 도메인.
-- **경량화·연산 효율 축 확장**: lsod-yolo(파라미터 경량화)에 이어 querydet·ffsstd-net(연산 가속)까지 더해지며 "정확도"만이 아니라 "효율"을 정면으로 다루는 논문이 세 편으로 늘었다 — 실제 배포(엣지/실시간) 관점에서 이 세 편을 하나의 갈래로 놓고 비교할 가치가 있다.
+- **경량화·연산 효율 축 확장**: lsod-yolo(파라미터 경량화)에 이어 querydet·ffsstd-net(연산 가속), ffca-yolo(PConv 기반 backbone 재구성)까지 더해지며 "정확도"만이 아니라 "효율"을 정면으로 다루는 논문이 네 편으로 늘었다 — 실제 배포(엣지/실시간) 관점에서 이 네 편을 하나의 갈래로 놓고 비교할 가치가 있다. 특히 lsod-yolo와 ffca-yolo는 둘 다 "성능 유지하며 경량화"를 목표로 하지만 전략이 상반된다 — lsod-yolo는 저기여 검출 헤드(P5) 자체를 제거하는 구조적 재배치인 반면, ffca-yolo(L-FFCA-YOLO)는 backbone 컨볼루션 연산을 PConv로 대체하는 연산 층위의 경량화다.
 - **DETR → RT-DETR → UAV-DETR 계보**: DETR이 2020년에 처음 지적한 "소형 객체(APS) 성능 열세"라는 한계는 이 위키의 거의 모든 feature 강화 논문이 (다른 아키텍처에서) 다루는 문제와 동일한 문제의식이다. UAV-DETR은 RT-DETR(DETR의 실시간화 후속작)을 기반으로 주파수 도메인 모듈을 추가해 이 한계에 대응하지만, 원조 DETR 자체에 이 위키의 feature 강화 기법(reconstruction, 정보이론 기반 등)을 직접 적용한 사례는 아직 없다.
