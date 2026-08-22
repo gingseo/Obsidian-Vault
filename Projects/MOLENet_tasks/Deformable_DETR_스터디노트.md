@@ -402,7 +402,7 @@ ResNeXt-101 + DCN(!) 백본을 쓰면 50.1 AP, 여기에 TTA(수평 flip + 멀�
 가능한 접근 방향을 몇 가지로 나누면:
 
 1. **Reference point를 diff map 기반으로 초기화/보정 (가장 자연스러운 진입점)**
-   - 현재 디코더의 reference point는 "object query 임베딩 → Linear → sigmoid"로만 예측됩니다 (5.2절). 당신의 diff map에서 "소형 객체가 있을 것 같은 위치"를 뽑아, 이를 reference point의 prior(사전 정보) 혹은 초기값으로 주입하면, two-stage Deformable DETR(6.2절)의 "region proposal" 역할을 diff map이 대신하는 셈이 됩니다. Two-stage 구조를 참고해서, 1단계 proposal 생성 로직을 당신의 self-reconstruction/diff map 모듈로 교체하는 그림을 그려볼 수 있습니다.
+   - 현재 디코더의 reference point는 "object query 임베딩 → Linear → sigmoid"로만 예측됩니다 (5.2절). 당신의 diff map에서 "소형 객체가 있을 것 같은 위치"를 뽑아, 이를 reference point의 prior(사전 정보) 혹은 초기값으로 주입하면, two-stage Deformable DETR(6.2절)의 "region proposal" 역할을 diff map이 대신하는 셈이 됩니다. Two-stage 구조를 참고해서, 1단계 proposal 생성 로직을 당신의                                                                                                                                                                                                                                                              self-reconstruction/diff map 모듈로 교체하는 그림을 그려볼 수 있습니다.
 
 2. **Sampling offset의 탐색 범위를 diff map으로 변조(modulate)**
    - Iterative box refinement(6.1절)에서 이미 "박스 크기로 offset을 스케일링"하는 선례가 있습니다. 같은 방식으로, diff map에서 나온 "이 지점이 소형 객체일 확률/에너지"를 offset 예측에 곱해주는 modulation term을 추가하면, 소형 객체로 추정된 영역에서 K개의 샘플링 점이 더 촘촘하게/정확하게 모이도록 유도할 수 있습니다. (DCNv2가 실제로 이런 "modulation scalar"를 도입한 전례가 있으니, 관련 문헌으로 참고할 가치가 있습니다.)
