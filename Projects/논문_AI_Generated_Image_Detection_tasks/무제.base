@@ -1,0 +1,16 @@
+views:
+  - type: table
+    name: 표
+    filters:
+      and:
+        - file.inFolder("Projects")
+    order:
+      - file.name
+      - jcr_quartile
+      - paper_tags
+      - pm-project
+      - pm-task
+      - progress
+      - priority
+      - projectId
+      - source

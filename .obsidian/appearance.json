@@ -1,0 +1,10 @@
+{
+  "theme": "moonstone",
+  "showRibbon": true,
+  "enabledCssSnippets": [
+    "daily-note-columns"
+  ],
+  "cssTheme": "AnuPpuccin",
+  "interfaceFontFamily": "",
+  "monospaceFontFamily": "Andale Mono"
+}

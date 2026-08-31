@@ -1,0 +1,78 @@
+# 읽을 논문 모음
+
+여러 논문 노트에 흩어진 "읽어볼 만한 논문" 추천을 task별로 모은 목록.
+논문을 실제로 읽어서 `wiki/papers/`에 정식 노트가 생기면 이 목록에서는 제거된다.
+
+## anomaly-detection
+- [ ] H. Deng and X. Li, "Anomaly Detection via Reverse Distillation from One-Class Embedding" (CVPR 2022) [2] — ReContrast의 직접적인 baseline(RD4AD). ReContrast의 모든 단계적 개선이 이 구조를 기준으로 설명되므로 배경 이해에 필수 (출처: [[ReContrast]])
+- [ ] X. Chen and K. He, "Exploring simple Siamese representation learning" (SimSiam, CVPR 2021) [16] — ReContrast가 stop-gradient 아이디어를 직접 차용한 원조 논문 (출처: [[ReContrast]])
+- [ ] Z. You et al., "A unified model for multi-class anomaly detection" (UniAD, NeurIPS 2022) [9] — multi-class unified 세팅에서 ReContrast가 비교하는 SOTA (출처: [[ReContrast]])
+- [ ] P. Bergmann et al., "Beyond dents and scratches: Logical constraints in unsupervised anomaly detection and localization" (GCAD, IJCV 2022) [49] — ReContrast가 유일하게 뒤처지는 logical anomaly에 특화된 방법 (출처: [[ReContrast]])
+- [ ] (검증 필요) Adam optimizer의 불안정성을 다루는 최신 개선 연구 — 검색 키워드: `Adam optimizer instability large-scale training second moment estimate fix` (출처: [[ReContrast]])
+
+## small-object-detection
+- [ ] C. Xu, J. Wang, W. Yang, H. Yu, L. Yu, G.-S. Xia, "RFLA: Gaussian receptive field based label assignment for tiny object detection" (ECCV 2022) [28] — Gaussian 수용영역 기반 label assignment의 대표 논문. Unc-SOD를 포함해 여러 SOD 논문이 baseline/비교 대상으로 인용 (출처: [[Unc-SOD]])
+- [ ] X. Yuan, G. Cheng, K. Yan, Q. Zeng, J. Han, "Small object detection via coarse-to-fine proposal generation and imitation learning" (CFINet, ICCV 2023) [16] — coarse-to-fine 방식 label assignment. SODA-D/SODA-A 벤치마크에서 반복적으로 비교 대상이 됨 (출처: [[Unc-SOD]])
+- [ ] A. Kendall and Y. Gal, "What uncertainties do we need in Bayesian deep learning for computer vision" (NeurIPS 2017) — epistemic uncertainty 개념의 원조 논문. Unc-SOD가 다루지 않은 부분을 이해하는 데 필요 (출처: [[Unc-SOD]])
+- [ ] J. U. Kim et al., "CUA loss: Class uncertainty-aware gradient modulation for robust object detection" (TCSVT 2021) — epistemic uncertainty를 손실 함수에 반영한 사례 (출처: [[Unc-SOD]])
+- [ ] (검증 필요) MC Dropout 기반 Bayesian object detection 관련 연구 — 검색 키워드: `"Monte Carlo dropout" object detection epistemic uncertainty` (출처: [[Unc-SOD]])
+- [ ] Y. Zhao, W. Lv, S. Xu, J. Wei, G. Wang, Q. Dang, Y. Liu, J. Chen, "DETRs Beat YOLOs on Real-Time Object Detection" (RT-DETR, CVPR 2024) [6] — UAV-DETR의 baseline 아키텍처. 세 모듈이 어디에 삽입되는지 이해하려면 필수 (출처: [[UAV-DETR]])
+- [ ] G. Liu, Z. Chen, D. Liu, B. Chang, Z. Dou, "FTMF-Net: A Fourier Transform-Multiscale Feature Fusion Network for Segmentation of Small Polyp Objects" (IEEE TIM 2023) [17] — 의료영상 도메인의 Fourier 기반 멀티스케일 fusion 선례, FF 모듈 아이디어 계보 파악에 도움 (출처: [[UAV-DETR]])
+- [ ] Y. Cui, W. Ren, A. Knoll, "Omni-Kernel Network for Image Restoration" (AAAI 2024) [16] — 주파수 도메인 fusion을 다루는 선행 연구, image restoration 태스크에서의 비교 (출처: [[UAV-DETR]])
+- [ ] (검증 필요) 항공/위성 영상에서 FFT 기반 attention을 쓰는 최신 연구 — 검색 키워드: `frequency domain attention aerial remote sensing object detection` (출처: [[UAV-DETR]])
+- [ ] C. Deng, M. Wang, L. Liu, Y. Liu, Y. Jiang, "Extended feature pyramid network for small object detection" (IEEE TMM 2021) [14] — feature imitation(생성 기반 복원) 계열의 대표 선행 연구. SR-TOD가 생성 기반 접근의 한계(spurious artifact)를 비판할 때 직접 인용하는 대상 (출처: [[SR-TOD]])
+- [ ] G. Cheng, X. Yuan, X. Yao, K. Yan, Q. Zeng, X. Xie, J. Han, "Towards large-scale small object detection: Survey and benchmarks" (IEEE TPAMI 2023) [11] — tiny object detection을 5갈래로 정리한 서베이. SR-TOD의 related work 구성이 이 분류를 그대로 따름 (출처: [[SR-TOD]])
+- [ ] L. Jiang, B. Dai, W. Wu, C. C. Loy, "Focal frequency loss for image reconstruction and synthesis" (ICCV 2021) [24] — SR-TOD가 high-frequency difference map 설계 시 참고한 주파수 도메인 reconstruction 연구 (출처: [[SR-TOD]])
+- [ ] (검증 필요) reconstruction error를 이상 신호로 쓰는 autoencoder 기반 anomaly detection 관련 연구 — 검색 키워드: `autoencoder reconstruction error anomaly detection survey` (출처: [[SR-TOD]])
+- [ ] K. W. Lau, L.-M. Po, Y. A. U. Rehman, "Large separable kernel attention: rethinking the large kernel attention design in CNN" (Expert Systems with Applications, 2024) — LSOD-YOLO의 SPPFL이 채택한 LSKA의 원조 논문 (출처: [[LSOD-YOLO]])
+- [ ] Y. Liu, Z. Shao, Y. Teng, N. Hoffmann, "NAM: Normalization-based attention module" (arXiv:2111.12419, 2021) — LSOD-YOLO의 C2f-N이 채택한 NAM의 원조 논문 (출처: [[LSOD-YOLO]])
+- [ ] W. Liu, H. Lu, H. Fu, Z. Cao, "Learning to upsample by learning to sample" (ICCV 2023) — LSOD-YOLO가 채택한 경량 upsampler Dysample의 원조 논문 (출처: [[LSOD-YOLO]])
+- [ ] X. Zhu, S. Lyu, X. Wang, Q. Zhao, "TPH-YOLOv5: Improved YOLOv5 based on transformer prediction head for object detection on drone-captured scenarios" (ICCV Workshops 2021) — 정확도는 높이지만 파라미터가 크게 증가하는 갈래의 대표 사례, LSOD-YOLO가 피하고자 한 트레이드오프의 대조군 (출처: [[LSOD-YOLO]])
+- [ ] (검증 필요) YOLO 계열 검출 헤드에 structured/channel pruning을 적용한 경량화 연구 — 검색 키워드: `YOLO detection head structured pruning small object real-time` (출처: [[LSOD-YOLO]])
+- [ ] Z. Li, Y. Wang, D. Xu, Y. Gao, T. Zhao, "TBNet: A texture and boundary-aware network for small weak object detection in remote-sensing imagery" (Pattern Recognition, 2025) — RS-TOD가 AI-TOD에서 가장 근접하게 비교하는 경쟁 모델(mAP50 59.00 vs 59.84) (출처: [[RS-TOD]])
+- [ ] C. Xu, J. Wang, W. Yang, H. Yu, L. Yu, G.-S. Xia, "Detecting tiny objects in aerial images: A normalized Wasserstein distance and a new benchmark" (ISPRS J. Photogramm. Remote Sens., 2022) — label-assignment 계열 대표 논문, RS-TOD Table 8에서 NWD-RKA로 비교됨 (출처: [[RS-TOD]])
+- [ ] (검증 필요) CBAM(Convolutional Block Attention Module) 원 논문 — 검색 키워드: `CBAM convolutional block attention module ECCV 2018`. RS-TOD가 RSAM 설계 근거로 CBAM과 직접 비교함 (출처: [[RS-TOD]])
+- [ ] Z. Shi et al., "HS-FPN: High Frequency and Spatial Perception FPN for Tiny Object Detection" (AAAI 2025) [44] — 고주파 응답을 attention으로 활용하는 FANet의 CAREM이 직접 참고한 선행 연구 (출처: [[FANet]])
+- [ ] B.N. Patro et al., "SpectFormer: Frequency and Attention is what you need in a Vision Transformer" (arXiv 2023) [43] — self-attention을 spectral attention으로 대체하는 접근, 주파수 정보를 다루는 설계 스펙트럼을 넓게 보여줌 (출처: [[FANet]])
+- [ ] (검증 필요) 원격탐사·항공 이미지의 반복적 텍스처가 주파수 도메인 필터링에 미치는 영향 관련 연구 — 검색 키워드: `periodic texture frequency domain false positive remote sensing object detection` (출처: [[FANet]])
+- [ ] J. Ballé, V. Laparra, E. P. Simoncelli, "Density modeling of images using a generalized normalization transformation" [2] (arXiv 2015) — PFIM의 quantization·fully factorized density modeling·GDN 설계가 기반하는 원조 논문. Information Entropy loss의 수학적 배경 이해에 필수 (출처: [[Feature_Info_Driven_Gaussian]])
+- [ ] D. Minnen, J. Ballé, G. D. Toderici, "Joint autoregressive and hierarchical priors for learned image compression" [30] (NeurIPS 2018) — Gaussian density를 unit uniform distribution과 convolve해 marginal distribution에 맞추는 기법의 근거. Learned compression의 density modeling이 detection에 어떻게 전용됐는지 이해에 도움 (출처: [[Feature_Info_Driven_Gaussian]])
+- [ ] (검증 필요) information entropy/rate-distortion 관점을 다른 dense prediction task(예: segmentation 경계 saliency)에 적용한 연구 — 검색 키워드: `information entropy loss feature map saliency segmentation learned compression` (출처: [[Feature_Info_Driven_Gaussian]])
+- [ ] I. Chen, W.-T. Chen et al., "UniRestore: Unified perceptual and task-oriented image restoration model using diffusion prior" [13] (CVPR 2025) — perceptual quality와 downstream task를 함께 최적화하는 최신 통합 restoration 프레임워크. DORA가 SOD 특화 최적화 gap이 남아있다고 지적한 비교 대상 (출처: [[Detection_Oriented_Rectification]])
+- [ ] T. Son, J. Kang, N. Kim, S. Cho, S. Kwak, "URIE: Universal image enhancement for visual recognition in the wild" [33] (ECCV 2020) — recognition accuracy가 low-level restoration의 최적화를 이끈다는 원칙의 초기 대표 사례. DORA의 task-oriented rectification 설계 철학의 계보 이해에 도움 (출처: [[Detection_Oriented_Rectification]])
+- [ ] C. Xu, J. Ding et al., "Dynamic coarse-to-fine learning for oriented tiny object detection" (DCFL) [4] (CVPR 2023) — SODA-A에서 DORA와 결합했을 때 가장 좋은 결과(37.9% AP)를 낸 OSOD 특화 detector (출처: [[Detection_Oriented_Rectification]])
+- [ ] (검증 필요) 저조도/악천후 등 다른 "체계적으로 열화된 입력" 도메인에서 degradation을 명시적으로 모델링해 downstream task를 돕는 최신 연구 — 검색 키워드: `explicit degradation modeling low-light object detection task-oriented restoration 2025` (출처: [[Detection_Oriented_Rectification]])
+- [ ] A. Kirillov, Y. Wu, K. He, R. Girshick, "PointRend: Image segmentation as rendering" (CVPR 2020) [19] — QueryDet과 유사하게 sparse한 위치만 골라 고해상도 예측을 하지만 point-wise MLP를 쓴다는 점에서 대조되는 접근 (출처: [[QueryDet]])
+- [ ] M. Najibi, B. Singh, L. S. Davis, "AutoFocus: Efficient multi-scale inference" (ICCV 2019) [33] — QueryDet이 직접 비교하는 가장 유사한 선행 연구(image pyramid 기반 coarse-to-fine) (출처: [[QueryDet]])
+- [ ] B. Zhu, J. Wang, Z. Jiang, F. Zong, S. Liu, Z. Li, J. Sun, "AutoAssign: Differentiable label assignment for dense object detection" (arXiv 2020) [36] — QueryDet의 query head 학습과 비교할 만한 differentiable label assignment 접근 (출처: [[QueryDet]])
+- [ ] (검증 필요) sparse convolution 기반 3D object detection(LiDAR) 연구 — 검색 키워드: `sparse convolution 3D object detection LiDAR point cloud CVPR` (출처: [[QueryDet]])
+- [ ] G. Cheng et al., "Towards large-scale small object detection: Survey and benchmarks" (IEEE TPAMI 2023) [14] — FFSSTD-Net이 참조하는 4갈래 분류(scale-aware/contextual/focused/sample-oriented) 체계의 원 서베이 (출처: [[FFSSTDNet]])
+- [ ] (검증 필요) Focus-and-Detect 계열의 최신 후속 연구(2025~2026) — 검색 키워드: `focus and detect small object aerial images 2025 2026` (출처: [[FFSSTDNet]])
+- [ ] A. Radford et al., "Learning transferable visual models from natural language supervision" (CLIP, ICML 2021) [4] — CDATOD-Diff의 CLIP 조건화 전체가 기반하는 원조 논문 (출처: [[CDATOD-Diff]])
+- [ ] S. Chen, P. Sun, Y. Song, P. Luo, "DiffusionDet: Diffusion model for object detection" (ICCV 2023) [57] — 바운딩 박스 자체를 diffusion target으로 삼는 원조 접근, CDATOD-Diff의 "anchor 샘플링 포인트를 diffusion으로 정제" 방식과 대조 비교 가치 (출처: [[CDATOD-Diff]])
+- [ ] (검증 필요) SAR 도메인 특화 CLIP 사전학습(원격탐사 vision-language foundation model) 관련 연구 — 검색 키워드: `SAR remote sensing CLIP domain-specific pretraining vision-language foundation model 2025` (출처: [[CDATOD-Diff]])
+- [ ] S. Ren, K. He, R. Girshick, J. Sun, "Faster R-CNN: Towards real-time object detection with region proposal networks" (PAMI 2015) [37] — DETR이 직접 비교하는 핵심 baseline. DETR의 모든 성능 비교가 이 구조를 기준으로 하므로 배경 이해에 필수 (출처: [[DETR]])
+- [ ] A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, L. Kaiser, I. Polosukhin, "Attention is all you need" (NeurIPS 2017) [47] — DETR의 encoder-decoder 아키텍처가 직접 기반하는 원조 transformer 논문 (출처: [[DETR]])
+- [ ] A. Kirillov, K. He, R. Girshick, C. Rother, P. Dollár, "Panoptic segmentation" (CVPR 2019) [19] — DETR이 확장하는 panoptic segmentation 과제의 정의 논문 (출처: [[DETR]])
+- [ ] (검증 필요) DETR의 느린 수렴 문제를 해결한 후속 연구 분석 — 검색 키워드: `DETR slow convergence analysis sparse attention 2021` (출처: [[DETR]])
+- [ ] Y. Cao, J. Xu, S. Lin, F. Wei, H. Hu, "GCNet: Non-local networks meet squeeze-excitation networks and beyond" (ICCV Workshop 2019) [14] — FFCA-YOLO의 SCAM이 계승한 전역 문맥 모델링의 원조 (출처: [[FFCA-YOLO]])
+- [ ] J. Chen et al., "Run, don't walk: Chasing higher FLOPS for faster neural networks" (CVPR 2023) [51] — L-FFCA-YOLO가 채택한 PConv(FasterNet)의 원조 논문 (출처: [[FFCA-YOLO]])
+- [ ] M. Tan, R. Pang, Q. V. Le, "EfficientDet: Scalable and efficient object detection" (CVPR 2020) [29] — FFCA-YOLO의 FFM이 뼈대로 삼은 BiFPN의 원조 논문 (출처: [[FFCA-YOLO]])
+- [ ] (검증 필요) PConv와 LCOR류 헤드 재배치 경량화 기법을 함께 적용한 하이브리드 경량 원격탐사 detector 연구 — 검색 키워드: `lightweight remote sensing object detection partial convolution head reduction combined` (출처: [[FFCA-YOLO]])
+
+## ai-generated-image-detection
+- [ ] Z. Wang, J. Bao, W. Zhou, W. Wang, H. Hu, H. Chen, H. Li, "DIRE for diffusion-generated image detection" (2023) [40] — LaRE²가 직접 비교·극복하는 baseline. 모든 개선점이 이 논문 대비 설명되므로 배경 이해에 필수 (출처: [[LaRE2]])
+- [ ] R. Rombach, A. Blattmann, D. Lorenz, P. Esser, B. Ommer, "High-resolution image synthesis with latent diffusion models" (LDM, CVPR 2022) [32] — LaRE 추출에 사용되는 Stable Diffusion의 기반 논문 (출처: [[LaRE2]])
+- [ ] M. Zhu, H. Chen, Q. Yan, X. Huang, G. Lin, W. Li, Z. Tu, H. Hu, J. Hu, Y. Wang, "GenImage: A million-scale benchmark for detecting AI-generated image" (2023) [47] — LaRE²의 실험 전체가 기반하는 벤치마크 (출처: [[LaRE2]])
+- [ ] (검증 필요) DIRE 이후 diffusion 생성 이미지 탐지의 2025년 최신 후속 연구 — 검색 키워드: `diffusion generated image detection reconstruction error 2025 generalization` (출처: [[LaRE2]])
+
+## instance-segmentation
+- [ ] D. Li, Y. Sun, Z. Zheng, F. Zhang, B. Sun, C. Yuan, "A real-world large-scale infrared image dataset and multitask learning framework for power line surveillance" (IEEE Trans. Instrum. Meas. 2025) [8] — SR+instance segmentation 멀티태스크 프레임워크(PowerNet). ORD/DFE 접근과 SR 기반 접근의 실증적 차이를 이해하는 데 도움 (출처: [[Reconstruction_Error_Guided_Instance_Segmentation]])
+- [ ] K. P. Alexandridis, J. Deng, A. Nguyen, S. Luo, "Long-tailed instance segmentation using Gumbel optimized loss" (ECCV 2022) [25] — DFE 모듈이 Gumbel-sigmoid 필터링을 도입할 때 근거로 삼은 원 기법 (출처: [[Reconstruction_Error_Guided_Instance_Segmentation]])
+- [ ] (검증 필요) 적외선/열화상 영상에서의 도메인 특이적 노이즈(NUC 보정 잔여 오차, 방사율 차이)가 reconstruction 기반 anomaly/difference 신호에 미치는 영향 관련 연구 — 검색 키워드: `infrared thermal image non-uniformity correction residual noise reconstruction-based detection` (출처: [[Reconstruction_Error_Guided_Instance_Segmentation]])
+
+## salient-object-detection
+- [ ] J. Zhao, J.-J. Liu, D.-P. Fan, Y. Cao, J. Yang, M.-M. Cheng, "EGNet: Edge guidance network for salient object detection" [32] (ICCV 2019) — 이 논문이 대비축으로 삼는 boundary guidance 계열의 대표 논문이자, URA의 ablation(Table VII)에서 경계 추출 방식으로 직접 채택된 baseline (출처: [[Uncertainty_Guided_Refinement]])
+- [ ] T. Kim, K. Kim, J. Lee, D. Cha, J. Lee, D. Kim, "Revisiting image pyramid structure for high resolution salient object detection" (ISPRN) [42] (ACCV 2022) — SOD에 불확실성 맵 생성을 최초로 도입한 선행 연구, UGRAN의 "명시적 attention 마스크" 방식과 대비되는 기준점 (출처: [[Uncertainty_Guided_Refinement]])
+- [ ] B. Cheng, I. Misra, A. G. Schwing, A. Kirillov, R. Girdhar, "Masked-attention mask transformer for universal image segmentation" (Mask2Former) [52] (CVPR 2022) — URA의 masked attention 계산식이 형태적으로 참조한 원조 기법 (출처: [[Uncertainty_Guided_Refinement]])
+- [ ] (검증 필요) saliency/segmentation 모델의 confidence calibration(temperature scaling 등) 관련 연구 — 검색 키워드: `confidence calibration semantic segmentation temperature scaling` (출처: [[Uncertainty_Guided_Refinement]])

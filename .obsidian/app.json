@@ -1,0 +1,12 @@
+{
+  "newFileLocation": "current",
+  "attachmentFolderPath": "./_",
+  "promptDelete": false,
+  "autoPairMarkdown": true,
+  "autoPairBrackets": false,
+  "alwaysUpdateLinks": true,
+  "focusNewTab": false,
+  "defaultViewMode": "source",
+  "livePreview": true,
+  "readableLineLength": false
+}
