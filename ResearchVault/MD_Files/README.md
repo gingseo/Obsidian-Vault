@@ -4,7 +4,7 @@ Claude Code가 논문 PDF를 읽고 자동으로 정리·유지해주는 개인 
 
 ## 구조
 
-위키 부속 문서(개념/비교/MOC)는 `ResearchVault/PaperStudy/`에, 논문 분석 노트는 Project Manager 플러그인과 통합 관리하기 위해 볼트 최상위 `Projects/`에 있다. 논문 **PDF 원본**은 용량 문제로 Obsidian vault(`GingseoLife/`) 밖 `Projects/논문_pdf/`에 별도 보관한다.
+위키 부속 문서(개념/비교/MOC)는 `ResearchVault/PaperStudy/`에, 논문 분석 노트는 Project Manager 플러그인과 통합 관리하기 위해 볼트 최상위 `Projects/`에 있다. 논문 **PDF 원본**도 `Projects/논문_pdf/`에 함께 있다(용량이 커서 git 추적에서는 `.gitignore`로 제외했지만 vault 안에는 있다).
 
 ```
 ResearchVault/PaperStudy/
@@ -21,7 +21,7 @@ Projects/
   논문_<Task>_tasks/          그 task의 논문 분석 노트들. 논문 1편 = 파일 1개. 폴더명은 반드시 `<프로젝트파일명>_tasks` 형식(Project Manager 하드코딩 규칙)
   논문_PaperWiki.base         모든 논문_<Task>_tasks/를 가로질러 보는 Obsidian Bases 뷰 정의
 
-Projects/논문_pdf/     vault 밖. 논문 PDF 원본
+Projects/논문_pdf/     논문 PDF 원본 (git 추적은 .gitignore로 제외)
   _inbox/                   아직 처리 안 한 원본 PDF, 직접 읽고 싶어서 넣은 것 (다운받으면 여기에 넣는다) → 처리되면 노트에 source_type: personal
   _issue_paper/              아직 처리 안 한 원본 PDF, 커뮤니티에서 이슈가 된 논문을 트렌드 파악용으로 넣은 것 → 처리되면 노트에 source_type: community
   <Task>/                    처리 완료 후 이동되는 task별 PDF 폴더 (출처 폴더 구분 없이 한 곳에 모인다)
@@ -62,6 +62,12 @@ Obsidian에서 `Projects/논문_PaperWiki.base` 파일을 열면 Notion 데이�
 ## 다음에 읽을 논문 찾기
 
 `reading-list.md`를 열면 각 논문 노트가 추천한 "읽어볼 만한 논문"이 task별로 한곳에 모여있다. 참고문헌 기반 추천(원문 그대로, 신뢰도 높음)과 자유 추천("(검증 필요)" 표시 + 검색 키워드 포함, 검증 필요)이 구분되어 있다. 이 목록에 있던 논문을 실제로 읽어서 위키에 넣으면 자동으로 목록에서 빠진다.
+
+## 새 논문을 기존 지식과 연결해서 공부하기
+
+`/process-papers`가 논문을 정식 노트로 자동 변환하는 스킬이라면, `/study-paper`는 그 논문을 Claude Code와 **실시간으로 함께 읽을 때** 쓰는 스킬이다("이 논문 같이 읽자" 같은 요청). 본문을 읽기 전에 먼저 `000-Home.md`·해당 task의 Moc·`Concepts/`·`Architecture Design/`을 훑어, 이미 읽은 논문·개념과 어떤 모듈/메커니즘이 겹치거나 대비되는지 미리 짚어준 뒤 함께 읽어나간다 — task가 달라도 원리가 같은 개념(예: reconstruction error 기반 신호)까지 찾는다.
+
+`000-Home.md`의 "Task를 가로지르는 개념" 섹션이 이런 교차 연결을 모아두는 곳이다 — 새 논문이 이미 있는 개념을 다른 task에서 재사용하면 이 섹션에 추가된다.
 
 ## direction 속성이란
 

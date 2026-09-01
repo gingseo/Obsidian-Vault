@@ -2,7 +2,7 @@
 title: "연구 지도"
 tags: [moc]
 created: 2026-08-04
-updated: 2026-08-31
+updated: 2026-09-01
 ---
 
 # 연구 지도
@@ -15,6 +15,14 @@ updated: 2026-08-31
 - [[Instance_Segmentation_Moc]] — 1편
 - [[Visual_Grounding_Moc]] — 1편
 - [[Scientific_Critique_Automation_Moc]] — 1편, 새로 생긴 분야(컴퓨터 비전 밖 — 커뮤니티 트렌드 추적 경로로 유입)
+
+## Task를 가로지르는 개념
+task 경계와 무관하게 여러 분야에서 반복 등장하는 개념·신호·메커니즘을 모은다. 새 논문을 읽을 때 이 목록부터 훑으면, 표면적 분야가 달라도 이미 아는 메커니즘인지 바로 확인할 수 있다.
+
+- **Reconstruction error를 판별 신호로 쓴다** — [[Self_Reconstruction_Difference_Map]] / [[Latent_Reconstruction_Error]]: "무언가를 재구성해보고, 재구성이 실패하는 정도(오차)를 신호로 쓴다"는 원리가 세 task에서 각기 다른 대상에 적용된다. small-object-detection의 [[SR-TOD]](FPN feature→원본 이미지, 원조)와 [[Reconstruction_Error_Guided_Instance_Segmentation]](같은 원리를 instance segmentation·적외선 도메인으로 확장), ai-generated-image-detection의 [[LaRE2]](사전학습 diffusion model의 노이즈 예측 오차), anomaly-detection의 [[ReContrast]]([[ReContrast_Dual_Encoder_Contrastive_Reconstruction]], encoder를 직접 학습시키는 방식이라 나머지와 대조). 재구성 "대상"이 원본 이미지인지 latent인지, 재구성기가 고정인지 학습되는지가 갈래를 가른다.
+- **Object query를 이미지 내용에 따라 동적으로 조정한다** — [[Density_Guided_Dynamic_Query]] / [[Pattern_Quality_Aware_Query_Refinement]]: small-object-detection 안에서만 6편([[DQ-DETR]], [[Density-Aware-DETR]], [[IG-DETR]], [[DQP-DETR]], [[PaQ-DETR]], [[DQA-DETR]])이 이 상위 아이디어를 공유하지만, "무엇을 동적으로 조정하는가"(개수 vs 표현 vs 병합)가 갈래를 가른다. 아직 다른 task에서는 등장하지 않았지만, query 기반 구조(DETR 계열)를 쓰는 다른 분야(visual-grounding 등)로 확장될 가능성이 있는 축.
+- **불확실성(uncertainty)을 명시적으로 모델링해 파이프라인에 반영한다** — [[Gaussian_Box_Uncertainty_Modeling]] / [[Perception_And_Interaction]] / [[Uncertainty_Masked_Refinement_Attention]]: small-object-detection의 [[Unc-SOD]](박스 좌표 불확실성을 positive sampling 기준으로), salient-object-detection의 [[Uncertainty_Guided_Refinement]](예측 saliency map에서 유도한 불확실성을 attention 마스크로). 둘 다 "어디가 불확실한지 알아내 그 부분에 자원을 더 쓴다"는 상위 전략은 같지만 불확실성을 유도하는 방식과 적용 지점이 다르다.
+- **학습 시에만 존재하고 추론 시 제거되는 auxiliary branch** — small-object-detection 안에서만 이미 4개 변형([[ORFENet]]의 ORB, [[FFSSTDNet]]의 FSR, [[BAFNet]]의 Boundary-Aware Branch, [[CoLR-Det]]의 latent restoration branch)이 계보를 이루며, 위 "reconstruction error" 항목과도 원리적으로 겹친다(재구성 기반 auxiliary branch는 사실상 이 계보와 reconstruction 계보의 교집합).
 
 ## 지금 무엇에 집중하고 있는가
 지금까지 읽은 29편 중 대다수가 small/tiny object detection에 집중되어 있다. 그중 다수는 "기존 detector에 어떤 plug-in 모듈을 추가할 것인가"(feature 강화, label assignment, 연산 가속, 경량화, 구조 개선)를 다루고, 6편은 Deformable DETR을 baseline으로 삼아 object query의 개수·구성을 이미지 내용에 따라 동적으로 조정하는 "dynamic query DETR" 계열([[DQ-DETR]], [[Density-Aware-DETR]], [[IG-DETR]], [[PaQ-DETR]], [[DQA-DETR]], [[DQP-DETR]])이며, 나머지 3편([[DETR]], [[Deformable_Convolutional_Networks]], [[Deformable-DETR]])은 이 흐름들이 기반하는 순수 foundational 아키텍처 논문이다. 자세한 흐름과 빈틈은 [[Small_Object_Detection_Moc]] 참고.
