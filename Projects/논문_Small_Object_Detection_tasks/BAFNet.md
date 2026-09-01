@@ -23,7 +23,8 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [novel-approach, improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, attention-mechanism, feature-fusion, boundary-supervision, auxiliary-task]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2025_TGRS_BAFNet.pdf"
+source: "Projects/논문_pdf/Small_Object_Detection/2025_TGRS_BAFNet.pdf"
+source_type: personal
 createdAt: "2026-08-24T03:28:00.000Z"
 updatedAt: "2026-08-28T17:30:00.000Z"
 ---
@@ -34,6 +35,7 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 > [!quote] 원제
 > **Boundary-Aware Feature Fusion With Dual-Stream Attention for Remote Sensing Small Object Detection**
 > Jingnan Song, Mingliang Zhou, Jun Luo, Huayan Pu, Yong Feng, Xuekai Wei, Weijia Jia — Chongqing University 외, IEEE TGRS 2025
+> https://doi.org/10.1109/TGRS.2024.3514376
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">최고레벨 feature에서 전경(FPAM)·배경(BPAM) attention map을 동시에 생성해 저레벨 feature와 결합하는 Dual-Stream Attention Module(DSAM)과, 예측한 경계를 Laplacian pyramid 기반 GT로 supervision해 cross-scale fusion 중 손실되는 경계 정보를 보존하는 Boundary-Aware Branch를 결합한 BAFNet — AI-TOD/VisDrone/DIOR/LEVIR-Ship 네 원격탐사 벤치마크에서 SOTA를 달성한 DetectoRS 기반 탐지기.</mark>
@@ -43,15 +45,42 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 
 # 정리
 
+## 기존 방법의 한계
+- **배경과의 혼동**:
+  원격탐사 영상의 소형 객체는 픽셀 비율이 낮고 외형이 흐릿해, 복잡하고 다양한 지형·텍스처 배경과 구별하기 어렵다.
+- **Cross-scale fusion 중 경계 정보 손실**:
+  고레벨 semantic feature(문맥 정보 풍부)와 저레벨 spatial feature(공간 디테일 풍부)를 직접 융합하면 boundary-blurring이나 over-erosion이 발생해 세밀한 feature 정보가 손실된다.
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — Feature 융합 구조 개선**
+- FPN[1]/PANet[2]/BiFPN[3]: feature 융합 구조 개선.
+- MHN[26]/HRNet[27]/ASFF[28]: 레벨 간 semantic 불일치 해소, 다중 스케일 표현 강화.
+- 문맥 관계 모델링([6]~[11]): 객체-주변 문맥 의존성 캡처.
+- **타겟/해결**: 배경과의 혼동(문제①) — 융합 구조·문맥 모델링을 개선할 뿐, "전경-배경을 동시에 상호보완적으로" 모델링하는 이중 스트림 설계는 없음.
+
+**갈래 2 — Feature 정렬·반복 정제**
+- DetectoRS[31]: recursive feature pyramid + switchable atrous convolution.
+- FSANet[32]: feature-aware alignment + spatial-aware guidance head로 반복 정제.
+- **타겟/해결**: Cross-scale fusion 중 경계 정보 손실(문제②) — feature 정렬·반복 정제는 다루지만, 경계 정보를 명시적 supervision 신호로 활용하지는 않음.
+
+**갭**: <mark style="background: #FFF3A3A6;">선행 연구들은 feature fusion 구조 개선, 문맥 모델링, label assignment를 각각 따로 발전시켜 왔지만, "경계(boundary) 정보의 명시적 보존"이라는 관점을 정면으로 다룬 연구는 드물었다.</mark>
+
+## 이 논문이 풀고자 하는 문제
+1. 고레벨 semantic feature로부터 전경과 배경 정보를 동시에, 상호보완적으로 추출해 저레벨 spatial feature와 결합하는 것.
+2. Cross-scale feature fusion 과정에서 손실되기 쉬운 객체 경계 디테일을 명시적으로 보존하는 것.
+
+**갭 종합**: <mark style="background: #FFF3A3A6;">전경과 배경을 상호보완적으로 모델링하는 이중 스트림 attention과, 경계를 별도 supervision 신호로 보완하는 방법을 결합한 시도가 BAFNet의 통찰이다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
 | | 문제 ① — 배경과의 혼동 | 문제 ② — Cross-scale fusion 중 경계 정보 손실 |
 |---|---|---|
-| **문제 정의** | 원격탐사 영상의 소형 객체는 픽셀 비율이 낮고 외형이 흐릿해, 복잡하고 다양한 지형·텍스처 배경과 구별하기 어렵다. | 고레벨 semantic feature(문맥 정보 풍부)와 저레벨 spatial feature(공간 디테일 풍부)를 직접 융합하면 boundary-blurring이나 over-erosion이 발생해 세밀한 feature 정보가 손실된다. |
-| **풀고자 하는 문제** | 고레벨 semantic feature로부터 전경과 배경 정보를 동시에, 상호보완적으로 추출해 저레벨 spatial feature와 결합하는 것 | Cross-scale feature fusion 과정에서 손실되기 쉬운 객체 경계 디테일을 명시적으로 보존하는 것 |
-| **선행 연구 접근** | - FPN[1]/PANet[2]/BiFPN[3]: feature 융합 구조 개선<br>- MHN[26]/HRNet[27]/ASFF[28]: 레벨 간 semantic 불일치 해소, 다중 스케일 표현 강화<br>- 문맥 관계 모델링([6]~[11]): 객체-주변 문맥 의존성 캡처<br>- **갭**: 융합 구조·문맥 모델링을 개선할 뿐, "전경-배경을 동시에 상호보완적으로" 모델링하는 이중 스트림 설계는 없음. | - DetectoRS[31]: recursive feature pyramid + switchable atrous convolution<br>- FSANet[32]: feature-aware alignment + spatial-aware guidance head로 반복 정제<br>- **갭**: feature 정렬·반복 정제는 다루지만, 경계 정보를 명시적 supervision 신호로 활용하지는 않음. |
 | **해결 방법** | 최고레벨 feature `P4`로 전경 attention(FPAM)을 만들고, 그 여집합(`1-FPAM`)으로 배경 attention(BPAM)을 동시에 얻어 저레벨 feature `P0`에 각각 적용 — 배경 억제를 명시적 별도 신호로 다룬다. | Laplacian pyramid로 만든 멀티스케일 GT 경계 맵으로 boundary head를 supervision해, DSAM으로 강화된 feature가 경계 정보를 보존하도록 학습을 유도한다. |
 | **예상되는 문제점** | BPAM이 FPAM의 단순 여집합(`E-FPAM`)이라 별도로 학습되지 않고 FPAM 품질에 전적으로 종속된다 — FPAM이 부정확하면 BPAM도 자동으로 부정확해지는 구조적 종속성. | Boundary GT를 Laplacian pyramid로 만드는 과정 자체가 추가 연산 오버헤드이며, 이 비용에 대한 정량 보고가 논문에 없다. |
-
-**갭 종합**: <mark style="background: #FFF3A3A6;">선행 연구들은 feature fusion 구조 개선, 문맥 모델링, label assignment를 각각 따로 발전시켜 왔지만, "경계(boundary) 정보의 명시적 보존"이라는 관점을 정면으로 다룬 연구는 드물었다. 전경과 배경을 상호보완적으로 모델링하는 이중 스트림 attention과, 경계를 별도 supervision 신호로 보완하는 방법을 결합한 시도가 BAFNet의 통찰이다.</mark>
 
 > [!info] 내 메모
 > 

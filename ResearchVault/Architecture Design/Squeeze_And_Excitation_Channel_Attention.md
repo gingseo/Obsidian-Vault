@@ -17,12 +17,12 @@ Feature map의 채널마다 "이 채널이 지금 얼마나 중요한 정보를 
 ## 내부 동작
 1. **Squeeze(압축)**:
    공간 차원 `(H, W)`을 채널마다 스칼라 하나로 압축한다. Global Average Pooling(GAP, 채널의 평균값)을 기본으로 쓰고, 변형에서는 Global Max Pooling(GMP, 채널의 최댓값)을 함께 써서 두 통계를 모두 반영하기도 한다.
-   `avgp_c = (1/HW) Σ_{h,w} x(c,h,w)`, `maxp_c = max_{h,w} x(c,h,w)` — 결과는 채널 개수만큼의 벡터 `(C,)`.
+   $avgp_c = \frac{1}{HW} \sum_{h,w} x(c,h,w)$, $maxp_c = \max_{h,w} x(c,h,w)$ — 결과는 채널 개수만큼의 벡터 `(C,)`.
 2. **Excitation(재조정)**:
-   압축된 벡터를 1×1 conv(또는 FC layer, [[1x1_Convolution]] 참고) 두 개를 거치게 해 채널 간 비선형 상호작용을 학습한 뒤, sigmoid로 0~1 범위의 채널별 가중치 `W_c`를 만든다.
-   `W_c = σ(Conv₁(Conv₂(avgp)) + Conv₁(Conv₂(maxp)))` (GMP 분기를 추가한 변형 기준)
+   압축된 벡터를 1×1 conv(또는 FC layer, [[1x1_Convolution]] 참고) 두 개를 거치게 해 채널 간 비선형 상호작용을 학습한 뒤, sigmoid로 0~1 범위의 채널별 가중치 $W_c$를 만든다.
+   $W_c = \sigma(Conv_1(Conv_2(avgp)) + Conv_1(Conv_2(maxp)))$ (GMP 분기를 추가한 변형 기준)
 3. **Scale(재적용)**:
-   `W_c`를 원본 feature `x`의 각 채널에 곱한다(broadcasting) — `x̂ = x · W_c`.
+   $W_c$를 원본 feature `x`의 각 채널에 곱한다(broadcasting) — $\hat{x} = x \cdot W_c$.
 
 > [!example]- 원조 SE-block과의 차이
 > - 원조 Squeeze-and-Excitation(Hu et al., CVPR 2018)은 GAP 하나만 쓰고, excitation을 FC(채널 축소) → ReLU → FC(채널 복원) → sigmoid로 구성한다.

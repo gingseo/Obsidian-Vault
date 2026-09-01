@@ -23,106 +23,272 @@ jcr_quartile: arXiv
 task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, object-detection, detr, dynamic-query, clustering, query-pruning, general-detection]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2025_arXiv_PaQ-DETR.pdf"
+source: "Projects/논문_pdf/Object_Detection/2025_arXiv_PaQ-DETR.pdf"
+source_type: personal
 createdAt: "2026-08-24T03:14:00.000Z"
 updatedAt: "2026-08-24T03:14:00.000Z"
 ---
 
-Project: [[논문_Object_Detection|Object Detection]]
 #paper #object-detection #detr #dynamic-query #clustering #query-pruning #general-detection
 
+> [!quote] 원제
+> **PaQ-DETR: Learning Pattern and Quality-Aware Dynamic Queries for Object Detection**
+> Zhengjian Kang, Jun Zhuang, Kangtong Mo, Qi Chen, Rui Liu, Ye Zhang — New York University / Boise State University / University of Illinois at Urbana-Champaign / University of California, Irvine / Illinois Institute of Technology / University of Pittsburgh, arXiv 2025 (v2: 2026-03-22)
+> https://arxiv.org/abs/2603.06917
+
 # 한 줄 요약
-<mark style="background: #FFF3A3A6;">이미지 전체의 밀도가 아니라 개별 후보 영역의 두 성질 — 공간적 군집 패턴(pattern)과 객체다움 신뢰도(quality) — 을 직접 신호로 삼아, 유사도 기반 클러스터링으로 중복 query를 병합하고 품질 임계값 이하 query를 제거하는 방식으로 초기 대량의 dense query를 이미지마다 다른 최종 개수로 동적 축소하는 PaQ-DETR을 제안해, COCO 일반 객체 탐지에서도 DINO 대비 일관된 개선을 보인 DETR 계열 논문.</mark>
+<mark style="background: #FFF3A3A6;">DETR의 one-to-one Hungarian matching이 소수의 "승자" query에만 gradient를 몰아주는 구조적 query activation imbalance를 만든다는 점을 실증한 뒤, object query를 소수의 학습된 공유 패턴(pattern)의 이미지 조건부 볼록결합(convex combination)으로 구성하고 예측 품질에 따라 positive 샘플 수를 동적으로 조정하는 quality-aware one-to-many assignment를 결합해, 여러 DETR 계열 baseline에서 일관되게 mAP를 끌어올리고 query 활용의 Gini 계수를 크게 낮추는 PaQ-DETR을 제안하는 논문.</mark>
 
-# 문제 정의
+> [!info] 내 메모
+> 
 
-### 기존 방법의 한계
-- **밀도 기반 query 배정의 정보 손실**:
-  이미지 전체의 인스턴스 수(density)만으로 query 개수를 정하는 방식은, 같은 밀도라도 객체들이 공간적으로 어떻게 분포하는지(밀집 군집 vs 균등 산재)는 반영하지 못한다. 예컨대 동일한 인스턴스 수라도 객체가 몇 개의 조밀한 클러스터로 뭉쳐 있으면 필요한 query 수와 위치가, 화면 전체에 고르게 흩어져 있을 때와 크게 달라야 한다.
-- **낮은 품질의 query가 학습·추론을 오염**:
-  Dense 초기화 방식(query 수를 넉넉하게 잡는 방식)은 recall을 높이지만, 배경이나 애매한 영역을 가리키는 저품질 query가 다수 섞여 들어가 decoder self-attention 연산을 낭비하고 최종 예측의 정밀도(precision)를 떨어뜨린다.
-- **일반 객체 탐지에서의 미검증**:
-  기존 dynamic query 연구 대다수가 tiny/aerial object에 특화된 데이터셋(AI-TOD 등)에서만 검증되어, 인스턴스 수 편차가 상대적으로 크지 않은 COCO 같은 일반 벤치마크에서도 이 접근이 유효한지는 불분명하다.
+# 정리
 
-### 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+## 기존 방법의 한계
+- **Query 표현(representation) 불균형**:
+  Deformable-DETR/DN-DETR/DINO의 query activation 분포를 분석하면 극심한 long-tail 패턴이 나타나며(Gini 계수 최대 0.97), 소수의 "승자" query만 실제 예측에 기여하고 대다수는 거의 활성화되지 않는다.
+- **Supervision(공급되는 학습 신호) 불균형**:
+  One-to-one Hungarian matching은 하나의 GT 객체당 정확히 하나의 query만 매칭시켜 학습시키므로, 나머지 query는 유의미한 gradient를 받지 못해 supervision이 극도로 희소하다.
 
-**갈래 1 — 밀도/카운팅 기반 query 개수 조정**
-- DQ-DETR류(density map 기반 이미지 레벨 counting): 전역 밀도로 query 개수를 정함 — 개별 후보 영역 간의 공간적 관계(패턴)는 고려하지 않음. (이 논문이 명시적으로 "instance-level" 대안을 제시하며 대조하는 사고 틀.)
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
 
-**갈래 2 — Query pruning/selection**
-- Sparse R-CNN [다수 인용], Deformable DETR의 two-stage 선택: top-K score 기반으로 고정 개수를 선별 — score 임계값이나 클러스터 구조를 명시적으로 활용하지 않고 순위(rank)만 사용.
+**갈래 1 — 정적/동적 query 설계**
+- 정적(static) query(원조 DETR 등): 이미지 전체에서 공유되는 고정 학습 파라미터라 의미적으로는 안정적이지만 이미지별 적응력이 없음.
+- Content-dependent 동적 query(Deformable-DETR의 encoder-derived proposal, Conditional/Anchor DETR의 공간 사전 주입, RT-DETR류의 top-K encoder token 선택): 적응력은 높아지지만 장면마다 의미가 불안정해짐(DINO가 다시 순수 학습 query로 회귀한 이유).
+- Dy-DETR(900→300 융합), DDQ-DETR(공유 기저의 정적 조합), EASE-DETR(attention routing): query 중복/경쟁을 완화하지만 이미지-독립적이거나 표현·공급 불균형이라는 근본 원인은 다루지 않음.
+- **타겟/해결**: Query 표현 불균형(문제①) — 정적 query는 안정성을, 동적 query는 적응력을 얻지만 어느 쪽도 "불균형의 구조적 원인"을 직접 겨냥하지 않음.
 
-**갈래 3 — Dense query + post-hoc 정제**
-- DDQ(Dense Distinct Query): dense query를 만든 뒤 NMS류 후처리로 중복 제거 — greedy 방식이라 학습 가능한 유사도 기준이 아니며, 최종 query 수가 이미지 내용에 적응적으로 결정되지 않음.
+**갈래 2 — Supervision 확장(1:多 assignment)**
+- Group-DETR(GT마다 고정 그룹으로 query 분할), MS-DETR(decoder 단계별 혼합 supervision), H-DETR(보조 branch로 positive 확대), Co-DETR(1:1과 1:多 branch를 gradient 공유로 공동 최적화): 모두 supervision을 늘리지만 고정된 그룹 크기나 별도 decoder/branch에 의존.
+- **타겟/해결**: Supervision 불균형(문제②) — Positive 샘플 수·선정을 예측 품질에 따라 적응적으로 조절하는 방법은 없었음.
 
-**갭**: <mark style="background: #FFF3A3A6;">기존 dynamic query 연구는 "얼마나 많은 객체가 있는가"(전역 밀도)에 집중했지, "그 객체들이 공간적으로 어떻게 무리 지어 있는가"(패턴)와 "각 후보가 실제로 객체를 담고 있을 신뢰도가 얼마나 높은가"(품질)를 개별 후보 단위에서 직접 다루지 않았다. 이 둘을 학습 가능한 방식으로 결합해 query를 동적으로 병합·제거하는 프레임워크는 없었다.</mark>
+**갭**: <mark style="background: #FFF3A3A6;">정적/동적 query 논쟁(갈래 1)과 1:1/1:多 매칭 논쟁(갈래 2)은 서로 다른 문제처럼 다뤄져 왔지만, 둘 다 "DETR의 one-to-one Hungarian matching이 만드는 구조적 query activation imbalance"라는 하나의 원인에서 갈라져 나온 두 측면(표현이 어떻게 gradient를 나누는가, supervision이 얼마나 퍼지는가)일 뿐, 어느 갈래도 이 공통 원인을 직접 겨냥하지 않았다.</mark>
 
-### 이 논문이 풀고자 하는 문제
-1. 이미지 전체 밀도가 아니라 개별 후보 영역 간 공간적 군집 패턴을 반영해 중복 query를 병합하는 것
-2. 개별 query의 객체다움 품질을 평가해 저품질 query를 제거하는 것
-3. 위 두 과정을 학습 가능하게 만들어 최종 query 개수가 이미지 내용에 따라 자동으로 정해지도록 하는 것
-4. Tiny/aerial 특화 데이터셋뿐 아니라 COCO 같은 일반 객체 탐지에서도 유효성을 검증하는 것
+## 이 논문이 풀고자 하는 문제
+1. Query 표현 방식 자체를 바꿔, gradient가 소수 query에 갇히지 않고 공유 표현을 통해 여러 query에 걸쳐 퍼지도록 만드는 것.
+2. 최종 layer의 1:1 매칭 구조는 유지하면서, 중간 decoder layer에서 더 많은 positive 샘플이 학습에 참여하도록 supervision을 동적으로 확장하는 것.
+
+**갭 종합**: <mark style="background: #FFF3A3A6;">정적/동적 query 논쟁과 1:1/1:多 매칭 논쟁은 서로 다른 문제처럼 다뤄져 왔지만, 이 논문은 둘 다 "DETR의 one-to-one Hungarian matching이 만드는 구조적 query activation imbalance"라는 하나의 원인에서 갈라져 나온 두 측면(표현이 어떻게 gradient를 나누는가, supervision이 얼마나 퍼지는가)이라고 재해석한다. 두 측면을 하나의 프레임워크(공유 패턴 기반 표현 + 품질 기반 동적 할당)로 동시에 다루면 서로를 보완한다는 것이 이 논문의 통찰이다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
+| | 문제 ① — Query 표현(representation) 불균형 | 문제 ② — Supervision(공급되는 학습 신호) 불균형 |
+|---|---|---|
+| **해결 방법** | Object query를 소수(m=50~150)의 공유 base pattern의 이미지 조건부 볼록결합으로 구성 — 매칭된 query의 gradient가 공유 patterns를 통해 여러 query에 전파되도록(pattern-based dynamic query module) 함 | 예측의 IoU-분류 신뢰도 일치도(quality score)에 따라 GT당 positive 개수 k_j를 매 GT마다 다르게 산정하는 quality-aware one-to-many assignment를 중간 decoder layer에 적용, 최종 layer는 1:1 유지 |
+| **예상되는 문제점** | 패턴 수가 지나치게 많아지면(250개) 과도한 표현 다양성이 최적화를 방해해 오히려 성능이 소폭 하락(Fig. 3(a)) — 최적 패턴 수를 튜닝해야 하는 하이퍼파라미터 민감성 | Positive 수 k를 크게 잡으면(Fig. 3(c), k=5~6) 저품질 매칭이 섞여 들어와 성능이 오히려 하락 — quality score의 γ 균형 계수도 함께 튜닝 필요(Fig. 3(d)), 파라미터·FLOPs·메모리도 소폭 증가(Table 7) |
+
+> [!info] 내 메모
+> 
 
 # 제안 방법
 
-<mark style="background: #FFF3A3A6;">초기에는 넉넉한 수의 dense candidate query를 생성한 뒤, Pattern-Aware Clustering(PAC) 모듈이 공간적으로 유사한 candidate를 학습된 유사도 기준으로 묶어 대표 query로 병합하고, Quality-Aware Pruning(QAP) 모듈이 병합된 query들의 객체다움 신뢰도를 평가해 임계값 이하를 제거함으로써, 최종 query 집합의 개수와 내용이 이미지마다 다르게 결정되도록 한다.</mark>
+<mark style="background: #FFF3A3A6;">Encoder feature로부터 <span style="color:#c0392b; font-weight:bold;">content-aware weight generator</span>가 만든 이미지 조건부 가중치로 <span style="color:#c0392b; font-weight:bold;">소수의 공유 base pattern을 볼록결합</span>해 image-specific query를 구성하고, decoder 중간 layer에서는 <span style="color:#c0392b; font-weight:bold;">quality-aware one-to-many assignment</span>로 예측 품질에 따라 GT당 positive 수를 동적으로 정해 supervision을 넓힌다(최종 layer는 표준 1:1 매칭 유지).</mark>
 
-### ① Dense Candidate Generation
-- Encoder feature에서 anchor-free 방식으로 대량의 초기 candidate query(위치+content)를 생성 — 기존 two-stage DETR의 top-K 선택보다 훨씬 많은 수를 우선 확보해 recall 손실을 원천 방지.
+## 전체 파이프라인 (Fig. 2 기준)
 
-### ② Pattern-Aware Clustering (PAC)
-- 각 candidate의 위치 임베딩·content 임베딩으로부터 pairwise 유사도를 계산해, 공간적으로 인접하고 semantic이 유사한 candidate들을 학습 가능한 클러스터링으로 그룹화.
-- 각 클러스터를 대표하는 단일 query로 병합(soft-aggregation, 예: 유사도 가중합) — 동일 객체를 가리키는 중복 candidate를 사전에 하나로 합쳐 이후 단계의 부담을 줄임.
+```
+입력 이미지 I ∈ R^(h×w×3)
+       │
+       ▼
+Backbone + Deformable Encoder              → 이미지 토큰 X ∈ R^(m×d), encoder 출력 Z = Encoder(X) ∈ R^(m×d)
+       │                                       (멀티스케일 feature map S_i ∈ R^(h_i×w_i×d), i=2..5)
+       ▼
+① Content-Aware Weight Generator
+   1) Feature Extraction (1×1 conv → dilated conv → ReLU, 스케일별)   → 수용영역 확장된 S_i'
+   2) Multi-scale Feature Fusion (top-down upsample+합산 → channel/spatial attention)  → Z ∈ R^(h2×w2×d)
+   3) Weight Generation (avg pooling → 2-layer MLP → softmax)         → 동적 가중치 W^D ∈ R^(n×m)
+       │
+       ▼
+② Pattern-based Representation Module
+   Base patterns Q^P = {q_1^P,...,q_m^P} ∈ R^(m×d) (학습 파라미터, m=50~150)
+   content query q_i^C = Σ_j w_ij^D · q_j^P                          → content queries Q^C ∈ R^(n×d) (n=300 또는 900)
+   + position queries (FFN)                                          → position queries ∈ R^(n×d)
+       │
+       ▼
+Deformable Decoder (self-attn + cross-attn × L layers, Eq.1)         → 최종 layer 출력 Q^L ∈ R^(n×d)
+       │
+       ├─ (중간 decoder layer) ③ Quality-Aware One-to-Many Assignment  → GT별 동적 positive 수 k_j, IoU-aware Varifocal Loss
+       │
+       └─ (최종 decoder layer) 표준 1:1 Hungarian matching             → 최종 예측 Y = Head(Q^L)
+```
 
-<mark style="background: #FFF9D6A6;">"문제 정의"의 첫 번째 문제(전역 밀도만으로는 공간적 군집 정보를 못 담음)를, 후보 간 유사도를 직접 계산해 실제 공간적 무리(cluster) 구조를 반영하는 방식으로 해결한다 — 밀도 수치 하나로 요약되지 않는 "객체가 어떻게 뭉쳐 있는가"라는 정보가 클러스터링 결과 자체에 암묵적으로 인코딩된다.</mark>
+> [!info] 내 메모
+> 
 
-### ③ Quality-Aware Pruning (QAP)
-- 병합된 각 대표 query에 대해 객체다움(objectness) 신뢰도를 별도 head로 예측.
-- 신뢰도가 낮은 query를 제거해 최종 decoder에 전달되는 query 수를 이미지마다 다르게 확정 — 배경/애매 영역을 가리키는 query가 decoder self-attention 연산에 진입하는 것을 사전 차단.
+### ① Content-Aware Weight Generator
+- **역할**:
+  Base pattern들을 "어떤 비율로 섞을지" 정하는 이미지 조건부 가중치 W^D를 만든다. 이 가중치가 있어야 같은 공유 패턴 집합에서도 이미지마다 다른 query가 구성된다.
+- **구현**:
+  세 단계로 구성 — (1) 각 encoder 멀티스케일 feature map S_i에 [[1x1_Convolution]] 후 [[Dilated_Convolution]]+ReLU를 적용해 수용영역을 넓힘, (2) top-down으로 상위(저해상도) feature를 upsample해 하위(고해상도) feature와 element-wise 합산하고 channel attention([[Global_Context_Modeling_GAP_GMP]] 계열, ECA-Net 기반)과 spatial attention(Coordinate Attention 기반)으로 정제, skip connection으로 저수준 디테일 보존, (3) 결과 Z를 average pooling으로 압축 후 2-layer MLP(LayerNorm+ReLU)를 거쳐 softmax로 W^D 생성.
+- **입출력 shape**:
+  멀티스케일 encoder feature `{S_i ∈ R^(h_i×w_i×d)}` → 융합 feature `Z ∈ R^(h2×w2×d)` → 압축 `Ẑ ∈ R^d` → 동적 가중치 `W^D ∈ R^(n×m)` (softmax로 각 행의 합이 1인 볼록결합 계수).
 
-<mark style="background: #FFF9D6A6;">"문제 정의"의 두 번째 문제(저품질 query의 오염)를, 클러스터링 이후 단계에서 명시적 품질 필터를 둬 해결한다 — PAC이 "중복을 줄이는" 역할이라면 QAP은 "불필요한 것을 아예 없애는" 역할로, 두 모듈이 순차적으로 결합해 최종 query 집합이 개수와 내용 모두에서 이미지 내용에 적응적이게 된다.</mark>
+```python
+# 논문 Eq.(5) 및 3.2절 서술 기반 의사코드
+S_prime = relu(dilated_conv(conv_1x1(S)))                  # 스케일별 수용영역 확장
+Z = topdown_fuse(S_prime)                                  # upsample+add, channel/spatial attention 정제
+Z_hat = avg_pool(Z)                                         # (h2,w2,d) -> (d,)
+W_D = softmax(F_w(Z_hat))                                   # 2-layer MLP(LN+ReLU) -> (n, m)
+```
+
+<mark style="background: #FFF9D6A6;">가중치 생성 자체를 이미지 feature에 조건부로 만들어, "정적 query는 안정적이지만 적응력이 없다"는 문제 ①의 절반을 해결한다 — patterns라는 공유 기저는 고정하되 결합 비율만 이미지마다 바꾸므로 안정성과 적응력을 동시에 얻는다.</mark>
+
+> [!info] 내 메모
+> 
+
+### ② Pattern-based Representation Module
+- **역할**:
+  Object query 학습 문제를 "n개의 독립적인 query를 각각 학습"에서 "m개(≪n)의 공유 base pattern을 학습"으로 치환한다. 여러 query가 같은 pattern을 공유하므로, 한 query가 매칭되어 받은 gradient가 그 pattern을 통해 다른 query에도 흘러들어간다.
+- **구현**:
+  Base pattern `Q^P = {q_1^P,...,q_m^P} ∈ R^(m×d)`는 학습되는 파라미터. 각 content query는 `q_i^C = Σ_j w_ij^D q_j^P` (Eq. 4)로, ①에서 만든 `W^D`를 계수로 쓰는 볼록결합(`w_ij^D ≥ 0`, `Σ_j w_ij^D = 1`)이다. Position query는 별도 FFN으로 생성. 패턴 간 중복을 막기 위해 정규화된 pattern 쌍의 cosine 유사도를 벌점화하는 diversity loss(Eq. 8, `L_div`)를 함께 학습한다.
+- **입출력 shape**:
+  `W^D ∈ R^(n×m)` + base patterns `Q^P ∈ R^(m×d)` → content queries `Q^C ∈ R^(n×d)` (n=300 또는 900, m=50~150).
+
+```python
+# 논문 Eq.(4), Eq.(8) 기반 의사코드
+Q_C = W_D @ Q_P                      # (n, m) @ (m, d) -> (n, d), 볼록결합
+L_div = mean(abs(cosine_sim(Q_P_normalized, Q_P_normalized)))  # 패턴 간 중복 억제, i != j만
+```
+
+<mark style="background: #FFF9D6A6;">이 볼록결합 구조가 "문제 ①"의 핵심 해법이다 — 매칭된 query의 gradient가 공유 pattern을 거쳐 다른 query들로 퍼지므로, one-to-one matching이 만드는 승자독식(winner-take-all) 경향이 표현 층위에서부터 완화된다. Table 6 ablation에서 이 모듈 단독 추가만으로 Gini 계수가 0.97→0.90으로, mAP가 +1.1(50.3→51.4) 개선된 것이 이를 뒷받침한다.</mark>
+
+> [!warning] 이 구조 때문에 예상되는 문제점
+> 패턴 수 m이 너무 많아지면(250개) "정리" 표의 "예상되는 문제점" ①에서 언급한 대로 과도한 패턴 다양성이 최적화를 방해해 mAP가 소폭 하락한다(Fig. 3(a), 200개 51.7 → 250개 51.5). 즉 이 모듈은 "패턴 수를 적절히 고르는" 하이퍼파라미터 튜닝 없이는 최적 효과를 내지 못한다.
+
+> [!info] 내 메모
+> 
+
+### ③ Quality-Aware One-to-Many Assignment
+- **역할**:
+  One-to-one matching은 GT 하나당 query 하나에만 gradient를 주는 구조적 한계가 있다. 이 모듈은 decoder 중간 layer에서만, 예측의 품질(IoU와 분류 신뢰도의 일치도)에 따라 GT마다 다른 개수의 positive를 배정해 supervision을 넓힌다 — 최종 layer는 여전히 순수 1:1 매칭이라 추론 방식(NMS 불필요 등)은 그대로 유지된다.
+- **구현**:
+  예측-GT 쌍마다 품질 점수 $s_{i,j} = IoU(\hat{b}_i, g_j) - \gamma \cdot \hat{c}_i$ (Eq. 6, $\gamma$는 위치정확도-분류신뢰도 균형 계수)를 계산한다. GT $g_j$의 positive 개수는 $k_j = \max(\lceil \sum_{i \in top\text{-}k(s_{\cdot,j})} s_{i,j} \rceil, l)$ (Eq. 7, $l$은 최소 positive 수)로 예측 품질에 따라 동적으로 결정된다. 손실은 1:多 손실(Eq. 3)에 IoU-aware Varifocal Loss(품질 점수로 positive를 가중)를 적용.
+- **입출력 shape**:
+  예측 집합 `P̂ = {p̂_1,...,p̂_n}` (박스+분류 신뢰도) + GT 집합 `G = {g_1,...,g_m}` → GT별 동적 positive 개수 `k_j` + 해당 인덱스 집합 → 1:多 손실 스칼라.
+
+```python
+# 논문 Eq.(6)-(7) 기반 의사코드
+s = iou(pred_boxes, gt_boxes) - gamma * pred_conf            # (n, m) quality score
+for j in range(m):
+    topk_idx = top_k(s[:, j], k=4)                            # k=4 (논문 채택값)
+    k_j = max(ceil(sum(s[topk_idx, j])), l)                   # l=1 (최소 positive)
+    positives[j] = topk_idx[:k_j]
+loss_1m = varifocal_loss(preds, gts, positives, quality=s)    # IoU-aware Varifocal Loss
+```
+
+<mark style="background: #FFF9D6A6;">Positive 개수를 고정 k가 아니라 예측 품질에 따라 매 GT·매 이미지마다 동적으로 정해, "문제 ②"인 supervision 희소성을 해소한다 — 이때도 "얼마나 많은 positive를 줄지"를 품질 신호로 적응적으로 조절하므로 저품질 매칭까지 무분별하게 늘리지 않는다. Table 6에서 이 모듈 단독 추가만으로 mAP가 +0.8(50.3→51.1) 개선된 것이 이를 뒷받침한다.</mark>
+
+> [!warning] 이 구조 때문에 예상되는 문제점
+> Top-k 선택의 k를 크게 잡으면(Fig. 3(c), k=5~6) 품질이 낮은 매칭까지 positive로 편입되어 오히려 mAP가 하락한다(k=4일 때 51.7 최고 → k=6일 때 50.7). "정리" 표의 "예상되는 문제점" ②에서 언급한 대로 k와 γ 두 하이퍼파라미터를 함께 튜닝해야 최적 효과가 난다.
+
+> [!info] 내 메모
+> 
+
+## 파이프라인 정리표
+
+| 단계 | 입력 shape | 출력 shape | 역할 | 구조/구현 |
+|---|---|---|---|---|
+| ① Content-Aware Weight Generator | 멀티스케일 encoder feature `{S_i}` | 동적 가중치 `W^D ∈ R^(n×m)` | 이미지 조건부 패턴 결합 비율 산정 | 1×1 conv+dilated conv, top-down fusion+channel/spatial attention, avg pool+MLP+softmax |
+| ② Pattern-based Representation Module | `W^D ∈ R^(n×m)` + base patterns `Q^P ∈ R^(m×d)` | content queries `Q^C ∈ R^(n×d)` | Gradient 공유를 통한 표현 측 불균형 완화 | 볼록결합(Eq. 4) + diversity loss(Eq. 8) |
+| Deformable Decoder | `Q^C, Q^P_pos ∈ R^(n×d)` + encoder memory `Z ∈ R^(m×d)` | `Q^L ∈ R^(n×d)` | 표준 self/cross-attention 디코딩 | Deformable-DETR decoder, L layers |
+| ③ Quality-Aware 1:多 Assignment | 예측 `P̂` (n개) + GT `G` (m개) | GT별 positive 인덱스 집합 + 손실 | Supervision 측 불균형 완화(중간 layer만) | IoU-분류 quality score(Eq. 6) + 동적 top-k(Eq. 7) + IoU-aware Varifocal Loss |
+
+> [!info] 내 메모
+> 
 
 # 실험 결과
 
-### 핵심 결과 (COCO val2017, DINO baseline 기준)
-| 벤치마크 | 지표 | Before(DINO baseline) | After(PaQ-DETR) |
+### 핵심 결과 — Table 1 (COCO val2017, ResNet-50, 12 epoch, 900 queries)
+**표를 보는 법**: DINO++(재구현 baseline)와 PaQ-DINO(제안 방법 적용) 행만 비교하면 이 논문의 핵심 개선폭을 바로 볼 수 있다. `AP_S/M/L`은 객체 크기별 성능.
+
+| 벤치마크 | 지표 | DINO++ (baseline) | PaQ-DINO (ours) |
 |---|---|---|---|
-| COCO val2017 | AP | DINO 기준값 | 일관된 개선(+수치는 표 참고) |
+| COCO val2017 (12 epoch, 900q) | mAP | 50.3 | 51.9 |
+| COCO val2017 (12 epoch, 900q) | AP50 / AP75 | 67.9 / 55.3 | 69.1 / 56.3 |
+| COCO val2017 (12 epoch, 900q) | AP_S / AP_M / AP_L | 34.1 / 53.7 / 63.7 | 35.1 / 56.0 / 66.6 |
+| COCO val2017 (24 epoch, 900q) | mAP | 50.9 | 52.6 |
 
 > [!note]- 세부 결과 및 Ablation
-> 이 논문은 dynamic query DETR 계열 중 유일하게 tiny/aerial 특화 데이터셋이 아니라 COCO 일반 객체 탐지를 주 벤치마크로 삼는다. PDF 추출 과정에서 수치 표의 세부 값(AP/AP50/AP75 등 정확한 소수점)이 이미지 기반 표로 렌더링되어 있어 본 노트에는 상대적 개선 경향만 반영하고, 정확한 수치는 원문 표를 직접 참고할 것을 권장한다.
-> - PAC·QAP 각 모듈의 ablation에서 두 모듈을 함께 쓸 때가 개별 적용보다 우수 — "병합 후 제거"라는 순서가 "제거만" 또는 "병합만"보다 효과적임을 시사.
-> - Query 개수가 이미지마다 동적으로 달라지는 것을 정성적으로 시각화(밀집 장면과 희소 장면에서 최종 query 수 차이).
+> #### Table 1 — 다른 baseline과의 비교 (COCO val2017, ResNet-50, 12 epoch)
+> **보는 법**: 같은 baseline 계열(회색 행 바로 위)과 짝지어 비교. 300-query 기준 Deformable-DETR++ 46.9→PaQ 48.4(+1.5), DAB-DETR++ 48.0→PaQ 49.2(+1.2), DN-DETR++ 47.3→PaQ 48.9(+1.6). 900-query 기준도 전 baseline에서 +1.1~+1.6 mAP 일관 개선. PaQ-DINO(24 epoch, 52.6 mAP)는 DDQ-DETR(52.0)·Stable-DINO(51.5)·Align-DETR(51.3)·MS-DETR(51.7) 등 동시대 방법을 모두 상회.
+>
+> #### Table 2 — Swin-L backbone (COCO val2017, 12 epoch)
+> **보는 법**: 더 큰 backbone에서도 개선이 유지되는지 확인. PaQ-DINO 57.8 mAP로 DINO(56.8) 대비 +1.0, Relation-DETR(57.8)과 동률로 최고 수준.
+>
+> #### Table 3 — 1:多 assignment DETR과의 비교 (COCO val2017, ResNet-50, 12 epoch, hybrid 설정 N_h=1500·k=6)
+> **보는 법**: Group-DETR/H-Def-DETR/MS-DETR/Co-DETR 등 기존 1:多 계열과 동일 조건(hybrid auxiliary branch)에서 비교. PaQ-DETR 52.4 mAP로 Co-DETR(52.1)보다 높아 최고 성능.
+>
+> #### Table 4 — CSD 결함 탐지 (ResNet-50, 60 epoch)
+> **보는 법**: 일반 객체가 아닌 표면 결함 탐지 도메인에서의 일반화 검증. PaQ-DINO 54.2 mAP로 DINO(53.4) 대비 +0.8.
+>
+> #### Table 5 — MSSD 결함 탐지 (ResNet-50, 120 epoch)
+> **보는 법**: 다른 결함 탐지 벤치마크. PaQ-DINO 55.2 mAP로 DINO(51.0) 대비 +4.2, 특히 AP_S가 20.0→27.2로 소형 결함에서 개선폭이 큼.
+>
+> #### Table 6 — 컴포넌트별 ablation (COCO val2017, ResNet-50, 12 epoch, DINO++ 기준)
+> **보는 법**: D(pattern-based dynamic query)와 Q(quality-aware 1:多 assignment) 체크 조합별 mAP·Gini 계수 비교.
+>
+> | D | Q | mAP | AP50 | AP75 | AP_S | AP_M | AP_L | Gini |
+> |---|---|---|---|---|---|---|---|---|
+> | | | 50.3 | 67.9 | 55.3 | 34.1 | 53.7 | 63.7 | 0.97 |
+> | ✓ | | 51.4 | 69.0 | 56.0 | 35.3 | 55.2 | 66.5 | 0.90 |
+> | | ✓ | 51.1 | 68.4 | 55.5 | 34.8 | 55.1 | 65.6 | 0.95 |
+> | ✓ | ✓ | **51.9** | **69.1** | **56.3** | 35.1 | **56.0** | **66.6** | **0.89** |
+>
+> D 단독 +1.1 mAP(특히 AP_L +2.8), Q 단독 +0.8 mAP, 둘 다 쓰면 +1.6 mAP(AP_M +2.3, AP_L +2.9)로 상호 보완적. Gini 계수도 0.97→0.89로 크게 개선되어 query 활용 불균형이 실제로 완화됨을 뒷받침.
+>
+> #### Fig. 3 — 하이퍼파라미터 ablation
+> **보는 법**: (a) 패턴 수 50~250 — 150~200에서 최적(51.7), 250은 소폭 하락(51.5). (b) diversity loss 가중치 β 0~0.4 — β=0.2에서 최적(51.8), β=0(정규화 없음)은 51.2로 하락. (c) 1:多 assignment top-k 2~6 — k=4에서 최적(51.7), k=6에서 50.7로 하락. (d) γ(IoU-분류 균형) 0.2~0.8 — γ=0.4에서 최적(51.7).
+>
+> #### Table 7 — 연산 효율성 (ResNet-50, 900 queries)
+> **보는 법**: Params/FLOPs/Mem/FPS를 baseline과 비교해 "정확도 개선 대비 비용"을 판단. PaQ-DINO는 DINO++ 대비 파라미터 42.0M→43.8M, FLOPs 196G→205G(+4.6%), 메모리 3.67GB→4.15GB(+0.48GB), FPS 15.8→15.4(−0.4, 논문 본문은 "−0.2 FPS"로 서술하나 표의 실제 차이는 0.4)로 경미한 오버헤드.
+>
+> #### Table 8 — Instance Segmentation (COCO val2017, CityScapes 2016, 300 queries, Deformable-DETR 기준)
+> **보는 법**: Detection 전용이 아니라 segmentation에도 확장 가능한지 확인. COCO 12 epoch에서 Mask AP 32.4→34.8(+2.4), Box AP 46.5→48.4(+1.9); CityScapes 12 epoch에서 Mask AP 34.8→36.8(+2.0), Box AP 52.6→54.8(+2.2).
+>
+> #### Fig. 4 — 수렴 곡선
+> **보는 법**: x축 epoch, y축 mAP. PaQ 계열(실선)이 baseline(점선)보다 초반부터 더 빠르게 수렴하고 최종 정확도도 높음 — pattern 기반 query가 더 나은 초기화·안정적 최적화를 제공한다는 저자 해석.
+>
+> #### Fig. 5, Fig. 6 — Pattern activation·의미적 군집 시각화
+> **보는 법**: Fig. 5는 person/cat 클래스의 성공 탐지(IoU>0.7, conf>0.5)에서 어떤 pattern이 활성화되는지 히트맵+분포로 표시 — 활성화가 소수 패턴에 sparse하게 집중되고 person·cat이 일부 패턴을 공유함을 보여줌. Fig. 6은 200장의 COCO 이미지에서 뽑은 W^D를 t-SNE로 2D 투영 — 동물(빨강)·항공기(주황)·차량(보라)이 서로 다른 영역에 군집을 이뤄, W^D가 이미지의 의미적 내용을 실제로 반영함을 시각적으로 뒷받침.
+
+> [!info] 내 메모
+> 
 
 # Discussion
 
 ### 이 아이디어의 잠재적 부작용
-- PAC의 클러스터링이 실제로는 서로 다른 두 개의 인접 객체를 하나로 잘못 병합할 위험(under-segmentation) → <mark style="background: #FF5582A6;">이 위험에 대한 정량적 검증(예: 병합 오류율)이 충분히 제시되지 않는다 — 특히 밀집된 소형 객체가 서로 인접한 상황에서 이 위험이 클 것으로 예상되나 별도 분석이 없다.</mark>
-- QAP의 품질 임계값이 학습 데이터의 객체 분포에 최적화되어, 도메인이 크게 다른 이미지(예: 다른 위키 논문들의 원격탐사 특화 데이터셋)에서는 재조정이 필요할 가능성 → <mark style="background: #FF5582A6;">COCO 단일 도메인 검증에 집중되어 있어, 도메인 전이 시의 강건성은 이 논문만으로는 확인하기 어렵다.</mark>
+- 패턴 수·1:多 top-k·γ 등 여러 하이퍼파라미터가 서로 얽혀 있어 → <mark style="background: #FF5582A6;">각각을 독립적으로 튜닝한 ablation(Fig. 3)만 제시되고, 하이퍼파라미터 간 상호작용(joint search)에 대한 분석은 없다.</mark>
+- 연산 비용이 소폭이지만 명확히 증가(Params +1.8M, FLOPs +9G, Mem +0.48GB) → <mark style="background: #FF5582A6;">논문은 "marginal overhead"라 표현하지만, 실시간성이 중요한 응용에서 이 증가분이 누적될 경우의 영향은 별도로 분석되지 않는다.</mark>
 
 ### 한계
-- <mark style="background: #FF5582A6;">Dynamic query DETR 계열의 다른 5편과 달리 이 논문은 AI-TOD/AI-TOD-V2 같은 tiny object 특화 벤치마크에서의 검증이 없어(COCO 중심), 이 위키의 주 관심사인 "타이니 객체" 맥락에서 다른 5편과 정량적으로 직접 비교하기 어렵다.</mark>
-- PAC·QAP 두 모듈이 순차 파이프라인이라, 앞 단계(PAC)의 오류가 뒷 단계(QAP)로 전파될 가능성에 대한 별도 강건성 분석은 제시되지 않는다.
-- 클러스터링 연산 자체의 추가 지연시간(latency)이 실시간 응용에 미치는 영향에 대한 상세 분석(FPS 비교 등)이 이 위키 노트 작성 시점 기준 PDF에서 명확히 확인되지 않음 — 원문 재확인 필요.
+- <mark style="background: #FF5582A6;">Quality-aware assignment는 중간 decoder layer에만 적용하고 최종 layer는 표준 1:1을 유지한다고 명시하지만, "왜 최종 layer에는 적용하지 않는지"(1:多를 최종까지 적용했을 때의 실패 사례나 정량적 비교)에 대한 ablation은 제시되지 않는다.</mark>
+- Fig. 3(a)에서 패턴 수가 250개로 늘면 성능이 소폭 하락한다고 보고하지만, <mark style="background: #FF5582A6;">그 이상(예: 300개 이상)의 구간이나 왜 특정 지점부터 "과도한 다양성"이 최적화를 방해하는지에 대한 메커니즘 설명은 없다.</mark>
+- 저자가 명시한 실패 사례(failure case) 분석은 논문 본문에서 확인되지 않는다 — 어떤 유형의 이미지·객체에서 PaQ-DETR이 baseline 대비 오히려 나빠지는지는 다루지 않는다.
 
 ### 생각할 점
-- <mark style="background: #A6E3A1A6;">이 논문은 6편의 dynamic query DETR 계열 중 유일하게 "전역 밀도"가 아니라 "개별 후보 간 관계(패턴)"와 "개별 후보의 품질"이라는 두 가지 인스턴스 레벨 신호를 직접 다룬다는 점에서, DQ-DETR/Density-Aware DETR/IG-DETR의 density map 계열과 뚜렷이 구분되는 두 번째 하위 갈래를 형성한다.</mark>
-- <mark style="background: #A6E3A1A6;">"병합(clustering)으로 중복을 줄이고 품질로 불필요한 것을 제거한다"는 2단계 구조는, 전통적 객체 탐지의 NMS(중복 제거)+confidence thresholding(저품질 제거) 파이프라인을 decoder 진입 이전 단계로 앞당긴 것으로 볼 수 있다 — 즉 NMS의 역할을 후처리가 아니라 query 생성 단계 자체에 내재화한 설계로 해석 가능하다.</mark>
+- <mark style="background: #A6E3A1A6;">"정적 query vs 동적 query", "1:1 vs 1:多 assignment"라는 이 분야의 두 오래된 논쟁을 "query activation imbalance"라는 하나의 상위 원인으로 재해석한 프레이밍 자체가 이 논문의 가장 흥미로운 기여로 보인다 — 표현(representation)과 supervision을 분리해서 보지 않고 "같은 문제의 두 측면"으로 묶은 시각이 다른 DETR 변형에도 적용될 수 있는 일반적 진단 틀일 수 있다.</mark>
+- <mark style="background: #A6E3A1A6;">Base pattern을 볼록결합으로 쓰는 방식(Eq. 4)은 사전학습된 "재사용 가능한 기저(dictionary)"라는 점에서, 이 위키의 다른 feature 강화 기법들이 쓰는 "매 이미지마다 새로 계산하는 attention"과는 다른 축의 파라미터 효율화 전략이다.</mark>
 
 ### 내 주제와 연관된 후속 연구 아이디어
-- <mark style="background: #A6E3A1A6;">이 위키의 dynamic query DETR 계열 중 density map 기반 3편(DQ-DETR, Density-Aware DETR, IG-DETR)과 이 논문의 pattern/quality 기반 접근을 결합하면, "전역 밀도로 대략의 예산을 정하고, 인스턴스 레벨 패턴/품질로 그 예산 내에서 세부 배정을 정제"하는 2단계 설계가 가능할 것으로 보인다.</mark>
-- <mark style="background: #A6E3A1A6;">PAC의 클러스터링 기반 병합은 이 위키의 [[QueryDet]]이 다루는 "저해상도에서 고해상도 연산 위치를 좁힌다"는 coarse-to-fine 사상과 달리, "동일 레벨 내에서 후보 간 관계로 중복을 줄인다"는 점에서 직교적인 축이다 — 두 아이디어를 결합하면 레벨 간 축소(QueryDet)와 레벨 내 축소(PAC)를 모두 갖춘 계층적 query 관리가 가능할 것으로 보인다.</mark>
+- <mark style="background: #A6E3A1A6;">Gini 계수로 query 활용 불균형을 정량화하는 방식(Fig. 1, Table 6)은, 이 위키의 다른 dynamic query DETR 계열([[DQ-DETR]] 등 density map 기반 접근)이 "density 신호로 query 수를 조절"하는 것과는 독립적인 축의 진단 지표다 — 두 접근을 결합해 "density로 대략의 query 예산을 정하고, pattern 기반 볼록결합으로 그 예산 내 gradient 균형을 맞춘다"는 하이브리드 설계를 검토할 가치가 있다.</mark>
+- <mark style="background: #A6E3A1A6;">Fig. 6의 t-SNE 군집(동물/항공기/차량)이 실제로 의미 있다면, 이 pattern 표현을 다른 도메인(원격탐사 등)에 전이했을 때도 유사한 군집 구조가 나타나는지, 그리고 그 군집 구조를 도메인 특화 사전 지식 주입에 활용할 수 있는지가 흥미로운 확장 방향으로 보인다.</mark>
+
+> [!info] 내 메모
+> 
 
 # 관련 개념
-- [[Pattern_Quality_Aware_Query_Refinement]] — 이 논문의 핵심 기여. 후보 query 간 공간적 유사도 기반 클러스터링(병합)과 객체다움 신뢰도 기반 pruning(제거)을 결합해 query 집합을 동적으로 정제하는 메커니즘. Density_Guided_Dynamic_Query와 달리 전역 밀도가 아니라 개별 후보 간 관계·품질을 직접 신호로 쓴다는 점에서 별도 concept으로 분리.
+- [[Pattern_Quality_Aware_Query_Refinement]] — 이 논문의 핵심 기여. 소수의 공유 base pattern을 이미지 조건부 가중치로 볼록결합해 object query를 구성하는 표현 측 메커니즘과, 예측 품질(IoU-분류 일치도)에 따라 GT당 positive 샘플 수를 동적으로 정하는 supervision 측 메커니즘을 함께 다룬다. 2026-08-31 PDF 재대조로 기존 정의(클러스터링 병합+pruning)의 오류를 바로잡고 실제 내용으로 전면 정정함.
+- [[Bipartite_Matching_Hungarian_Algorithm]] — 이 논문이 불균형의 구조적 원인으로 지목하는 DETR 표준 1:1 매칭 메커니즘.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — dynamic query DETR 계열 4번째 사례이자, density map 기반 3편과 구분되는 "pattern/quality 기반" 하위 갈래의 시작점. 유일하게 COCO 일반 객체 탐지를 주 벤치마크로 삼는 논문.
+- (아직 없음 — 이 위키의 dynamic query DETR 계열 비교 문서가 이 논문의 실제 내용을 반영해 갱신되면 추가 예정)
 
 # 읽어볼 만한 논문
-- 참고문헌 기반: (원문 참고문헌 목록에서 DQ-DETR, DINO, Sparse R-CNN 등 직접 인용 확인 — 이미 위키에 있는 [[DQ-DETR]], [[Density-Aware-DETR]]와 비교 대상이므로 중복 추천 생략)
-- 자유 추천(검증 필요): Dense-to-sparse query 정제를 다루는 DDQ(Dense Distinct Query) 계열 연구 — 검색 키워드: `dense distinct query DETR NMS-free duplicate removal learnable`. 이 논문의 PAC 모듈이 명시적으로 대조하는 "greedy 후처리 기반 중복 제거"와의 차이를 이해하는 데 도움.
-- 자유 추천(검증 필요): 클러스터링 기반 토큰 병합(token merging)을 Vision Transformer 효율화에 적용한 연구(ToMe 등) — 검색 키워드: `token merging vision transformer efficient clustering ToMe`. PAC의 유사도 기반 병합 아이디어가 ViT 토큰 압축 분야의 유사 기법과 어떻게 연결되는지 배경 이해에 유용할 것으로 예상.
-
----
-**보안 참고**: PDF 전체를 확인했으며, 프롬프트 인젝션이나 지시문처럼 보이는 텍스트는 발견되지 않았다. 다만 이 논문은 표·수치가 이미지 형태로 삽입된 페이지가 있어 일부 정확한 수치(AP 소수점 값 등)를 텍스트로 완전히 추출하지 못했다 — "실험 결과" 섹션에 이를 명시했으며, 필요 시 원문 PDF의 표를 직접 확인할 것을 권장한다.
+- 참고문헌 기반: N. Carion et al., "End-to-end object detection with transformers" [2] — 이 논문이 불균형의 근본 원인으로 지목하는 one-to-one Hungarian matching의 원조. 이미 위키에 있는 [[DETR]] 참고.
+- 참고문헌 기반: X. Zhu et al., "Deformable DETR: Deformable transformers for end-to-end object detection" [47] — 이 논문의 모든 baseline·decoder 구조가 기반하는 원조. 이미 위키에 있는 [[Deformable-DETR]] 참고.
+- 참고문헌 기반: Z. Zong, G. Song, Y. Liu, "DETRs with collaborative hybrid assignments training (Co-DETR)" [48] — Table 3에서 직접 비교 대상. 1:多 assignment를 gradient 공유로 결합하는 접근이라 quality-aware assignment와의 차이를 이해하는 데 도움. #pending:co-detr
+- 참고문헌 기반: S. Zhang et al., "Dense distinct query for end-to-end object detection (DDQ-DETR)" [44] — Table 1·2에서 직접 비교 대상이며, 공유 기저의 정적 조합이라는 점에서 이 논문의 "이미지 조건부 동적 조합"과의 차이가 뚜렷이 대조됨. #pending:ddq-detr
+- 자유 추천(검증 필요): Query activation imbalance를 Gini 계수로 정량화하는 다른 연구 사례 — 검색 키워드: `query activation imbalance gini coefficient DETR object query utilization`. 이 논문이 제시한 진단 프레임을 다른 DETR 변형에 적용한 후속 연구가 있는지 확인하는 데 유용.

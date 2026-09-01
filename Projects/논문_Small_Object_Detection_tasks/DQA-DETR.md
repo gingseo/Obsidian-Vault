@@ -23,7 +23,8 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, oriented-object-detection, detr, dynamic-query, remote-sensing, query-aggregation, label-assignment]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2026_JSTARS_DQA-DETR.pdf"
+source: "Projects/논문_pdf/Small_Object_Detection/2026_JSTARS_DQA-DETR.pdf"
+source_type: personal
 createdAt: "2026-08-24T03:17:00.000Z"
 updatedAt: "2026-08-28T18:20:00.000Z"
 ---
@@ -34,6 +35,7 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 > [!quote] 원제
 > **DQA-DETR: Dynamic Query Aggregation for Oriented Object Detection in Remote Sensing Images**
 > Yongchen Yao, Songwei Pei, Yuanzhou Huang, Qian Li, Shangguang Wang — Beijing University of Posts and Telecommunications, IEEE JSTARS 2026
+> https://doi.org/10.1109/JSTARS.2026.3683794
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Rotated-DINO 기반 oriented object detection에서, dense query를 줄이는 대신 유사한 고품질 query를 "병합(aggregate)"하는 방식으로 one-to-one matching의 중복 고품질 음성 샘플(high-quality negative) 문제를 해결하는 DQA-DETR — 이미지별 밀도 수준(4단계 분류)으로 병합 중심(aggregation center) 개수의 사전(prior)만 제공하고, class-agnostic rotated-NMS로 대표 중심을 선별한 뒤, multi-head cross-attention으로 나머지 dense query의 정보를 중심에 흡수시켜 DOTA-v1.0/v1.5에서 baseline 대비 mAP +2.70/+2.74%p를 달성한 원격탐사 방향성 객체 탐지 논문.</mark>
@@ -43,15 +45,42 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 
 # 정리
 
+## 기존 방법의 한계
+- **One-to-one matching의 고품질 음성 샘플**:
+  DETR 계열은 GT당 정확히 하나의 query만 양성으로 매칭하는데, 동일 GT 근처에 공간적으로 유사한 고품질 query가 여럿 있으면 나머지는 모두 음성(배경)으로 강제 라벨링된다. 저자들은 focal loss의 gradient를 직접 유도해(Eq. 1-3), 이런 "중복 고품질 negative"가 gradient 구조를 왜곡하고 학습 방향을 오염시킴을 이론적으로 보인다(Fig. 3, gradient ratio가 p>0.5 구간에서 음수로 전환).
+- **고정 query 수의 밀도 불일치**:
+  DOTA-v1.0은 이미지당 인스턴스 수가 1~1939개로 극단적 편차를 보인다. 소수 query는 밀집 소형 객체의 recall을 낮추고, 다수 query는 희소한 대형 객체 장면에서 중복 예측(redundant box)을 유발한다.
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — 중복 query 경쟁 완화**
+- DN-DETR/Group DETR/CO-DETR: 양성 샘플을 늘려 수렴 가속 — 유사 query 간 경쟁 자체는 해소하지 못함.
+- <mark style="background: #FFF3A3A6;">DDQ-DETR: class-agnostic NMS로 추론 시 중복을 제거 — 유사 query를 버릴 뿐 정보 활용 못 하고 적응성 없음.</mark>
+- EMO2-DETR: negative 재배정 + 추론 시 NMS로 완화 — end-to-end 설계 훼손.
+- **타겟/해결**: One-to-one matching의 고품질 음성 샘플(문제①) — 경쟁 완화 방향은 맞지만, DDQ-DETR류는 "제거"만 할 뿐 버려지는 정보를 활용하지 못한다.
+
+**갈래 2 — Dynamic query 개수 조정 및 회전 검출 설계**
+- <mark style="background: #FFF3A3A6;">DQ-DETR([[DQ-DETR]]): 이미지 레벨 밀도로 query 수 자체를 조정 — 학습 불안정성과 연산 오버헤드가 큼.</mark>
+- AO2-DETR, O2-DETR, ARS-DETR, D2Q-DETR: 회전 인식 모듈·query 설계 개선 — 원격탐사 특유의 밀도 편차(sparse·dense 동시 대응)는 대부분 미해결.
+- **타겟/해결**: 고정 query 수의 밀도 불일치(문제②) — DQ-DETR은 "몇 개 쓸지"만 조정했지, 유사 query 간 경쟁 자체(문제①)는 직접 다루지 않았고 학습 불안정성·오버헤드가 크다.
+
+**갭**: <mark style="background: #FFF3A3A6;">기존 dynamic query 연구(DQ-DETR)는 query를 "몇 개 쓸지"만 조정했지, 유사 query 간 경쟁 자체(고품질 negative 문제)를 직접 다루지 않았다. DDQ-DETR은 중복 제거는 하지만 버려지는 query의 정보를 활용하지 못한다.</mark>
+
+## 이 논문이 풀고자 하는 문제
+1. One-to-one matching에서 발생하는 중복 고품질 negative의 gradient 왜곡 문제를 정보 손실 없이 완화하는 것.
+2. 이미지별 객체 밀도에 맞게 병합될 대표 query(aggregation center) 개수를 동적으로 정하는 것.
+
+**갭 종합**: <mark style="background: #FFF3A3A6;">"제거"가 아니라 "병합"을 통해 정보를 보존하면서 동시에 밀도 적응적인 방법은 없었다는 것이 이 논문의 통찰이다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
 | | 문제 ① — One-to-one matching의 고품질 음성 샘플 | 문제 ② — 고정 query 수의 밀도 불일치 |
 |---|---|---|
-| **문제 정의** | DETR 계열은 GT당 정확히 하나의 query만 양성으로 매칭하는데, 동일 GT 근처에 공간적으로 유사한 고품질 query가 여럿 있으면 나머지는 모두 음성(배경)으로 강제 라벨링된다. 저자들은 focal loss의 gradient를 직접 유도해(Eq. 1-3), 이런 "중복 고품질 negative"가 gradient 구조를 왜곡하고 학습 방향을 오염시킴을 이론적으로 보인다(Fig. 3, gradient ratio가 p>0.5 구간에서 음수로 전환). | DOTA-v1.0은 이미지당 인스턴스 수가 1~1939개로 극단적 편차를 보인다. 소수 query는 밀집 소형 객체의 recall을 낮추고, 다수 query는 희소한 대형 객체 장면에서 중복 예측(redundant box)을 유발한다. |
-| **풀고자 하는 문제** | One-to-one matching에서 발생하는 중복 고품질 negative의 gradient 왜곡 문제를 정보 손실 없이 완화하는 것 | 이미지별 객체 밀도에 맞게 병합될 대표 query(aggregation center) 개수를 동적으로 정하는 것 |
-| **선행 연구 접근** | - DN-DETR/Group DETR/CO-DETR: 양성 샘플을 늘려 수렴 가속 — 유사 query 간 경쟁 자체는 해소하지 못함<br>- DDQ-DETR: class-agnostic NMS로 추론 시 중복을 제거 — 유사 query를 버릴 뿐 정보 활용 못 하고 적응성 없음<br>- EMO2-DETR: negative 재배정 + 추론 시 NMS로 완화 — end-to-end 설계 훼손 | - DQ-DETR([[DQ-DETR]]): 이미지 레벨 밀도로 query 수 자체를 조정 — 학습 불안정성과 연산 오버헤드가 큼<br>- AO2-DETR, O2-DETR, ARS-DETR, D2Q-DETR: 회전 인식 모듈·query 설계 개선 — 원격탐사 특유의 밀도 편차(sparse·dense 동시 대응)는 대부분 미해결 |
 | **해결 방법** | ACS(Aggregation Center Selector)가 class-agnostic rotated-NMS로 유사 query 중 대표만 남겨 Hungarian matching에 진입하는 query 수 자체를 줄이고, QA(Query Aggregator)가 선택 안 된 query의 정보를 attention으로 대표 query에 흡수시켜 "제거"가 아닌 "병합"으로 정보 보존 | ACP(Aggregation Center Predictor)가 이미지를 인스턴스 수 기준 4구간(0/1~9/10~99/100+)으로 분류해, 병합 후 남길 대표 query 개수(300/500/900/1200)의 대략적 사전(prior)만 제공 — 최종 검출 개수를 직접 정하지 않는다는 점이 DQ-DETR과 다름 |
 | **예상되는 문제점** | R-NMS가 미분 불가능한 연산이라 선택 단계 자체에는 gradient가 흐르지 않아, 선택 규칙 자체는 고정된 휴리스틱(confidence+IoU)에 의존 | ACP의 밀도 예측이 전역 feature 통계에만 의존해, 극도로 밀집되거나 초대형 이미지에서 일반화가 제한될 수 있음(저자 인정) |
-
-**갭 종합**: <mark style="background: #FFF3A3A6;">기존 dynamic query 연구(DQ-DETR)는 query를 "몇 개 쓸지"만 조정했지, 유사 query 간 경쟁 자체(고품질 negative 문제)를 직접 다루지 않았다. DDQ-DETR은 중복 제거는 하지만 버려지는 query의 정보를 활용하지 못한다. "제거"가 아니라 "병합"을 통해 정보를 보존하면서 동시에 밀도 적응적인 방법은 없었다는 것이 이 논문의 통찰이다.</mark>
 
 > [!info] 내 메모
 > 
@@ -261,18 +290,18 @@ L_total = 1.0 * focal_loss(cls, gt_cls) + 2.0 * rotated_iou_loss(box, gt_box) + 
 - R-NMS 임계값 0.8, QA 3층 등 핵심 하이퍼파라미터가 DOTA 데이터셋 특성에 맞춰 튜닝되어 있어, 다른 원격탐사 데이터셋에 대한 일반화는 검증되지 않음.
 
 ### 생각할 점
-- <mark style="background: #A6E3A1A6;">이 논문은 dynamic query DETR 계열 중 유일하게 oriented(회전) object detection을 다루며, "query 개수 자체를 줄인다"가 아니라 "비슷한 query를 병합해 정보를 보존한 채 개수를 실질적으로 압축한다"는 독자적인 제3의 전략을 취한다 — [[DQ-DETR]]/Density-Aware DETR/IG-DETR의 "밀도로 개수를 정한다", PaQ-DETR의 "패턴+품질로 병합·제거한다"와 비교하면, DQA-DETR은 PaQ-DETR과 "병합"이라는 상위 개념은 공유하지만 제거(pruning) 없이 병합만 한다는 점, 그리고 병합의 주 목적이 "one-to-one matching의 gradient 왜곡을 이론적으로 규명하고 이를 해소하는 것"이라는 점에서 독자적이다.</mark>
+- <mark style="background: #A6E3A1A6;">이 논문은 dynamic query DETR 계열 중 유일하게 oriented(회전) object detection을 다루며, "query 개수 자체를 줄인다"가 아니라 "비슷한 query를 병합해 정보를 보존한 채 개수를 실질적으로 압축한다"는 독자적인 제3의 전략을 취한다 — [[DQ-DETR]]/Density-Aware DETR/IG-DETR의 "밀도로 개수를 정한다"와 비교하면, DQA-DETR은 "선택되지 않은 query도 attention으로 흡수·병합해 정보를 보존한다"는 점에서 독자적이다. [[PaQ-DETR]]은 이와 전혀 다른 축(query 개수 조정이 아니라 query *표현*을 공유 패턴의 볼록결합으로 재구성하고, 매칭 단계에서 품질 기반 1:다 할당으로 supervision을 늘리는 것)을 다루므로 직접 비교 대상이 아니다.</mark>
 - <mark style="background: #A6E3A1A6;">Table IV·Fig. 7에서 baseline은 query 수 증가에 따라 성능이 붕괴(75.59→55.29)하는 반면 DQA-DETR은 안정적으로 유지되는 패턴은, "query를 늘리는 것 자체는 위험하고, 늘린 query를 어떻게 다루는지가 핵심"이라는 dynamic query DETR 계열 전체를 관통하는 메시지를 가장 극적으로 보여주는 실험이다.</mark>
 
 ### 내 주제와 연관된 후속 연구 아이디어
 - <mark style="background: #A6E3A1A6;">Focal loss의 gradient를 직접 유도해 "중복 고품질 negative가 학습을 방해한다"는 것을 이론적으로 보인 접근(Section III.B, Eq. 1-3)은, 이 위키의 다른 dynamic query DETR 논문들이 실험적 관찰에만 의존하는 것과 달리 이론적 근거를 제시한 유일한 사례다 — 이 분석 틀을 [[DQ-DETR]]·IG-DETR 등 다른 계열에도 적용하면 "왜 밀도 기반 query 조정이 작동하는지"에 대한 공통 이론적 기반을 마련할 수 있을 것으로 보인다.</mark>
-- <mark style="background: #A6E3A1A6;">QA의 "선택되지 않은 query를 버리지 않고 attention으로 흡수한다"는 아이디어는, 이 위키의 [[PaQ-DETR]]이 하는 "저품질 query를 완전히 제거"하는 것과 정반대 철학이다 — 두 방법을 결합해 "명백한 배경 query는 제거하되, 애매하지만 유용할 수 있는 중복 query는 병합"하는 하이브리드가 가능할지 검토할 가치가 있다.</mark>
+- <mark style="background: #A6E3A1A6;">QA의 "선택되지 않은 query를 버리지 않고 attention으로 흡수한다"는 설계는 정보 손실을 최소화하는 접근인데, [[PaQ-DETR]]이 다루는 "공유 패턴을 통해 gradient를 여러 query에 분산시킨다"는 문제의식과 결합하면 — 즉 R-NMS로 선택된 query의 표현 자체도 공유 패턴의 볼록결합으로 구성해본다면 — query activation imbalance를 줄이면서 동시에 정보 손실도 막는 하이브리드가 가능할지 검토할 가치가 있다.</mark>
 
 > [!info] 내 메모
 > 
 
 # 관련 개념
-- [[Pattern_Quality_Aware_Query_Refinement]] — PaQ-DETR과 "유사 query를 다룬다"는 상위 목표는 같지만, 이 논문은 병합(merge)만 하고 제거(prune)는 하지 않는다는 점에서 메커니즘이 다르다.
+- [[Pattern_Quality_Aware_Query_Refinement]] — PaQ-DETR이 다루는 문제(query 표현의 activation imbalance, 품질 기반 1:다 할당)는 이 논문의 "유사 query 병합"과는 다른 축이지만, 둘 다 넓게는 "DETR의 query 처리 방식을 어떻게 더 정교하게 만들 것인가"라는 상위 질문을 공유한다.
 - [[Density_Guided_Dynamic_Query]] — ACP의 4단계 이미지 밀도 분류는 DQ-DETR의 CCM과 구조적으로 유사(회귀 대신 분류, 4단계 구간)하지만, 이 논문에서 ACP의 출력은 "최종 query 수"가 아니라 ACS 단계를 위한 "대략적 사전(prior)"일 뿐이라는 역할 차이가 있다.
 - [[Multi_Head_Self_Attention]] — ACS 이전 decoder self/cross-attention, QA의 self-attention·cross-attention 모두의 기반.
 - [[Bipartite_Matching_Hungarian_Algorithm]] — 최종 예측-정답 매칭에 사용되는 one-to-one Hungarian matching.

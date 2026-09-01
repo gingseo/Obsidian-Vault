@@ -23,7 +23,8 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, detr, dynamic-query, density-estimation, remote-sensing, label-assignment]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2025_JSTARS_Density-Aware-DETR.pdf"
+source: "Projects/논문_pdf/Small_Object_Detection/2025_JSTARS_Density-Aware-DETR.pdf"
+source_type: personal
 createdAt: "2026-08-24T03:09:00.000Z"
 updatedAt: "2026-08-28T19:00:00.000Z"
 ---
@@ -34,6 +35,7 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 > [!quote] 원제
 > **Density-Aware DETR With Dynamic Query for End-to-End Tiny Object Detection**
 > Xianhang Ye, Chang Xu, Haoran Zhu, Fang Xu, Haijian Zhang, Wen Yang — Wuhan University, IEEE JSTARS 2025
+> https://doi.org/10.1109/JSTARS.2025.3571814
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">DQ-DETR의 이산 4단계 query 개수 분류를 crowd counting 기법 기반 연속 density map 회귀로 대체하고, 점 단위 density focal loss(DFL)로 이를 정밀하게 학습시키며, tiny object에서 L1 loss의 supervision이 약해지는 문제를 log-ratio 기반 anchor L1 measure로 보완한 D3Q(Density-aware DETR with Dynamic Query) — AI-TOD-v2에서 DINO baseline 대비 mAP +3.6%p, DQ-DETR 대비도 우위를 보이며 새 SOTA(32.1% mAP)를 달성한 plug-and-play 모듈.</mark>
@@ -43,15 +45,41 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 
 # 정리
 
+## 기존 방법의 한계
+- **고정 query 수와 극단적 밀도 편차의 충돌**:
+  원격탐사 영상은 이미지당 인스턴스 수가 COCO(대부분 100개 미만)와 달리 AI-TOD-v2 기준 1~2667개까지 극단적으로 편차가 크다(Fig. 2). Sparse query는 밀집 장면의 recall을 낮추고, dense query는 sparse 장면에서 one-to-one assignment 최적화를 어렵게 만들며 연산도 낭비한다.
+- **정규화 좌표의 약한 회귀 supervision**:
+  DETR은 박스 좌표를 [0,1] 정규화 표현으로 회귀하는데, tiny object는 이 정규화 좌표에서 너비·높이 값 자체가 매우 작아 GT와의 편차도 작아진다. 표준 L1 loss는 절대 오차만 보므로, 이 작은 편차에 대한 유효 gradient가 거의 0에 가까워 supervision이 사실상 사라진다.
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — 이산 분류 기반 dynamic query**
+- <mark style="background: #FFF3A3A6;">DQ-DETR([[DQ-DETR]]): 인스턴스 수를 4개 이산 구간(N≤10/10~100/100~500/500+)으로 분류해 query 수(300/500/900/1500)를 결정 — 구간 폭이 넓어 서로 다른 밀도(예: 101개 vs 499개)가 같은 구간으로 뭉개짐.</mark>
+- Crowd counting 계열(density map 기반 연속 카운팅): detection과 직접 결합된 사례는 드묾.
+- **타겟/해결**: 고정 query 수와 극단적 밀도 편차의 충돌(문제①) — 밀도 기반 dynamic query라는 방향은 맞지만, 이산 분류라는 선택이 밀도 정보의 세밀함을 희생시킨다.
+
+**갈래 2 — 박스 회귀 손실 설계**
+- Anchor 기반 검출기: 앵커 대비 상대 오프셋으로 박스를 인코딩해 스케일 불변적 회귀를 함.
+- DETR 계열: 정규화 좌표에 표준 L1만 사용 — tiny object에 특화된 조정 없음.
+- **타겟/해결**: 정규화 좌표의 약한 회귀 supervision(문제②) — anchor 기반 검출기의 상대 오프셋 아이디어는 있었지만 DETR 계열의 정규화 좌표 L1 loss에는 이식된 적이 없었다.
+
+**갭**: <mark style="background: #FFF3A3A6;">DQ-DETR이 처음으로 밀도 기반 dynamic query 개념을 제시했지만, 이산 분류라는 선택이 밀도 정보의 세밀함을 희생시켰다. Anchor 기반 검출기의 상대 오프셋 회귀 아이디어는 DETR 계열의 정규화 좌표 L1 loss 설계에는 반영되지 않았다.</mark>
+
+## 이 논문이 풀고자 하는 문제
+1. 이미지별 실제 객체 밀도를 연속적으로 추정해 object query 수를 데이터셋·이미지에 상관없이 자동으로 적응시키는 것.
+2. Tiny object의 박스 회귀에도 유효한 gradient가 남도록 손실 함수 자체를 재설계하는 것.
+
+**갭 종합**: <mark style="background: #FFF3A3A6;">이 논문은 "이산 분류 대신 연속 회귀"라는 하나의 축과, "정규화 좌표의 회귀 약화"라는 완전히 다른 축(query 개수와 무관한 loss 설계 문제)을 함께 해결함으로써, DQ-DETR이 놓친 정밀도와 DETR 계열 전체가 겪는 tiny object 회귀 문제를 동시에 메운다는 것이 통찰이다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
 | | 문제 ① — 고정 query 수와 극단적 밀도 편차의 충돌 | 문제 ② — 정규화 좌표의 약한 회귀 supervision |
 |---|---|---|
-| **문제 정의** | 원격탐사 영상은 이미지당 인스턴스 수가 COCO(대부분 100개 미만)와 달리 AI-TOD-v2 기준 1~2667개까지 극단적으로 편차가 크다(Fig. 2). Sparse query는 밀집 장면의 recall을 낮추고, dense query는 sparse 장면에서 one-to-one assignment 최적화를 어렵게 만들며 연산도 낭비한다. | DETR은 박스 좌표를 [0,1] 정규화 표현으로 회귀하는데, tiny object는 이 정규화 좌표에서 너비·높이 값 자체가 매우 작아 GT와의 편차도 작아진다. 표준 L1 loss는 절대 오차만 보므로, 이 작은 편차에 대한 유효 gradient가 거의 0에 가까워 supervision이 사실상 사라진다. |
-| **풀고자 하는 문제** | 이미지별 실제 객체 밀도를 연속적으로 추정해 object query 수를 데이터셋·이미지에 상관없이 자동으로 적응시키는 것 | Tiny object의 박스 회귀에도 유효한 gradient가 남도록 손실 함수 자체를 재설계하는 것 |
-| **선행 연구 접근** | - DQ-DETR([[DQ-DETR]]): 인스턴스 수를 4개 이산 구간(N≤10/10~100/100~500/500+)으로 분류해 query 수(300/500/900/1500)를 결정 — 구간 폭이 넓어 서로 다른 밀도(예: 101개 vs 499개)가 같은 구간으로 뭉개짐<br>- Crowd counting 계열(density map 기반 연속 카운팅): detection과 직접 결합된 사례는 드묾 | - Anchor 기반 검출기: 앵커 대비 상대 오프셋으로 박스를 인코딩해 스케일 불변적 회귀를 함<br>- DETR 계열: 정규화 좌표에 표준 L1만 사용 — tiny object에 특화된 조정 없음 |
 | **해결 방법** | IDE(Instance Density Estimation)가 encoder feature에서 연속적인 salient density map을 예측하고, 그 합(적분)으로 이미지의 객체 수를 직접 추정 — 이산 분류가 아닌 연속값이라 세밀한 밀도 차이도 보존 | Anchor L1 measure — 박스의 너비·높이에 로그 비율(`|log(l_p/l_gt)|`)을 적용해 값의 절대 크기와 무관하게 상대 오차에 민감한 gradient를 유지 |
 | **예상되는 문제점** | Density map을 pixel-level로 회귀하는 방식이라 예측 개수(K)가 실제 GT 개수를 크게 넘어서는 경우 query 조정 효율이 떨어질 수 있음(Table VII에서 L2 loss 사용 시 실제로 발생) | 로그 비율 방식은 중심 좌표(x,y)에는 적용되지 않고 너비·높이(w,h)에만 적용되므로, 중심 위치 자체의 supervision 약화 문제는 여전히 남음 |
-
-**갭 종합**: <mark style="background: #FFF3A3A6;">DQ-DETR이 처음으로 밀도 기반 dynamic query 개념을 제시했지만, 이산 분류라는 선택이 밀도 정보의 세밀함을 희생시켰다. 이 논문은 "이산 분류 대신 연속 회귀"라는 하나의 축과, "정규화 좌표의 회귀 약화"라는 완전히 다른 축(query 개수와 무관한 loss 설계 문제)을 함께 해결함으로써, DQ-DETR이 놓친 정밀도와 DETR 계열 전체가 겪는 tiny object 회귀 문제를 동시에 메운다는 것이 통찰이다.</mark>
 
 > [!info] 내 메모
 > 

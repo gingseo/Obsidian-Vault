@@ -1,10 +1,10 @@
 # PaperWiki Schema
 
-이 문서는 `ResearchVault/PaperStudy/`(Concepts/, Comparisons/, Moc/, reading-list.md)와 `Projects/`(task별 프로젝트 노트, `논문_<Task>_tasks/` 논문 분석 노트 폴더) 그리고 vault 밖 `/Users/GyeongSeo/Workspace/논문_pdf/`(논문 PDF 원본) 아래 문서를 생성·수정할 때 지켜야 하는 규칙이다.
+이 문서는 `ResearchVault/PaperStudy/`(Concepts/, Comparisons/, Moc/, reading-list.md)와 `Projects/`(task별 프로젝트 노트, `논문_<Task>_tasks/` 논문 분석 노트 폴더, `논문_pdf/` 논문 PDF 원본) 아래 문서를 생성·수정할 때 지켜야 하는 규칙이다.
 Claude Code에게 위키 업데이트를 요청할 때, 이 문서가 유일한 규칙 소스다.
 
-> [!note] PDF 원본은 vault 밖에 있다
-> 논문 PDF 원본은 용량 문제로 Obsidian vault(`GingseoLife/`) 밖의 `/Users/GyeongSeo/Workspace/논문_pdf/`에 별도 보관한다. 분석 노트(task 노트)는 여전히 vault 안 `Projects/논문_<Task>_tasks/`에 있다. `/Users/GyeongSeo/Workspace/논문_pdf/` 아래 파일은 Obsidian `[[wiki-link]]` 대상이 아니므로(vault 밖이라 링크가 걸리지 않는다), 노트에서는 `source` frontmatter에 절대경로 문자열로만 참조한다.
+> [!note] PDF 원본은 vault 안 `Projects/논문_pdf/`에 있다
+> 논문 PDF 원본과 분석 노트(task 노트) 모두 Obsidian vault(`GingseoLife/`) 안에 있다 — PDF는 `Projects/논문_pdf/`, 분석 노트는 `Projects/논문_<Task>_tasks/`. `Projects/논문_pdf/`는 용량이 커서 git 추적 대상에서는 제외했지만(`.gitignore`), Obsidian vault 자체에는 포함되어 있다.
 
 ## 폴더 구조
 
@@ -18,20 +18,19 @@ ResearchVault/MD_Files/
   README.md                사용법
   Schema.md                이 문서
 
-Projects/                볼트 최상위. 논문 분석 노트는 여기 있다 (PDF 원본은 vault 밖, 아래 참고)
+Projects/                볼트 최상위. 논문 분석 노트와 PDF 원본 모두 여기 있다
   논문_<Task>.md              task별 Project Manager 프로젝트 노트 (예: 논문_Small_Object_Detection.md, 논문_Anomaly_Detection.md). task 개수만큼 존재한다
   논문_<Task>_tasks/          그 task 프로젝트에 속한 논문 분석 노트(task 노트)들 (논문 1편 = 파일 1개). 반드시 `<프로젝트파일명>_tasks` 형식이어야 한다(아래 참고)
   논문_PaperWiki.base         모든 논문_<Task>_tasks/ 논문 노트를 가로질러 테이블로 보여주는 Obsidian Bases 뷰 정의. task/status 등으로 필터링은 여기서 한다
-
-/Users/GyeongSeo/Workspace/논문_pdf/     vault 밖. 논문 PDF 원본 (용량 문제로 vault 밖에 보관)
-  _inbox/                  아직 처리 안 한 원본 PDF (다운받으면 여기에 넣는다)
-  <Task>/                   처리 완료 후 이동되는 task별 PDF 폴더
-  _issue_paper/             (참고용, 처리 대상 아님) 직접 읽으려는 논문이 아니라 커뮤니티 등에서 이슈가 된 논문을 트렌드 파악용으로 모아두는 별도 폴더. `/process-papers` 워크플로우가 스캔하는 대상이 아니다.
+  논문_pdf/                   논문 PDF 원본 (용량이 커서 `.gitignore`로 git 추적에서는 제외했지만 vault 안에는 있다)
+    _inbox/                    아직 처리 안 한 원본 PDF, 직접 읽으려고 넣은 것 (다운받으면 여기에 넣는다) — 처리되면 `source_type: personal`
+    _issue_paper/               아직 처리 안 한 원본 PDF, 커뮤니티 등에서 이슈가 된 논문을 트렌드 파악용으로 넣은 것 — 처리되면 `source_type: community`
+    <Task>/                     처리 완료 후 이동되는 task별 PDF 폴더 (`_inbox/`·`_issue_paper/` 구분 없이 한 곳에 모인다 — 어디서 왔는지는 노트의 `source_type`으로 구분)
 ```
 
-- 새 PDF는 항상 `/Users/GyeongSeo/Workspace/논문_pdf/_inbox/`에 넣는다.
-- 처리 완료되면 PDF 파일 자체를 `/Users/GyeongSeo/Workspace/논문_pdf/<Task>/`로 **이동**한다 (`_inbox/`에는 남기지 않는다). "처리됐는지"는 이제 폴더 위치로도 바로 보인다 — `_inbox/`에 남아있으면 미분류, `<Task>/`에 있으면 처리 완료.
-- `<Task>` 이름은 논문의 목적/과제를 가리키며, 아래 "폴더·파일 네이밍 규칙"을 따른다 (예: `Small_Object_Detection`, `Anomaly_Detection`). 기존에 없던 task면 프로젝트 노트(`Projects/논문_<Task>.md`)와 논문 노트 폴더(`Projects/논문_<Task>_tasks/`)를 함께 새로 만든다. 폐쇄 목록이 아니다 — 논문을 보고 적절한 task가 없으면 새로 만든다. `/Users/GyeongSeo/Workspace/논문_pdf/<Task>/`(PDF 쪽)와 `Projects/논문_<Task>_tasks/`(노트 쪽)는 폴더명 규칙이 다르다는 점에 유의한다 — PDF 폴더는 접미사 없이 `<Task>` 그대로, 노트 폴더는 반드시 `<Task>_tasks`.
+- 새 PDF는 직접 읽고 싶은 논문이면 `Projects/논문_pdf/_inbox/`에, 커뮤니티에서 화제라 트렌드 파악 차원에서 챙겨두는 논문이면 `Projects/논문_pdf/_issue_paper/`에 넣는다. 둘 다 `/process-papers`의 처리 대상이다 — 넣은 폴더에 따라 노트의 `source_type`만 다르게 채워진다(아래 Frontmatter 절 참고).
+- 처리 완료되면 PDF 파일 자체를 `Projects/논문_pdf/<Task>/`로 **이동**한다 (`_inbox/`·`_issue_paper/` 어디서 왔든 동일하게 이동하고, 원래 폴더에는 남기지 않는다). "처리됐는지"는 이제 폴더 위치로도 바로 보인다 — `_inbox/`나 `_issue_paper/`에 남아있으면 미분류, `<Task>/`에 있으면 처리 완료.
+- `<Task>` 이름은 논문의 목적/과제를 가리키며, 아래 "폴더·파일 네이밍 규칙"을 따른다 (예: `Small_Object_Detection`, `Anomaly_Detection`). 기존에 없던 task면 프로젝트 노트(`Projects/논문_<Task>.md`)와 논문 노트 폴더(`Projects/논문_<Task>_tasks/`)를 함께 새로 만든다. 폐쇄 목록이 아니다 — 논문을 보고 적절한 task가 없으면 새로 만든다. `Projects/논문_pdf/<Task>/`(PDF 쪽)와 `Projects/논문_<Task>_tasks/`(노트 쪽)는 폴더명 규칙이 다르다는 점에 유의한다 — PDF 폴더는 접미사 없이 `<Task>` 그대로, 노트 폴더는 반드시 `<Task>_tasks`.
 - **`논문_<Task>_tasks/` 폴더명은 `_tasks` 접미사가 필수다.** Project Manager 플러그인이 프로젝트 노트 `Projects/논문_<Task>.md`의 task를 스캔할 때 폴더 경로를 `파일 경로에서 .md를 _tasks로 치환`해서 계산하도록 하드코딩되어 있다(플러그인 소스 `projectTaskFolder`). 즉 `논문_Small_Object_Detection.md`의 task 폴더는 반드시 `논문_Small_Object_Detection_tasks/`여야 하며, 접미사가 없거나 다르면(예: `논문_Small_Object_Detection/`) Project Manager가 그 폴더를 전혀 스캔하지 않아 프로젝트의 task 개수가 0으로 표시된다.
 - 논문 하나가 여러 task에 걸치면(드묾) 가장 핵심적인 task 하나의 프로젝트·폴더에만 PDF와 노트를 두고, task 노트의 `task` 속성에는 해당되는 task를 전부 적는다.
 - 논문 분석 노트는 `ResearchVault/PaperStudy/` 안에 있지 않다 — Project Manager 플러그인과 통합 관리하기 위해 볼트 최상위 `Projects/논문_<Task>_tasks/`에 둔다. 자세한 내용은 아래 "Projects/논문_<Task>.md — 논문 분석 노트" 절 참고. `Concepts/`와 `Comparisons/`는 여러 task에 걸치는 경우가 많으므로 task로 나누지 않고 `PaperStudy/` 안에 폴더 하나로 모아둔다.
@@ -60,7 +59,7 @@ Projects/                볼트 최상위. 논문 분석 노트는 여기 있다
 
 ## PDF 파일명 규칙
 
-`/Users/GyeongSeo/Workspace/논문_pdf/_inbox/`의 PDF를 처리할 때, 이동하기 전에 다음 규칙으로 리네임한다.
+`Projects/논문_pdf/_inbox/` 또는 `_issue_paper/`의 PDF를 처리할 때, 이동하기 전에 다음 규칙으로 리네임한다.
 
 ```
 {년도}_{학술지/학회/venue}_{제목}.pdf
@@ -93,7 +92,7 @@ Projects/                볼트 최상위. 논문 분석 노트는 여기 있다
 
 ### Frontmatter
 
-Project Manager의 task 스키마(`pm-task`, `projectId`, `id`, `type`, `priority`, `progress`, `assignees`, `subtaskIds`, `dependencies`, `createdAt`, `updatedAt` 등)에 아래 PaperWiki 고유 속성을 **frontmatter 최상위에 평평하게** 추가한다. PaperWiki 고유 속성(`year`/`venue`/`jcr_quartile`/`task`/`direction`/`paper_tags`/`source`)은 Project Manager의 `customFields`(중첩 객체) 안에 넣지 않는다 — Obsidian Bases는 중첩된 객체를 컬럼별로 필터링하지 못하기 때문에, `논문_PaperWiki.base`에서 `venue`/`year`/`jcr_quartile` 등을 각각 필터링하려면 반드시 최상위 키여야 한다. 단, Project Manager UI의 Table 뷰(Bases가 아니라 Project Manager 자체 뷰)에서 Year/Venue를 컬럼으로 보기 위해 사용자가 프로젝트별로 추가한 `customFields`(Year/Venue/Summary/Tags)는 최상위 속성과 별개로 병행 사용한다 — 최상위 `year`/`venue`가 정본이고, `customFields`의 Year/Venue는 Project Manager UI 표시용으로 같은 값을 중복 기입한다(아래 "Frontmatter" 절의 `customFields` 항목 참고).
+Project Manager의 task 스키마(`pm-task`, `projectId`, `id`, `type`, `priority`, `progress`, `assignees`, `subtaskIds`, `dependencies`, `createdAt`, `updatedAt` 등)에 아래 PaperWiki 고유 속성을 **frontmatter 최상위에 평평하게** 추가한다. PaperWiki 고유 속성(`year`/`venue`/`jcr_quartile`/`task`/`direction`/`paper_tags`/`source`/`source_type`)은 Project Manager의 `customFields`(중첩 객체) 안에 넣지 않는다 — Obsidian Bases는 중첩된 객체를 컬럼별로 필터링하지 못하기 때문에, `논문_PaperWiki.base`에서 `venue`/`year`/`jcr_quartile` 등을 각각 필터링하려면 반드시 최상위 키여야 한다. 단, Project Manager UI의 Table 뷰(Bases가 아니라 Project Manager 자체 뷰)에서 Year/Venue를 컬럼으로 보기 위해 사용자가 프로젝트별로 추가한 `customFields`(Year/Venue/Summary/Tags)는 최상위 속성과 별개로 병행 사용한다 — 최상위 `year`/`venue`가 정본이고, `customFields`의 Year/Venue는 Project Manager UI 표시용으로 같은 값을 중복 기입한다(아래 "Frontmatter" 절의 `customFields` 항목 참고).
 
 ```yaml
 ---
@@ -121,7 +120,8 @@ jcr_quartile: Q1 | Q2 | Q3 | Q4 | arXiv | Workshop | null
 task: [<task1>, <task2>, ...]
 direction: [<direction1>, <direction2>, ...]
 paper_tags: [paper, <세부 주제 태그...>]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/<Task>/<리네임된 파일명>"
+source: "Projects/논문_pdf/<Task>/<리네임된 파일명>"
+source_type: personal | community
 createdAt: "<ISO 8601>"
 updatedAt: "<ISO 8601>"
 ---
@@ -156,6 +156,8 @@ updatedAt: "<ISO 8601>"
   | arXiv | arXiv |
 
 - `tags`(빈 배열)는 Project Manager 자체 태그 시스템 필드이므로 건드리지 않는다. PaperWiki의 주제 태그는 이름이 겹치지 않도록 **`paper_tags`**에 넣는다.
+- `source`: 처리 완료 후 이동된 PDF의 vault 안 경로. `Projects/논문_pdf/<Task>/<리네임된 파일명>` 형태.
+- `source_type`: 이 논문 PDF를 어느 폴더에 넣었는지로 정해지는 출처 구분. `_inbox/`에 넣었으면(직접 읽고 싶어서 챙긴 논문) `personal`, `_issue_paper/`에 넣었으면(커뮤니티 등에서 화제라 트렌드 파악 차원에서 챙긴 논문) `community`. 어느 폴더에서 왔는지 확인해서 기계적으로 채운다 — 논문 내용을 보고 판단하지 않는다.
 - `task`: 이 논문이 다루는 과제. 노트가 위치한 `Projects/논문_<Task>_tasks/` 폴더명과 동일한 값을 쓴다 (여러 개면 배열).
 - `direction`: 이 논문이 연구 흐름에서 어떤 역할을 하는지 나타내는 **다중 선택 개방형** 태그. 한 논문이 여러 방향성에 동시에 해당될 수 있다 (예: 처음엔 새로운 시도였지만 지금은 foundational이기도 함). 아래 "direction 카테고리" 절 참고.
 - `status`: 이 논문을 실제로 읽고 이해한 진행 상태를 나타낸다. Project Manager 프로젝트의 "Statuses" 설정(해야할 것/진행 중/추가 공부 요청/완료)과 값을 공유한다.
@@ -163,7 +165,7 @@ updatedAt: "<ISO 8601>"
   - `in-progress`: 새로 처리 중 — Claude Code가 분석 노트를 막 생성했을 때의 기본값이 이 상태다. 사용자가 아직 논문을 다 읽지 않았어도 이 상태로 둔다.
   - `additional-study-needed`: 한 번 읽었지만 더 깊이 공부가 필요하다고 판단됨.
   - `done`: 사용자가 실제로 다 읽고 이해를 마침. Claude Code는 이 값을 스스로 `done`으로 바꾸지 않는다 — 사용자가 직접 다 읽고 나서 바꾸는 값이다.
-- `start`: 이 논문을 `_inbox/`에 처음 넣은 날짜. `_inbox/`에 있던 PDF 파일의 수정 시각(mtime)을 확인해 채운다.
+- `start`: 이 논문을 `_inbox/` 또는 `_issue_paper/`에 처음 넣은 날짜. 해당 PDF 파일의 수정 시각(mtime)을 확인해 채운다.
 - `jcr_quartile`: 이 논문이 실린 저널/학회의 등급. **절대로 추측해서 채우지 않는다.** 규칙:
   - **학회 논문**(NeurIPS, CVPR, ICCV, ECCV, ICML, ICLR처럼 이 분야에서 명백히 top-tier로 통용되는 학회)은 `Q1`로 표기해도 된다 — 이건 업계에서 널리 인정되는 사실이라 확신 가능하다. 그 외 애매한 학회는 함부로 등급을 매기지 않는다.
   - **저널 논문**은 실제 공식 JCR 등급을 알아야 하는데, 이건 매년 갱신되고 같은 저널도 분류 카테고리(예: Engineering vs Computer Science)에 따라 등급이 다를 수 있어 Claude Code가 확신을 갖고 판단할 수 없다. **모르면 `null`로 비워두고, 사용자에게 물어본다** ("이 논문 — <venue> — JCR 등급 아시면 알려주세요" 형태로). 사용자가 답을 주면 그 값을 채운다.
@@ -179,6 +181,12 @@ updatedAt: "<ISO 8601>"
 - Neural Networks (Elsevier): `Q1`
 - Image and Vision Computing (Elsevier): `Q1` (사용자는 "Q1-Q2 정도"로 표현 — 단일 값 필드 제약상 Q1로 단순화해 기록. 애매하면 재확인)
 - ICASSP: `Q2` (사용자 본인 판단 기준, 공식 학회 등급 체계는 아님 — "본인이 그 정도로 생각한다"는 맥락으로 적용)
+- IEEE TPAMI: `Q1`
+- IEEE TIP: `Q1`
+- Expert Systems With Applications (Elsevier): `Q1`
+- Remote Sensing (MDPI): `Q2`
+- Remote Sensing Applications: Society and Environment (Elsevier): `Q2`
+- Sensors (MDPI): `Q2`
 
 ### 새 task 노트 생성 시 프로젝트 노트도 함께 갱신
 
@@ -191,7 +199,9 @@ updatedAt: "<ISO 8601>"
 
 **독자 전제**: 이 노트는 object detection의 기본 개념(anchor, IoU, NMS, mAP 등)은 이미 아는 사람이, 그 논문이 제안하는 **모델 구조**(어떤 레이어가 무엇을 어떻게 하는지)를 처음부터 상세히 배우기 위한 자료다. 목표는 "이 노트만 보고 전체 흐름을 이해해서 다른 사람에게 설명할 수 있는 수준" — 단순 요약이 아니라 학습 자료로 취급한다.
 
-frontmatter 바로 아래, `# 한 줄 요약` 헤딩보다도 위에 frontmatter의 `paper_tags` 배열을 `#해시태그` 형태로 한 줄 옮겨 적는다 (예: `#paper #object-detection #transformer`). frontmatter의 속성 패널은 hover 미리보기에서 항상 렌더링되는 게 아니라서, 본문 첫 줄에도 명시적으로 둬야 미리보기에서 바로 태그를 확인할 수 있다. `paper_tags` 배열이 바뀌면 이 줄도 함께 갱신한다. 그 아래 `> [!quote] 원제` 콜아웃으로 논문 원제·저자·venue를 적는다 — `title` 필드는 short title(없으면 원제)만 담으므로, 원제 전체는 본문에서 이 콜아웃으로 항상 볼 수 있게 한다.
+frontmatter 바로 아래, `# 한 줄 요약` 헤딩보다도 위에 frontmatter의 `paper_tags` 배열을 `#해시태그` 형태로 한 줄 옮겨 적는다 (예: `#paper #object-detection #transformer`). frontmatter의 속성 패널은 hover 미리보기에서 항상 렌더링되는 게 아니라서, 본문 첫 줄에도 명시적으로 둬야 미리보기에서 바로 태그를 확인할 수 있다. `paper_tags` 배열이 바뀌면 이 줄도 함께 갱신한다. 그 아래 `> [!quote] 원제` 콜아웃으로 논문 원제·저자·venue·링크를 적는다 — `title` 필드는 short title(없으면 원제)만 담으므로, 원제 전체는 본문에서 이 콜아웃으로 항상 볼 수 있게 한다.
+
+마지막 줄의 논문 링크는 DOI가 있으면 `https://doi.org/<DOI>`를, DOI가 없는 논문(arXiv, 일부 워크숍/프리프린트 등)은 그 논문의 공식 접근 페이지(예: arXiv면 `https://arxiv.org/abs/<id>`, 학회/출판사 프로시딩 페이지 등)를 대신 적는다 — "DOI 링크"가 아니라 "이 논문에 실제로 접근할 수 있는 링크"가 목적이므로 무엇이든 하나는 채운다. PDF에서 DOI나 링크를 전혀 찾을 수 없으면(드묾) 이 줄 자체를 생략한다(근거 없는 링크를 만들어내지 않는다).
 
 ```markdown
 #paper #<세부 주제 태그...>
@@ -199,6 +209,7 @@ frontmatter 바로 아래, `# 한 줄 요약` 헤딩보다도 위에 frontmatter
 > [!quote] 원제
 > **<논문 원제 전체>**
 > <저자진> — <소속>, <venue> <year>
+> <DOI 링크 또는 arXiv/공식 페이지 링크>
 
 # 한 줄 요약
 (노랑 하이라이트) 이 논문을 한 문장으로.
@@ -208,15 +219,44 @@ frontmatter 바로 아래, `# 한 줄 요약` 헤딩보다도 위에 frontmatter
 
 # 정리
 
+## 기존 방법의 한계
+- **<문제 ① 이름>**:
+  이 문제가 왜 문제인지.
+- **<문제 ② 이름>**:
+  이 문제가 왜 문제인지. (문제가 하나뿐이면 이 항목도 하나만 쓴다.)
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — <갈래 이름>**
+- 이 갈래에 속하는 논문·기법과 그 접근 방식. 저자·연도를 함께 적는다.
+- (필요하면 갈래 안에서도 세부 그룹으로 bullet을 나눈다.)
+- **타겟/해결**: 이 갈래가 위 "기존 방법의 한계" 중 어떤 문제(①/② 등)를 겨냥하는지, 그리고 어디까지 해결했고 어떤 갭이 남았는지 한 줄.
+
+**갈래 2 — <갈래 이름>**
+- ...
+- **타겟/해결**: ...
+
+(갈래가 이 논문의 핵심 통찰과 직접 연결되는 경우 — 예: 이 논문이 그 갈래의 한계를 극복하려고 만들어졌거나, 그 갈래의 아이디어를 직접 계승·결합하는 경우 — 그 갈래 전체 또는 핵심 문장을 노랑 하이라이트로 강조한다. 모든 갈래를 강조하지 않는다, 정말 핵심적인 갈래 1~2개만.)
+
+**갭**: (노랑 하이라이트) 선행 연구 전체를 놓고 볼 때 공통으로 남아있는 빈틈이 무엇인지 1~2문장.
+
+## 이 논문이 풀고자 하는 문제
+1. 이 논문이 구체적으로 풀려는 문제 1.
+2. 문제 2. (문제가 여러 개면 번호로 나열, 하나면 문단으로.)
+
+**갭 종합**: (노랑 하이라이트) 문제들이 공통으로 어떤 원인에서 나오는지, 이 논문의 통찰이 무엇인지 1~2문장.
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
 | | 문제 ① | 문제 ② | ... |
 |---|---|---|---|
-| **문제 정의** | 이 문제가 왜 문제인지 | | |
-| **풀고자 하는 문제** | 이 논문이 여기서 구체적으로 뭘 풀려는지 | | |
-| **선행 연구 접근** | 갈래별 bullet + 갭 | | |
 | **해결 방법** | 이 논문이 실제로 어떻게 풀었는지 1~2문장 | | |
 | **예상되는 문제점** | 이 해결 방법 자체가 새로 만드는 구조적 문제 | | |
 
-**갭 종합**: (노랑 하이라이트) 문제들이 공통으로 어떤 원인에서 나오는지, 이 논문의 통찰이 무엇인지 1~2문장.
+(문제가 하나뿐이면 표 대신 bullet 두 개로 써도 된다 — 열이 하나뿐인 표는 표의 이점이 없다.)
 
 > [!info] 내 메모
 > 
@@ -254,10 +294,10 @@ frontmatter 바로 아래, `# 한 줄 요약` 헤딩보다도 위에 frontmatter
 # 의사코드 또는 논문/공식 구현 기반 코드. 실제 코드가 없으면 논문 수식을 그대로 코드로 옮긴 의사코드임을 주석으로 밝힌다.
 ```
 
-(연한 노랑 하이라이트, 1~2문장) 왜 이게 "정리" 표에서 언급한 문제를 해결하는가.
+(연한 노랑 하이라이트, 1~2문장) 왜 이게 "정리"에서 언급한 문제를 해결하는가.
 
 > [!warning] 이 구조 때문에 예상되는 문제점
-> 이 구조 자체가 낳는 부작용/비용/한계(있는 경우만). "정리" 표의 "예상되는 문제점" 행이나 뒤의 "실험 결과"·"Discussion"과 연결되면 서로 참조.
+> 이 구조 자체가 낳는 부작용/비용/한계(있는 경우만). "해결 방법 요약" 표의 "예상되는 문제점" 행이나 뒤의 "실험 결과"·"Discussion"과 연결되면 서로 참조.
 
 > [!info] 내 메모
 > 
@@ -322,7 +362,7 @@ frontmatter 바로 아래, `# 한 줄 요약` 헤딩보다도 위에 frontmatter
 
 이 세 섹션(`# 관련 개념`, `# 관련 문서`, `# 읽어볼 만한 논문`)에는 메모 콜아웃을 넣지 않는다 — 사용자가 직접 채우는 목록이라 학습 메모를 붙일 지점이 아니다.
 
-"제안 방법"과 "실험 결과"의 하위 heading(`###`/`####`)은 논문마다 실제 구조에 맞게 이름을 바꿔도 된다 — 위 템플릿은 뼈대이지, 섹션 제목을 토씨 하나까지 맞추라는 뜻이 아니다. 다만 상위 6개 헤딩(`#`, 한 줄 요약/정리/제안 방법/실험 결과/Discussion/관련 개념·관련 문서·읽어볼 만한 논문)과 그 배치 순서, 그리고 "왜 효과적인가"·"선행 연구 갭"·"파이프라인+tensor shape"·"Discussion 4항목" 같은 필수 요소는 반드시 포함한다.
+"제안 방법"과 "실험 결과"의 하위 heading(`###`/`####`)은 논문마다 실제 구조에 맞게 이름을 바꿔도 된다 — 위 템플릿은 뼈대이지, 섹션 제목을 토씨 하나까지 맞추라는 뜻이 아니다. 다만 상위 7개 헤딩(`#`, 한 줄 요약/정리/해결 방법 요약/제안 방법/실험 결과/Discussion/관련 개념·관련 문서·읽어볼 만한 논문)과 그 배치 순서, 그리고 "선행 연구 갈래별 타겟/해결"·"왜 효과적인가"·"파이프라인+tensor shape"·"Discussion 4항목" 같은 필수 요소는 반드시 포함한다.
 
 "한계 및 열린 질문"이라는 별도 최상위 섹션은 만들지 않는다 — Discussion의 "한계"에 통합되어 있다.
 
@@ -338,6 +378,7 @@ frontmatter 바로 아래, `# 한 줄 요약` 헤딩보다도 위에 frontmatter
 - 접기(`-`)를 쓰지 않는다 — 항상 펼쳐진 상태로 둔다.
 - 안내 문구("여기에 적어주세요" 같은)를 넣지 않는다 — 완전히 빈 줄로 둔다.
 - Discussion 섹션은 예외로, 소제목 4개(부작용/한계/생각할 점/후속 연구 아이디어)를 전부 지나고 섹션 끝에 메모 콜아웃 1개만 둔다 — 소제목마다 넣지 않는다.
+- `# 정리` 섹션도 같은 이유로 예외다 — `## 기존 방법의 한계`/`## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가`/`## 이 논문이 풀고자 하는 문제` 3개 소제목 각각에는 넣지 않고, "갭 종합" 다음(즉 `# 정리` 섹션 전체가 끝나는 지점)에 메모 콜아웃 1개만 둔다. 소제목마다 넣으면 갈래별 bullet 사이에 빈 콜아웃이 반복돼 오히려 훑어보기 어려워진다.
 - `# 관련 개념`, `# 관련 문서`, `# 읽어볼 만한 논문`에는 메모 콜아웃을 아예 넣지 않는다.
 
 ### Architecture Design 연동 (`ResearchVault/Architecture Design/`)
@@ -407,6 +448,15 @@ Obsidian 콜아웃은 제목 뒤에 `-`를 붙이면 기본적으로 접힌 상�
 - **제안 방법의 구현 디테일**: 수식, 의사코드, 하이퍼파라미터 값처럼 "필요할 때만 펼쳐보는" 내용은 `> [!example]- 구현 디테일` 콜아웃 안에 넣는다. 기법의 핵심 아이디어(bullet 3~5개)는 콜아웃 밖에 그대로 둔다.
 - **실험 결과의 세부 ablation**: 핵심 벤치마크 표 1~2개만 콜아웃 밖에 두고, 나머지 벤치마크·ablation 표·세부 발견은 `> [!note]- 세부 결과 및 Ablation` 콜아웃 안에 몰아넣는다.
 
+### 수식 표기 규칙
+
+본문 문장 안에 인라인으로 등장하는 수식(변수, 아래첨자·위첨자, 그리스 문자 포함)은 **MathJax 인라인 문법 `$...$`로 감싼다** (Obsidian 기본 내장 렌더러로 별도 플러그인 없이 렌더링된다). 코드 인라인(백틱 `` ` ``)이나 일반 텍스트 안에 `^{...}`, `_{...}` 같은 LaTeX 첨자 문법만 그대로 섞어 쓰지 않는다 — 코드 인라인·일반 텍스트는 있는 그대로 출력되므로 `^{d-1}` 같은 문자열이 첨자로 렌더링되지 않고 글자 그대로 깨져 보인다.
+
+- 예: ~~`` `b̂_q^{d-1}` ``~~(코드 인라인 안에 LaTeX 문법 — 깨짐) → `$\hat{b}_q^{d-1}$`(MathJax — 정상 렌더링)
+- 독립된 수식 블록(줄 전체가 수식)은 `$$...$$`로 감싼다.
+- 변수명이 코드가 아니라 수식이면(예: 논문의 $x$, $\theta$) 코드 인라인이 아니라 MathJax로 감싼다. 반대로 실제 코드/텐서 shape 표기(예: `(B, N, C)`)는 코드 인라인을 그대로 쓴다 — 코드와 수식을 혼동하지 않는다.
+- `> [!example]- 구현 디테일` 콜아웃 안의 의사코드 블록(```` ``` ````)에서는 이 규칙이 적용되지 않는다 — 코드블록은 원래 있는 그대로 렌더링되는 것이 의도이므로, 수식을 코드처럼 옮겨적을 때는 일반 텍스트 표기(`b_q^(d-1)`처럼 괄호 사용 등)를 써도 된다.
+
 문법:
 ```markdown
 > [!example]- 구현 디테일
@@ -473,7 +523,7 @@ Obsidian 콜아웃은 제목 뒤에 `-`를 붙이면 기본적으로 접힌 상�
 ### 갱신 규칙
 
 - 새 논문 노트에 "읽어볼 만한 논문" 항목을 추가할 때마다, 해당 task 섹션에 동일한 항목을 체크박스(`- [ ]`)로 추가하고 어느 논문 노트에서 추천했는지(`출처: [[...]]`) 남긴다.
-- 이미 `reading-list.md`에 있는 논문을 나중에 실제로 `_inbox/`에 넣어 처리하면(즉 `Projects/논문_<Task>_tasks/`에 그 논문의 정식 task 노트가 새로 생기면), `reading-list.md`에서 해당 항목을 **삭제**한다 (체크만 하고 남겨두지 않는다 — 목록이 "아직 안 읽은 것"만 남도록 유지한다).
+- 이미 `reading-list.md`에 있는 논문을 나중에 실제로 `_inbox/`나 `_issue_paper/`에 넣어 처리하면(즉 `Projects/논문_<Task>_tasks/`에 그 논문의 정식 task 노트가 새로 생기면), `reading-list.md`에서 해당 항목을 **삭제**한다 (체크만 하고 남겨두지 않는다 — 목록이 "아직 안 읽은 것"만 남도록 유지한다).
 - task 섹션이 없으면 새로 만든다.
 
 ## direction 카테고리
@@ -569,7 +619,7 @@ MOC는 두 계층으로 구성한다.
 
 ### Task MOC — `Moc/<Task>_Moc.md`
 
-`Projects/논문_<Task>_tasks/`, `/Users/GyeongSeo/Workspace/논문_pdf/`에 존재하는 task 폴더마다 하나씩 만든다 (예: `Moc/Small_Object_Detection_Moc.md`).
+`Projects/논문_<Task>_tasks/`, `Projects/논문_pdf/`에 존재하는 task 폴더마다 하나씩 만든다 (예: `Moc/Small_Object_Detection_Moc.md`).
 
 파일명: `Moc/<Task>_Moc.md`
 
@@ -634,12 +684,12 @@ updated: <YYYY-MM-DD>
 
 ## 새 논문 처리 워크플로우
 
-`/Users/GyeongSeo/Workspace/논문_pdf/_inbox/`에 새 PDF가 추가되고 "_inbox/에 새로 추가한 논문 읽고 반영해줘" 요청을 받으면:
+`Projects/논문_pdf/_inbox/` 또는 `_issue_paper/`에 새 PDF가 추가되고 "_inbox/에(또는 _issue_paper/에) 새로 추가한 논문 읽고 반영해줘" 요청을 받으면:
 
-1. `/Users/GyeongSeo/Workspace/논문_pdf/_inbox/`에 있는 각 PDF를 읽는다. (`/Users/GyeongSeo/Workspace/논문_pdf/_issue_paper/`는 이 워크플로우의 대상이 아니다 — 커뮤니티 트렌드 추적용 별도 보관 폴더이므로 스캔하지 않는다.)
-2. PDF 내용을 바탕으로 이 논문의 task를 판단한다 (기존 `/Users/GyeongSeo/Workspace/논문_pdf/<Task>/` 폴더 중 맞는 게 있으면 그걸 쓰고, 없으면 새 task 폴더명을 정한다).
-3. "PDF 파일명 규칙"대로 `{년도}_{venue}_{제목}.pdf`로 리네임하고 `/Users/GyeongSeo/Workspace/논문_pdf/<Task>/`로 이동한다 (`_inbox/`에는 남기지 않는다).
-4. `Projects/논문_<Task>_tasks/<Slug>.md`(분석 노트, task 노트)를 만든다. `title`은 논문 원제만 채운다(접두어 없음). `source`에 이동 후 PDF 경로(`/Users/GyeongSeo/Workspace/논문_pdf/<Task>/<리네임된 파일명>`)를 채우고, `task`, `direction` 속성을 채운다. 해당 `Projects/논문_<Task>.md`의 `customFields:` 정의에서 Year/Venue 필드 id를 확인해, task 노트의 `customFields`에 같은 값을 채운다(위 Frontmatter 절 참고). `status`는 항상 `in-progress`로 시작한다(사용자가 직접 다 읽고 나서 `done`으로 바꾸는 값이므로, 새로 처리했다고 `done`으로 채우지 않는다). `start`(PDF의 `_inbox/` 진입 날짜, mtime 기준)도 함께 채운다. `jcr_quartile`은 위 Frontmatter 절의 규칙대로 채운다 — 학회가 명백한 top-tier면 `Q1`, 저널이거나 등급을 모르면 `null`로 두고 나중에 사용자에게 물어볼 목록에 추가한다(추측 금지). 분석 노트 템플릿(콜아웃·bullet 규칙 포함)을 따른다. 마지막으로 해당 `Projects/논문_<Task>.md` 프로젝트 노트의 `taskIds`와 "## Tasks" 목록에 이 논문을 추가한다(프로젝트 노트가 아직 없으면 위 "새 task 노트 생성 시 프로젝트 노트도 함께 갱신" 절 규칙대로 새로 만든다). `projectId`는 이 프로젝트 노트의 `id`와 일치시킨다.
+1. `Projects/논문_pdf/_inbox/`와 `Projects/논문_pdf/_issue_paper/` 양쪽에 있는 각 PDF를 읽는다. 어느 폴더에서 읽었는지 기억해둔다(4번의 `source_type` 판단에 쓴다) — `_inbox/`면 `personal`, `_issue_paper/`면 `community`.
+2. PDF 내용을 바탕으로 이 논문의 task를 판단한다 (기존 `Projects/논문_pdf/<Task>/` 폴더 중 맞는 게 있으면 그걸 쓰고, 없으면 새 task 폴더명을 정한다). `_inbox/`와 `_issue_paper/` 어느 쪽에서 왔든 task 판단·폴더 배정 방식은 동일하다.
+3. "PDF 파일명 규칙"대로 `{년도}_{venue}_{제목}.pdf`로 리네임하고 `Projects/논문_pdf/<Task>/`로 이동한다 (원래 있던 `_inbox/`나 `_issue_paper/`에는 남기지 않는다 — 처리 완료된 PDF는 출처 폴더 구분 없이 `<Task>/` 한 곳에 모인다).
+4. `Projects/논문_<Task>_tasks/<Slug>.md`(분석 노트, task 노트)를 만든다. `title`은 논문 원제만 채운다(접두어 없음). `source`에 이동 후 PDF 경로(`Projects/논문_pdf/<Task>/<리네임된 파일명>`)를 채우고, `source_type`에 1번에서 기억해둔 출처(`personal` 또는 `community`)를 채운다. `task`, `direction` 속성을 채운다. 해당 `Projects/논문_<Task>.md`의 `customFields:` 정의에서 Year/Venue 필드 id를 확인해, task 노트의 `customFields`에 같은 값을 채운다(위 Frontmatter 절 참고). `status`는 항상 `in-progress`로 시작한다(사용자가 직접 다 읽고 나서 `done`으로 바꾸는 값이므로, 새로 처리했다고 `done`으로 채우지 않는다). `start`(PDF의 `_inbox/`·`_issue_paper/` 진입 날짜, mtime 기준)도 함께 채운다. `jcr_quartile`은 위 Frontmatter 절의 규칙대로 채운다 — 학회가 명백한 top-tier면 `Q1`, 저널이거나 등급을 모르면 `null`로 두고 나중에 사용자에게 물어볼 목록에 추가한다(추측 금지). 분석 노트 템플릿(콜아웃·bullet 규칙 포함)을 따르고, `> [!quote] 원제` 콜아웃의 링크 줄에 DOI(있으면) 또는 arXiv/공식 페이지 링크(없으면)를 채운다. 마지막으로 해당 `Projects/논문_<Task>.md` 프로젝트 노트의 `taskIds`와 "## Tasks" 목록에 이 논문을 추가한다(프로젝트 노트가 아직 없으면 위 "새 task 노트 생성 시 프로젝트 노트도 함께 갱신" 절 규칙대로 새로 만든다). `projectId`는 이 프로젝트 노트의 `id`와 일치시킨다.
 5. `grep -r "#pending:<이번 논문의 슬러그>" .`(`ResearchVault/PaperStudy/`와 `Projects/` 양쪽에서 실행)를 실행해서, 기존 노트 중 이 논문을 미완성 링크(`#pending:` 마커)로 남겨둔 곳이 있는지 확인한다. 있으면 해당 문장을 실제 `[[wiki-link]]`로 갱신하고 마커를 지운다.
 6. 논문에서 "독립적으로 설명할 가치가 있는" 개념/기법(핵심 기여인 기법·아이디어)이 있는지 판단한다 — 재사용 여부와 무관하게, 이 논문 1편만 보고 판단한다.
    - 그런 개념이 있고 `Concepts/`에 이미 있으면: 해당 concept 문서의 "등장 논문"에 이번 논문을 추가하고, 필요하면 "변형/발전" 섹션을 갱신한다.
@@ -653,7 +703,7 @@ updated: <YYYY-MM-DD>
 11. 논문 노트의 "읽어볼 만한 논문" 섹션을 채운다("읽어볼 만한 논문" 작성 규칙 참고). 여기 추가한 항목은 `reading-list.md`의 해당 task 섹션에도 동일하게 추가한다.
 12. 이번에 처리한 논문이 `reading-list.md`에 이미 있던 항목이라면(즉 예전에 추천되어 대기 중이던 논문을 지금 실제로 읽은 것이라면), 그 항목을 `reading-list.md`에서 삭제한다.
 13. 이번에 처리한 논문 중 `jcr_quartile`이 `null`로 남은 저널 논문(등급 확인 필요)이 있으면, 처리 완료 보고의 마지막에 "JCR 등급을 확인해 주세요"라는 목록으로 venue와 함께 사용자에게 물어본다. 사용자가 답을 주면 해당 논문 노트의 `jcr_quartile`을 갱신한다.
-14. 노트 작성을 마치면 원본 PDF와 다시 대조해 검수한다 — "정리" 표·파이프라인·tensor shape·수치가 원문과 정확히 일치하는지, 중요한 내용이 빠지거나 잘못 설명된 부분은 없는지 확인한다. 발견한 오류는 그 자리에서 바로 고친다(사용자에게 "검수했다"고만 보고하지 않고, 실제로 고친 뒤 보고한다).
+14. 노트 작성을 마치면 원본 PDF와 다시 대조해 검수한다 — "정리"·"해결 방법 요약"·파이프라인·tensor shape·수치가 원문과 정확히 일치하는지, 중요한 내용이 빠지거나 잘못 설명된 부분은 없는지 확인한다. 발견한 오류는 그 자리에서 바로 고친다(사용자에게 "검수했다"고만 보고하지 않고, 실제로 고친 뒤 보고한다).
 
 ## 상태 확인하기 (Bases · Project Manager)
 
@@ -663,4 +713,4 @@ Obsidian의 **Bases** 플러그인을 쓰면 Notion 데이터베이스 뷰처럼
 
 **Project Manager 플러그인 자체 UI**(Table/Kanban/Gantt)로 분야별로 나눠 보려면, task마다 있는 프로젝트 노트(`Projects/논문_<Task>.md`, 예: `논문_Small_Object_Detection.md`, `논문_Anomaly_Detection.md`)를 열면 된다 — Project Manager UI의 프로젝트 목록/드롭다운에서 원하는 분야의 프로젝트를 선택하면 그 분야 논문만 나열되고, task를 클릭하면 분석 노트 본문이 그대로 렌더링되며 `status`를 드래그 앤 드롭으로 바꿀 수 있다. (예전에는 모든 논문이 `논문 읽기.md`라는 단일 프로젝트 안에 있어서 분야 구분 없이 다 섞여 보였는데, 그 문제 때문에 프로젝트 자체를 task별로 나눴다 — 위 "프로젝트 구조" 절 참고.) **title은 이 UI에서 편집하지 않는다** (위 경고 참고).
 
-폴더 자체로도 확인 가능하다 — `/Users/GyeongSeo/Workspace/논문_pdf/_inbox/`에 파일이 남아있으면 아직 위키에 반영 안 된 논문, `/Users/GyeongSeo/Workspace/논문_pdf/<Task>/`에 있으면 처리 완료.
+폴더 자체로도 확인 가능하다 — `Projects/논문_pdf/_inbox/`나 `_issue_paper/`에 파일이 남아있으면 아직 위키에 반영 안 된 논문, `Projects/논문_pdf/<Task>/`에 있으면 처리 완료. 개인적으로 읽으려던 논문인지 커뮤니티 트렌드 추적용이었는지는 `논문_PaperWiki.base`에서 `source_type` 컬럼으로 구분해서 본다.

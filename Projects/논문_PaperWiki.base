@@ -18,6 +18,7 @@ views:
       - direction
       - paper_tags
       - source
+      - source_type
   - type: table
     name: 해야할 것
     filters:
@@ -252,6 +253,51 @@ views:
     sort:
       - property: venue
         direction: ASC
+  - type: table
+    name: Scientific_Critique_Automation (year)
+    filters:
+      and:
+        - task.contains("scientific-critique-automation")
+    order:
+      - file.name
+      - title
+      - year
+      - status
+      - direction
+      - venue
+    sort:
+      - property: year
+        direction: ASC
+  - type: table
+    name: Scientific_Critique_Automation (venue)
+    filters:
+      and:
+        - task.contains("scientific-critique-automation")
+    order:
+      - file.name
+      - title
+      - venue
+      - status
+      - direction
+      - year
+    sort:
+      - property: venue
+        direction: ASC
+  - type: table
+    name: 커뮤니티 트렌드
+    filters:
+      and:
+        - source_type == "community"
+    order:
+      - file.name
+      - title
+      - task
+      - venue
+      - year
+      - status
+    sort:
+      - property: start
+        direction: DESC
   - type: table
     name: Q1만
     filters:

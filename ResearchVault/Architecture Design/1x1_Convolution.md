@@ -17,7 +17,7 @@ updated: 2026-08-28
 ## 내부 동작
 - 각 공간 위치 `(h, w)`마다 그 위치의 `C_in`개 채널 값을 입력으로 받아, 학습된 가중치 행렬 `(C_out, C_in)`을 곱해 `C_out`개의 출력값을 만든다.
 - 이 연산은 모든 `(h, w)` 위치에서 **동일한 가중치**로 반복된다 — 즉 "위치는 안 보고 채널만 섞는" 연산.
-- 수식으로 보면 `y[c_out, h, w] = Σ_{c_in} W[c_out, c_in] · x[c_in, h, w] + b[c_out]` — 이건 각 픽셀 위치에서 독립적으로 수행하는 fully connected layer(선형변환)와 정확히 같은 식이다.
+- 수식으로 보면 $y[c_{out}, h, w] = \sum_{c_{in}} W[c_{out}, c_{in}] \cdot x[c_{in}, h, w] + b[c_{out}]$ — 이건 각 픽셀 위치에서 독립적으로 수행하는 fully connected layer(선형변환)와 정확히 같은 식이다.
 
 > [!example]- fully connected layer와의 관계
 > - FC layer: 입력 벡터 `(C_in,)` → 출력 벡터 `(C_out,)`, 가중치 `(C_out, C_in)`.

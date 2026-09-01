@@ -19,11 +19,12 @@ subtaskIds: []
 dependencies: []
 year: 2025
 venue: "Remote Sensing (MDPI)"
-jcr_quartile: null
+jcr_quartile: Q2
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, frequency-domain, attention, two-stage-detector, class-imbalance]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2025_RemoteSensing_FANet.pdf"
+source: "Projects/논문_pdf/Small_Object_Detection/2025_RemoteSensing_FANet.pdf"
+source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-28T00:00:00.000Z"
 ---
@@ -33,6 +34,7 @@ updatedAt: "2026-08-28T00:00:00.000Z"
 > [!quote] 원제
 > **FANet: Frequency-Aware Attention-Based Tiny-Object Detection in Remote Sensing Images**
 > Zixiao Wen, Peifeng Li, Yuhan Liu, Jingming Chen, Xiantai Xiang, Yuan Li, Huixian Wang, Yongchao Zhao, Guangyao Zhou — Aerospace Information Research Institute, Chinese Academy of Sciences, Remote Sensing (MDPI) 2025
+> https://doi.org/10.3390/rs17244066
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Faster R-CNN(+RFLA) 기반 원격탐사 tiny-object detector의 FPN 최하위 레벨(P2)과 RoI head에 각각 주파수 영역(2D-DFT/2D-DCT) 기반 plug-and-play attention 모듈(MSFFEM, CAREM)을 추가해 spatial 특징만으로는 부족한 tiny object의 경계·텍스처를 보강하고, 카테고리별 주파수 분포 차이를 정량 분석해 few-shot 카테고리 불균형을 다중 방향 flip 증강(SAS)으로 완화함으로써 AI-TOD에서 AP 20.6→24.8을 달성한 논문.</mark>
@@ -42,15 +44,51 @@ updatedAt: "2026-08-28T00:00:00.000Z"
 
 # 정리
 
+## 기존 방법의 한계
+- **약한 spatial 특징**:
+  원격탐사 tiny object(16×16px 미만, AI-TOD 평균 12.8px)는 픽셀 수가 극히 적어 저대비·저해상도이고, bounding box regression의 작은 오차도 IoU를 크게 흔들 만큼 위치 오차에 민감하다. 조명·구름·촬영 고도·각도에 따라 같은 카테고리도 외형이 크게 달라지는 intra-class variation까지 겹친다(Figure 1, 같은 "ship" 카테고리가 촬영 조건에 따라 확연히 다르게 보임).
+- **심한 class imbalance**:
+  AI-TOD trainval에서 vehicle이 88.22%를 차지하는 반면 windmill·swimming pool은 각각 0.1% 미만일 만큼 카테고리 간 인스턴스 수 편차가 극단적이라, few-shot 카테고리의 특징이 실제로 학습되는지조차 의심스럽다.
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — 멀티스케일 융합**
+- PANet, DetectoRS, BAFNet, FSANet — 타일 분할 전처리 자체가 tiny-object 특징을 손상시키는 문제는 대부분 간과.
+- **타겟/해결**: 약한 spatial 특징(문제①) — 여러 스케일을 합쳐 표현력을 보강하려 하지만, spatial-domain 정보에만 의존해 근본적인 특징 약함은 그대로.
+
+**갈래 2 — Context/attention 기반**
+- Non-local, DETR 계열, MENet, CFENet, FFCA-YOLO, DQ-DETR — 여전히 spatial-domain feature에 의존, 내재적으로 약한 특징 자체는 그대로.
+- **타겟/해결**: 약한 spatial 특징(문제①) — attention으로 문맥을 넓히지만 spatial-domain에 머물러 있다는 점은 갈래 1과 동일.
+
+**갈래 3 — Label assignment 개선**
+- NWD, RFLA — positive sample 품질·recall은 개선하나 "특징 자체가 약하다"는 근본 문제는 미해결.
+- **타겟/해결**: 약한 spatial 특징(문제①) — 매칭 규칙을 조정할 뿐 feature 표현력 자체는 건드리지 않는다.
+
+**갈래 4 — Frequency-domain 갈래**
+- <mark style="background: #FFF3A3A6;">DFT/wavelet 고전 기법, CNN+Fourier 결합(camouflaged object detection·segmentation 등), 학습형 주파수 필터(SpectFormer, HS-FPN) — 방향은 유사하나 범용 목적이거나 원격탐사 tiny object에 미특화, feature map·RoI 레벨을 동시에 다루지 않음.</mark>
+- **타겟/해결**: 약한 spatial 특징(문제①) — 이 논문이 직접 계승하는 갈래. Spatial 정보만으로는 부족하다는 한계를 주파수 정보로 보완하려는 방향은 같지만, 원격탐사 tiny object에 특화되지 않았고 feature map·RoI를 동시에 다루지도 않는다.
+
+**갈래 5 — 샘플 증강 기반 불균형 완화**
+- Super-resolution·GAN 합성·diffusion 기반(SVDDD) 샘플 증강, UniFusOD의 멀티모달 융합 — 연산 복잡도 증가, 일반화 부족.
+- **타겟/해결**: 심한 class imbalance(문제②) — 샘플 수 자체를 늘리려는 시도이지만, 카테고리별 주파수 특성 차이를 정량적으로 분석해 증강 대상·배수를 근거 있게 정하는 접근은 없었다.
+
+**갭**: <mark style="background: #FFF3A3A6;">두 문제는 서로 달라 보이지만, 둘 다 "spatial-domain(픽셀 배치) 정보만으로 tiny object를 다루려 한다"는 공통 한계에서 나온다 — 약한 spatial feature 문제는 물론이고, class imbalance조차 spatial 통계(인스턴스 개수)만으로 다뤄왔다.</mark>
+
+## 이 논문이 풀고자 하는 문제
+1. Spatial 특징만으로는 표현이 부족한 tiny object의 contour/texture를 주파수 영역 정보로 보완해 배경 노이즈를 억제하고 판별력을 높인다. RoI 단위에서도 고주파 응답을 활용해 위치 추정·분류 정확도를 추가로 개선한다.
+2. 카테고리 간 극심한 샘플 불균형으로 인한 few-shot 카테고리의 검출 성능 저하를 완화한다.
+
+**갭 종합**: <mark style="background: #FFF3A3A6;">이 논문은 주파수 영역이라는 별도 정보원(feature map·RoI 레벨의 주파수 응답, 카테고리별 주파수 분포)을 도입해 두 문제를 하나의 틀로 동시에 공략한다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
 | | 문제 ① — 약한 spatial 특징 | 문제 ② — 심한 class imbalance |
 |---|---|---|
-| **문제 정의** | 원격탐사 tiny object(16×16px 미만, AI-TOD 평균 12.8px)는 픽셀 수가 극히 적어 저대비·저해상도이고, bounding box regression의 작은 오차도 IoU를 크게 흔들 만큼 위치 오차에 민감하다. 조명·구름·촬영 고도·각도에 따라 같은 카테고리도 외형이 크게 달라지는 intra-class variation까지 겹친다(Figure 1, 같은 "ship" 카테고리가 촬영 조건에 따라 확연히 다르게 보임). | AI-TOD trainval에서 vehicle이 88.22%를 차지하는 반면 windmill·swimming pool은 각각 0.1% 미만일 만큼 카테고리 간 인스턴스 수 편차가 극단적이라, few-shot 카테고리의 특징이 실제로 학습되는지조차 의심스럽다. |
-| **풀고자 하는 문제** | Spatial 특징만으로는 표현이 부족한 tiny object의 contour/texture를 주파수 영역 정보로 보완해 배경 노이즈를 억제하고 판별력을 높인다. RoI 단위에서도 고주파 응답을 활용해 위치 추정·분류 정확도를 추가로 개선한다. | 카테고리 간 극심한 샘플 불균형으로 인한 few-shot 카테고리의 검출 성능 저하를 완화한다. |
-| **선행 연구 접근** | - 멀티스케일 융합: PANet, DetectoRS, BAFNet, FSANet — 타일 분할 전처리 자체가 tiny-object 특징을 손상시키는 문제는 대부분 간과<br>- Context/attention 기반: non-local, DETR 계열, MENet, CFENet, FFCA-YOLO, DQ-DETR — 여전히 spatial-domain feature에 의존, 내재적으로 약한 특징 자체는 그대로<br>- Label assignment 개선: NWD, RFLA — positive sample 품질·recall은 개선하나 "특징 자체가 약하다"는 근본 문제는 미해결<br>- Frequency-domain 갈래: DFT/wavelet 고전 기법, CNN+Fourier 결합(camouflaged object detection·segmentation 등), 학습형 주파수 필터(SpectFormer, HS-FPN) — 방향은 유사하나 범용 목적이거나 원격탐사 tiny object에 미특화, feature map·RoI 레벨을 동시에 다루지 않음 | - Super-resolution·GAN 합성·diffusion 기반(SVDDD) 샘플 증강, UniFusOD의 멀티모달 융합 — 연산 복잡도 증가, 일반화 부족<br>- **갭**: 카테고리별 주파수 특성 차이를 정량적으로 분석해 증강 대상·배수를 근거 있게 정하는 접근은 없었음 |
 | **해결 방법** | MSFFEM(feature map 레벨, P2에 패치 단위 2D-DFT + 학습 가능한 주파수 가중치)과 CAREM(RoI 레벨, 2D-DCT 고주파 필터 + 채널 attention)을 동시에 적용해 두 지점에서 주파수 정보를 활용 | 카테고리별 patch에 2D-DFT를 적용한 로그 파워 스펙트럼 방사평균 R_log(k)로 카테고리 간 주파수 분포가 실제로 다름을 정량 확인한 뒤, few-shot 카테고리는 다중 방향(수평/수직/대각) flip으로 최대 8배 증강하고 지배 카테고리(vehicle)는 샘플 일부를 제거(SAS) |
 | **예상되는 문제점** | 학습된 주파수 가중치는 배경/객체가 특정 주파수 대역으로 뚜렷이 분리되는 상황을 전제하므로, 이 가정이 깨지는 장면(반복적 텍스처 배경, 안개·저조도)에서는 역효과 가능성(아래 "제안 방법" ③ MSFFEM 참고). | flip 증강은 카테고리 내부의 다양성(예: 촬영 각도·조도 변화)을 새로 만들어내지 못하고 기존 샘플을 거울상으로 반복하는 것에 그친다(아래 "Discussion" 참고). |
-
-**갭 종합**: <mark style="background: #FFF3A3A6;">두 문제는 서로 달라 보이지만, 둘 다 "spatial-domain(픽셀 배치) 정보만으로 tiny object를 다루려 한다"는 공통 한계에서 나온다 — 약한 spatial feature 문제는 물론이고, class imbalance조차 spatial 통계(인스턴스 개수)만으로 다뤄왔다. 이 논문은 주파수 영역이라는 별도 정보원(feature map·RoI 레벨의 주파수 응답, 카테고리별 주파수 분포)을 도입해 두 문제를 하나의 틀로 동시에 공략한다.</mark>
 
 > [!info] 내 메모
 > 
@@ -162,7 +200,7 @@ x_hat = x * W_c[:, None, None]       # 채널별 스케일링, (C, 7, 7)
 ### SAS (Sample Augmentation Strategy, 학습 데이터 전처리 — forward 파이프라인 밖)
 - **역할**: "샘플이 적다"는 표면적 현상 아래에, 지배 카테고리(vehicle)에 학습이 쏠려 few-shot 카테고리(windmill, swimming pool 등)의 특징이 애초에 제대로 학습되는지조차 확인되지 않는다는 문제를 다룬다. 카테고리별 주파수 분포가 실제로 다름을 먼저 정량적으로 확인한 뒤, 그 근거 위에서 증강·축소 대상을 정한다.
 - **구현**:
-  1. **카테고리별 주파수 분포 분석**: 카테고리별 patch에 2D Hann window(경계 효과 억제)를 적용 → 2D-DFT → 로그 파워 스펙트럼을 반지름 방향으로 평균 낸 `R_log(k) = (1/N_k) Σ_{(u,v)∈S_k} log(|F(u,v)|² + 1)`을 계산한다(`S_k`: 반지름 k인 주파수 점들의 집합). Figure 6에서 카테고리마다 이 곡선이 실제로 다르게 나타남을 확인.
+  1. **카테고리별 주파수 분포 분석**: 카테고리별 patch에 2D Hann window(경계 효과 억제)를 적용 → 2D-DFT → 로그 파워 스펙트럼을 반지름 방향으로 평균 낸 $R_{log}(k) = \frac{1}{N_k} \sum_{(u,v) \in S_k} \log(|F(u,v)|^2 + 1)$을 계산한다($S_k$: 반지름 k인 주파수 점들의 집합). Figure 6에서 카테고리마다 이 곡선이 실제로 다르게 나타남을 확인.
   2. **Few-shot 카테고리 증강**: 인스턴스 수에 반비례해 수평/수직/대각 flip을 인스턴스 수에 따라 최대 8배까지 적용(Table 1: airplane/bridge ×4, storage tank ×2, swimming pool/windmill ×8 — vehicle/ship/person은 이미 샘플이 충분해 ×1).
   3. **지배 카테고리 축소**: vehicle 이미지를 무작위로 일부 제거해(369k→163k 인스턴스까지 실험) 중복 샘플을 줄인다.
 - **입출력**: 학습 데이터셋(이미지+annotation) 수준에서 작동하는 전처리이므로, 모델 구조에는 shape 변화가 없다 — 카테고리별 인스턴스 비율만 바뀐다(Table 1: 예를 들어 windmill 0.08%→0.45%, vehicle 88.22%→84.85%).

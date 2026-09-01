@@ -23,7 +23,8 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, yolo, lightweight, attention-mechanism, feature-fusion]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2024_TGRS_FFCA-YOLO.pdf"
+source: "Projects/논문_pdf/Small_Object_Detection/2024_TGRS_FFCA-YOLO.pdf"
+source_type: personal
 createdAt: "2026-08-20T00:00:00.000Z"
 updatedAt: "2026-08-28T00:00:00.000Z"
 ---
@@ -33,6 +34,7 @@ updatedAt: "2026-08-28T00:00:00.000Z"
 > [!quote] 원제
 > **FFCA-YOLO for Small Object Detection in Remote Sensing Images**
 > Yin Zhang, Mu Ye, Guiyi Zhu, Yong Liu, Pengyu Guo, Junhua Yan — Nanjing University of Aeronautics and Astronautics 외, IEEE Transactions on Geoscience and Remote Sensing (TGRS) 2024
+> https://doi.org/10.1109/TGRS.2024.3363057
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">YOLOv5m backbone의 세 스케일 출력마다 지역 문맥을 넓히는 FEM, neck에서 다중 스케일을 채널별 학습 가중치로 재가중 융합하는 FFM, 검출 헤드 직전에서 채널·공간 전역 문맥을 포착하는 SCAM 세 경량 plug-and-play 모듈을 결합해 원격탐사 소형 객체 탐지 정확도를 끌어올리고, backbone을 PConv 기반으로 재구성해 파라미터를 30% 줄인 경량판 L-FFCA-YOLO까지 함께 제시하는 프레임워크.</mark>
@@ -42,15 +44,51 @@ updatedAt: "2026-08-28T00:00:00.000Z"
 
 # 정리
 
+## 기존 방법의 한계
+- **얕은 layer의 부족한 지역 문맥**:
+  원격탐사 영상의 소형 객체(32×32픽셀 미만)는 backbone 초반 layer에서 주로 검출되는데, 이 시점 feature는 수용영역(receptive field)이 좁아 주변 문맥을 충분히 못 본다.
+- **다중 스케일 융합의 정보 손실**:
+  소형 객체 feature는 backbone 출력 단계에서 픽셀 몇 개로만 표현되므로 단일 스케일 feature만으로는 부족하고, 저·고레벨 다중 스케일 feature를 합쳐야 한다. 그런데 기존 융합 방식(BiFPN 등)은 스케일마다 하나의 가중치만 학습해, 스케일 안의 채널별 정보량 차이를 반영하지 못한다.
+- **배경 혼동**:
+  원격탐사 영상은 촬영 거리·플랫폼 모션·복잡한 대기 조건 때문에 객체와 배경의 경계가 흐려지고, 소형 객체일수록 배경으로 오인되기 쉽다.
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — 수용영역 확장**
+- RFB-s[52]: 여러 branch(표준 conv+atrous conv 조합)로 수용영역 확장 — branch 수가 많아 다소 무거움.
+- TPH-YOLO[22]: transformer encoder block 삽입 — 파라미터 급증.
+- **타겟/해결**: 얕은 layer의 부족한 지역 문맥(문제①) — 수용영역을 넓히는 기존 방법들은 정확도는 얻지만 경량성을 희생한다.
+
+**갈래 2 — 다중 스케일 경로/융합 개선**
+- PANet[26], NAS-FPN[27], ASFF[28]: FPN 변형으로 다중 스케일 경로 개선 — 스케일 간 연결 구조 개선에 집중, 채널별 재가중은 다루지 않음.
+- <mark style="background: #FFF3A3A6;">BiFPN[29]: 스케일(feature map) 단위로 학습 가능한 가중합 도입 — 같은 feature map 안 모든 채널이 동일 가중치를 공유.</mark>
+- FE-YOLO[23]: deformable conv로 상하위 레이어 semantic gap 완화 — 연산 비용 증가.
+- **타겟/해결**: 다중 스케일 융합의 정보 손실(문제②) — 이 논문이 직접 뼈대로 삼는 갈래(BiFPN). 스케일 간 경로는 개선되었지만, 채널 단위 재가중은 선행 연구에서 거의 검토되지 않았다.
+
+**갈래 3 — 전역 문맥 모델링**
+- NLNet[13]: 모든 픽셀 쌍의 pairwise correlation 직접 계산 — `O((HW)²)` 비용.
+- GCNet[14]: 1×1 conv+softmax로 전역 attention을 근사해 비용 절감 — 개별 픽셀 정보 손실.
+- SCP[38]: GCNet에 pixel-wise value path 추가 — 개별 픽셀 정보는 보존하지만 여전히 배경 노이즈를 함께 끌어들일 수 있음.
+- **타겟/해결**: 배경 혼동(문제③) — 연산 효율과 정보 보존 사이의 트레이드오프를 각 방법이 순차적으로 개선해왔으나, 여전히 절충적 근사에 머문다.
+
+**갭**: <mark style="background: #FFF3A3A6;">기존 방법들은 지역 문맥 확장·다중 스케일 융합·전역 문맥 모델링 중 한두 가지에만 집중했고, 그마저도 경량성을 희생하는 방향(transformer, deformable conv, 정교한 attention)으로 접근했다. 특히 채널 단위 학습 가중치로 다중 스케일을 재가중하는 접근은 BiFPN류의 균일 가중 방식에 비해 선행 연구에서 거의 검토되지 않았다.</mark>
+
+## 이 논문이 풀고자 하는 문제
+1. 파라미터를 거의 늘리지 않으면서 backbone 얕은 layer의 지역 인지 능력(수용영역)을 확장한다.
+2. 채널 단위로 차등 가중해 다중 스케일 feature를 정보 손실 없이 융합한다.
+3. 채널·공간 두 방향의 전역 관계를 모델링해 객체와 배경을 구별한다.
+
+**갭 종합**: <mark style="background: #FFF3A3A6;">FFCA-YOLO의 통찰은 지역 문맥 확장·다중 스케일 융합·전역 문맥 모델링 세 방향 모두를 "거의 파라미터를 늘리지 않는" plug-and-play 모듈로 동시에 다루는 것이다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
 | | 문제 ① — 얕은 layer의 부족한 지역 문맥 | 문제 ② — 다중 스케일 융합의 정보 손실 | 문제 ③ — 배경 혼동 |
 |---|---|---|---|
-| **문제 정의** | 원격탐사 영상의 소형 객체(32×32픽셀 미만)는 backbone 초반 layer에서 주로 검출되는데, 이 시점 feature는 수용영역(receptive field)이 좁아 주변 문맥을 충분히 못 본다. | 소형 객체 feature는 backbone 출력 단계에서 픽셀 몇 개로만 표현되므로 단일 스케일 feature만으로는 부족하고, 저·고레벨 다중 스케일 feature를 합쳐야 한다. 그런데 기존 융합 방식(BiFPN 등)은 스케일마다 하나의 가중치만 학습해, 스케일 안의 채널별 정보량 차이를 반영하지 못한다. | 원격탐사 영상은 촬영 거리·플랫폼 모션·복잡한 대기 조건 때문에 객체와 배경의 경계가 흐려지고, 소형 객체일수록 배경으로 오인되기 쉽다. |
-| **풀고자 하는 문제** | 파라미터를 거의 늘리지 않으면서 backbone 얕은 layer의 지역 인지 능력(수용영역)을 확장 | 채널 단위로 차등 가중해 다중 스케일 feature를 정보 손실 없이 융합 | 채널·공간 두 방향의 전역 관계를 모델링해 객체와 배경을 구별 |
-| **선행 연구 접근** | - RFB-s[52]: 여러 branch(표준 conv+atrous conv 조합)로 수용영역 확장 — branch 수가 많아 다소 무거움<br>- TPH-YOLO[22]: transformer encoder block 삽입 — 파라미터 급증<br>- **갭**: 수용영역을 넓히는 기존 방법들은 정확도는 얻지만 경량성을 희생한다. | - PANet[26], NAS-FPN[27], ASFF[28]: FPN 변형으로 다중 스케일 경로 개선 — 스케일 간 연결 구조 개선에 집중, 채널별 재가중은 다루지 않음<br>- BiFPN[29]: 스케일(feature map) 단위로 학습 가능한 가중합 도입 — **갭**: 같은 feature map 안 모든 채널이 동일 가중치를 공유<br>- FE-YOLO[23]: deformable conv로 상하위 레이어 semantic gap 완화 — 연산 비용 증가 | - NLNet[13]: 모든 픽셀 쌍의 pairwise correlation 직접 계산 — `O((HW)²)` 비용<br>- GCNet[14]: 1×1 conv+softmax로 전역 attention을 근사해 비용 절감 — **갭**: 개별 픽셀 정보 손실<br>- SCP[38]: GCNet에 pixel-wise value path 추가 — 개별 픽셀 정보는 보존하지만 여전히 배경 노이즈를 함께 끌어들일 수 있음 |
 | **해결 방법** | RFB-s를 경량화한 FEM(잔차 branch 1개 + atrous conv 포함 3-branch)을 backbone 세 스케일 출력에 삽입 | BiFPN 뼈대에 CRC(채널 단위 학습 가중치로 concat 후 재가중)를 적용한 FFM으로 대체 | GAP+GMP로 압축한 전역 정보에 GMP를 추가 결합한 SCAM으로, 채널 문맥과 공간 문맥을 각각 계산 후 결합 |
 | **예상되는 문제점** | 여러 branch를 병렬로 두는 구조라 branch 수만큼 파라미터·연산이 늘어난다(단독 추가 시 6.53M→6.70M). | CRC 세 변형(단순 channel attention/단일 재가중/이중 재가중) 중 하나를 실험적으로 골라야 해, 최적 전략이 데이터셋마다 달라질 가능성이 있다. | GAP/GMP로 압축하는 과정에서 세부 공간 정보 일부가 손실되고, QK 기반 연산이 attention 계열 공통의 비용을 수반한다(단독 추가 시 6.53M→6.92M). |
-
-**갭 종합**: <mark style="background: #FFF3A3A6;">기존 방법들은 지역 문맥 확장·다중 스케일 융합·전역 문맥 모델링 중 한두 가지에만 집중했고, 그마저도 경량성을 희생하는 방향(transformer, deformable conv, 정교한 attention)으로 접근했다. FFCA-YOLO의 통찰은 세 방향 모두를 "거의 파라미터를 늘리지 않는" plug-and-play 모듈로 동시에 다루는 것 — 특히 채널 단위 학습 가중치(CRC)로 다중 스케일을 재가중하는 접근은 BiFPN류의 균일 가중 방식에 비해 선행 연구에서 거의 검토되지 않았다.</mark>
 
 > [!info] 내 메모
 > 

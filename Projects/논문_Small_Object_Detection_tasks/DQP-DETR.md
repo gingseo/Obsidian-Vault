@@ -23,7 +23,8 @@ jcr_quartile: arXiv
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, detr, dynamic-query, density-map, uav, query-ranking]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2026_SSRN_DQP-DETR.pdf"
+source: "Projects/논문_pdf/Small_Object_Detection/2026_SSRN_DQP-DETR.pdf"
+source_type: personal
 createdAt: "2026-08-24T03:19:00.000Z"
 updatedAt: "2026-08-28T18:40:00.000Z"
 ---
@@ -34,6 +35,7 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 > [!quote] 원제
 > **DQP-DETR: Object-Density-Guided Query Prioritization for Small Object Detection in UAV Imagery**
 > Ningsheng Liao, Hao Sun, Yunhao Gong, Mi Zhu, Bo Peng — Chongqing University of Technology, SSRN preprint 2026 (미출판, Elsevier 제출)
+> https://ssrn.com/abstract=6811735
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">얕은 feature에서 예측한 density map을 단순 auxiliary branch로 두지 않고, encoder memory에 양방향 cross-modulation으로 직접 주입하고(BCME) 토큰 공간으로 투영해 classification score와 곱해 query 우선순위를 만든 뒤(RCS), GT 밀도 기반 참조 우선순위로 이 순위 자체를 학습시켜 D-Fine-S baseline 대비 VisDrone AP50 +4.0%p·AI-TOD +3.1%p를 얻은 DQP-DETR — 밀도 정보를 "예측 대상"에서 "query 배정을 직접 구동하는 신호"로 격상시킨 UAV 소형 객체 탐지 논문(SSRN 프리프린트, 미출판).</mark>
@@ -43,15 +45,43 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 
 # 정리
 
+## 기존 방법의 한계
+- **밀도 정보가 query 배정에 간접적으로만 관여**:
+  Density map은 crowd counting·dense scene 분석에 널리 쓰여왔지만, 기존 detection 방법들은 이를 보조 예측 브랜치나 feature 강화 신호 정도로만 사용한다 — density map과 실제 decoder query 배정(개수·순위) 사이의 연결이 간접적이다.
+- **Pixel-level density와 token-level 선택 간 단절**:
+  Density map을 pixel-space에서 정확히 예측하는 것과, 그 정보로 decoder의 top-k query 선택을 실제로 잘하는 것은 서로 다른 목표다. Pixel-level regression loss만으로 학습하면, 시각적으로 정확한 density map이라도 token-level 순위 매김에는 도움이 안 될 수 있다.
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — Density/counting을 query 개수 조정·보조 supervision으로만 사용**
+- <mark style="background: #FFF3A3A6;">[[DQ-DETR]], IG-DETR, DQA-DETR 등: density/counting 정보를 query 개수 조정에만 사용하거나 auxiliary supervision으로만 사용.</mark>
+- **타겟/해결**: 밀도 정보가 query 배정에 간접적으로만 관여(문제①) — 개수 조정 이상으로 density map을 encoder 표현이나 개별 토큰 순위 결정에 직접 참여시키지는 않는다.
+
+**갈래 2 — Crowd counting 계열 density map 추정**
+- 원조 density map 연구(CSRNet, Bayesian loss 등 crowd counting 계열): pixel-level 회귀 정확도에만 집중, detection query 배정과 연결하지 않음.
+- **타겟/해결**: 밀도 정보가 query 배정에 간접적으로만 관여(문제①) — density map 추정 자체의 원류이지만 detection query 배정과는 애초에 연결되지 않는다.
+
+**갈래 3 — Pixel-level regression 기반 density 학습**
+- 기존 density 기반 detection: pixel-level regression loss로만 density map을 학습.
+- **타겟/해결**: Pixel-level density와 token-level 선택 간 단절(문제②) — density map이 실제로 top-k 선택에 효과적인지(ranking 능력)를 직접 감독하는 방법은 없었음.
+
+**갭**: <mark style="background: #FFF3A3A6;">기존 density 기반 detection 방법들은 density map을 "보조 예측 결과물"로 다뤄, 이 예측이 실제로 decoder의 query 배정에 얼마나 유용한지는 간접적으로만 검증됐다.</mark>
+
+## 이 논문이 풀고자 하는 문제
+1. Density map을 encoder feature 강화와 query 개수·순위 결정에 직접 참여하는 일급 신호로 격상시키는 것.
+2. GT 밀도로부터 만든 token-level 참조 우선순위로, 예측된 query 우선순위의 상대적 순서 자체를 직접 감독하는 것.
+
+**갭 종합**: <mark style="background: #FFF3A3A6;">이 논문은 density map을 (1) encoder 표현 강화, (2) query 개수 추정, (3) 개별 토큰 순위 결정 세 지점 모두에 직접 참여시키고, token-level ranking 능력 자체를 별도로 감독(RCS)함으로써 이 간극을 메운다는 것이 통찰이다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
 | | 문제 ① — 밀도 정보가 query 배정에 간접적으로만 관여 | 문제 ② — Pixel-level density와 token-level 선택 간 단절 |
 |---|---|---|
-| **문제 정의** | Density map은 crowd counting·dense scene 분석에 널리 쓰여왔지만, 기존 detection 방법들은 이를 보조 예측 브랜치나 feature 강화 신호 정도로만 사용한다 — density map과 실제 decoder query 배정(개수·순위) 사이의 연결이 간접적이다. | Density map을 pixel-space에서 정확히 예측하는 것과, 그 정보로 decoder의 top-k query 선택을 실제로 잘하는 것은 서로 다른 목표다. Pixel-level regression loss만으로 학습하면, 시각적으로 정확한 density map이라도 token-level 순위 매김에는 도움이 안 될 수 있다. |
-| **풀고자 하는 문제** | Density map을 encoder feature 강화와 query 개수·순위 결정에 직접 참여하는 일급 신호로 격상시키는 것 | GT 밀도로부터 만든 token-level 참조 우선순위로, 예측된 query 우선순위의 상대적 순서 자체를 직접 감독하는 것 |
-| **선행 연구 접근** | - [[DQ-DETR]], IG-DETR, DQA-DETR 등: density/counting 정보를 query 개수 조정에만 사용하거나 auxiliary supervision으로만 사용<br>- 원조 density map 연구(CSRNet, Bayesian loss 등 crowd counting 계열): pixel-level 회귀 정확도에만 집중, detection query 배정과 연결하지 않음 | - 기존 density 기반 detection: pixel-level regression loss로만 density map을 학습<br>- **갭**: density map이 실제로 top-k 선택에 효과적인지(ranking 능력)를 직접 감독하는 방법은 없었음 |
 | **해결 방법** | ADPG(얕은 feature에서 density map 생성) + BCME(density feature를 encoder memory에 양방향으로 주입해 표현 자체를 강화) | RCS(Ranking Consistency Supervision) — GT 박스로 만든 density map을 token 공간에 투영해 참조 우선순위를 만들고, margin ranking loss로 고우선순위·저우선순위 토큰 간 상대적 순서를 직접 감독 |
 | **예상되는 문제점** | BCME가 encoder의 모든 스케일 feature에 추가 modulation 연산을 가하므로, density map 예측이 부정확하면 이 오류가 encoder 표현 전체로 퍼질 위험 | RCS는 GT 밀도 기반 참조 우선순위에 의존하므로, 밀도 계산 자체가 모호한 극단적으로 조밀하거나 객체 경계가 겹치는 장면에서는 참조값 자체의 신뢰도가 흔들릴 수 있음 |
-
-**갭 종합**: <mark style="background: #FFF3A3A6;">기존 density 기반 detection 방법들은 density map을 "보조 예측 결과물"로 다뤄, 이 예측이 실제로 decoder의 query 배정에 얼마나 유용한지는 간접적으로만 검증됐다. 이 논문은 density map을 (1) encoder 표현 강화, (2) query 개수 추정, (3) 개별 토큰 순위 결정 세 지점 모두에 직접 참여시키고, token-level ranking 능력 자체를 별도로 감독(RCS)함으로써 이 간극을 메운다는 것이 통찰이다.</mark>
 
 > [!info] 내 메모
 > 
@@ -128,7 +158,7 @@ F_d = G + G * D_tilde + F_s                                  # Eq.4, density-enh
 
 ### ③④ Encoder + Bidirectional Cross-Modulation Enhancement (BCME)
 - **역할**: 표준 encoder가 다중 스케일 feature를 문맥화한 memory를 만들면, BCME가 ②에서 만든 density-enhanced feature를 이 memory에 주입해 "밀도가 높은 영역에 더 집중하고, 배경 간섭은 억제하는" encoder 표현으로 재구성한다. "양방향(bidirectional)"인 이유는 density feature가 memory를 변조할 뿐 아니라, memory의 semantic 정보도 다시 density feature 쪽으로 피드백되어 density feature 자체가 더 detection에 유용한 semantic을 흡수하기 때문이다.
-- **구현**: `F_d`를 각 encoder 스케일에 맞춰 다운샘플링한 density feature `F_d^l`을 만든다. (1) **Spatial modulation**: `F_d^l`로부터 spatial weight `A_l`을 생성해 memory `M_l`에 곱해 밀도 높은 영역을 강조(`M̃_l = M_l ⊙ A_l`). (2) **Channel modulation**: `F_d^l`로부터 channel weight `C_l`을 생성해 다시 곱해 채널별 응답을 조정(`M'_l = M̃_l ⊙ C_l`). (3) **Semantic feedback**: memory로부터 만든 feedback gate `B_l`을 density feature에 곱해 더함으로써(`F_d^l = F_d^l + F_d^l ⊙ B_l`), density feature가 단순 저수준 공간 응답에 머물지 않고 detection semantic을 점차 흡수하게 함. (4) **Cross-scale gating**: 이전(고해상도) 스케일의 density feature를 보간해 현재 스케일과 결합(`F_d^l = F_d^l + Gate(Interp(F_d^{l-1}))`)해, 세밀한 디테일이 저해상도 스케일까지 전파되도록 함.
+- **구현**: $F_d$를 각 encoder 스케일에 맞춰 다운샘플링한 density feature $F_d^l$을 만든다. (1) **Spatial modulation**: $F_d^l$로부터 spatial weight $A_l$을 생성해 memory $M_l$에 곱해 밀도 높은 영역을 강조($\tilde{M}_l = M_l \odot A_l$). (2) **Channel modulation**: $F_d^l$로부터 channel weight $C_l$을 생성해 다시 곱해 채널별 응답을 조정($M'_l = \tilde{M}_l \odot C_l$). (3) **Semantic feedback**: memory로부터 만든 feedback gate $B_l$을 density feature에 곱해 더함으로써($F_d^l = F_d^l + F_d^l \odot B_l$), density feature가 단순 저수준 공간 응답에 머물지 않고 detection semantic을 점차 흡수하게 함. (4) **Cross-scale gating**: 이전(고해상도) 스케일의 density feature를 보간해 현재 스케일과 결합($F_d^l = F_d^l + Gate(Interp(F_d^{l-1}))$)해, 세밀한 디테일이 저해상도 스케일까지 전파되도록 함.
 - **입출력 shape**: `F_d (C, h_s, w_s)` + `M_l (C, h_l, w_l)` → 스케일별 다운샘플 `F_d^l (C, h_l, w_l)` → spatial+channel modulation → `M'_l (C, h_l, w_l)` (memory와 동일 shape).
 
 ```python

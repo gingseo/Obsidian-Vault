@@ -132,21 +132,24 @@ CNN backbone + transformer encoder-decoder + 이분 매칭(Hungarian algorithm) 
 
 ---
 
-### 2-B. 하위 갈래 B — 개별 후보의 패턴·품질로 query를 정제한다
+### 2-B. 하위 갈래 B — query 개수가 아니라 query 자체(표현·supervision)를 재구성한다
+
+> [!info] 2026-08-31 정정
+> 이 갈래의 원래 이름은 "개별 후보의 패턴·품질로 query를 정제한다"였고, PaQ-DETR을 "dense candidate를 클러스터링으로 병합하고 품질 임계값 이하를 제거하는 방법"으로 설명했었다. PaQ-DETR 논문 PDF를 원문과 전체 대조한 결과 **이 클러스터링·제거 메커니즘은 실제 논문에 없다** — PDF 전체 텍스트에 "candidate"/"prune"/"cluster" 등이 전혀 등장하지 않는다. 실제 PaQ-DETR은 (1) query 개수는 고정한 채 query *표현*을 소수의 공유 base pattern의 이미지 조건부 볼록결합으로 구성하고, (2) 예측 품질 기반 1:多 assignment로 supervision을 확장하는 논문이다. 아래 2-B-1은 이 내용으로 전면 재작성했다.
 
 #### 2-B-1. PaQ-DETR
-`##### 원제` PaQ-DETR: Learning Pattern and Quality-Aware Dynamic Queries for Object Detection · **2025 · arXiv · JCR 해당없음(arXiv)**
+`##### 원제` PaQ-DETR: Learning Pattern and Quality-Aware Dynamic Queries for Object Detection · **2025(arXiv, v2 2026-03) · arXiv · JCR 해당없음(arXiv)**
 
-**구조**: 이미지 전체 밀도가 아니라 **개별 후보의 공간적 군집 패턴 + 객체다움 신뢰도**를 신호로, 유사도 클러스터링으로 중복 병합 + 품질 임계값 이하 제거.
+**구조**: [[Pattern_Quality_Aware_Query_Refinement]]. Content-Aware Weight Generator가 encoder feature로부터 만든 이미지 조건부 가중치로 소수(m=50~150)의 학습되는 공유 base pattern을 볼록결합해 query 내용을 구성(Pattern-based Representation Module) + 중간 decoder layer에서 quality score(IoU−γ·분류 신뢰도)로 GT마다 다른 개수의 positive를 선정하는 Quality-Aware One-to-Many Assignment. 최종 decoder layer는 표준 1:1 matching 유지.
 
-**왜 (하위 갈래 A 전체의 다른 각도 한계)**: 밀도 수치 하나로는 "객체가 어떻게 뭉쳐 있는가"라는 공간 분포 정보를 못 담음. 게다가 기존 dynamic query 연구는 대부분 **tiny/aerial 특화 데이터셋에서만 검증**되어 일반 객체 탐지에서의 유효성이 불명.
+**왜 (DETR 계열 전체가 공유하는 다른 각도의 한계)**: Deformable-DETR/DN-DETR/DINO의 query activation 분포를 분석하면 극심한 long-tail(Gini 계수 최대 0.97)이 나타나 소수 "승자" query만 실제로 학습된다 — 이는 하위 갈래 A가 다루는 "query가 몇 개 필요한가"와는 다른 문제로, "이미 있는 query 중 실제로 학습 신호를 받는 게 왜 이렇게 적은가"라는 표현·supervision 측 문제다.
 
-**해결**: 클러스터링 결과 자체에 공간 분포가 암묵적으로 인코딩됨. **COCO 일반 탐지에서 검증한 유일한 사례**.
+**해결**: 공유 패턴을 통해 gradient가 여러 query에 걸쳐 분산되도록(표현 측) + 중간 layer에서 positive 수를 품질에 따라 늘려 supervision을 확장(공급 측). **COCO 일반 탐지에서 검증한 유일한 사례**.
 
 > [!warning] 이 논문 자체의 한계
-> 클러스터링이 인접한 두 객체를 하나로 잘못 병합할 위험(under-segmentation)에 대한 정량 검증 부족. AI-TOD류 tiny 특화 벤치마크 미검증이라 다른 5편과 직접 비교 어려움. 수치 표가 이미지로만 렌더링되어 정확한 AP 값 확인이 어려운 상태(문서 자체 한계).
+> 패턴 수(m)가 지나치게 많아지면(250개) 과도한 표현 다양성이 오히려 최적화를 방해해 성능이 소폭 하락 — 최적 패턴 수를 튜닝해야 하는 하이퍼파라미터 민감성. Positive 수 k를 너무 크게 잡으면 저품질 매칭이 섞여 성능이 하락하고, quality score의 균형 계수(γ)도 함께 튜닝 필요. 파라미터·FLOPs·메모리도 소폭 증가.
 
-**데이터셋**: COCO val2017 (DINO 대비 일관된 개선, 정확한 수치는 원문 표 확인 필요)
+**데이터셋**: COCO val2017 (DINO++ 대비 12-epoch mAP 50.3→51.9, query activation Gini 계수 0.97→0.89)
 
 ---
 
@@ -155,7 +158,7 @@ CNN backbone + transformer encoder-decoder + 이분 매칭(Hungarian algorithm) 
 
 **구조**: Rotated-DINO 기반 **oriented(회전) object detection**. 유사한 고품질 query를 제거가 아니라 **병합**(aggregate)하는 QA 모듈.
 
-**왜 (2-B-1의 한계 + one-to-one matching 고유 문제)**: One-to-one matching에서 "중복된 고품질 negative"가 gradient를 왜곡한다는 것을 **focal loss gradient를 직접 유도해(수식) 이론적으로 증명** — p>0.5 구간에서 gradient ratio가 음수로 전환됨을 Fig.3에서 시각화.
+**왜 (one-to-one matching 고유 문제, 2-B-1과는 별개 각도)**: 2-B-1(PaQ-DETR)이 query의 표현·supervision 분배 문제를 다룬다면, 이 논문은 query *개수*가 너무 많아질 때(밀집 영역) 유사한 고품질 query끼리 서로 negative로 경쟁하며 gradient가 왜곡된다는, one-to-one matching 자체의 또 다른 구조적 문제를 겨냥한다. 이를 **focal loss gradient를 직접 유도해(수식) 이론적으로 증명** — p>0.5 구간에서 gradient ratio가 음수로 전환됨을 Fig.3에서 시각화.
 
 **해결**: 제거가 아니라 병합(ablation: QA 제거 시 AP50 78.29→76.89로 하락 확인).
 

@@ -59,6 +59,14 @@
 - [ ] J. Chen et al., "Run, don't walk: Chasing higher FLOPS for faster neural networks" (CVPR 2023) [51] — L-FFCA-YOLO가 채택한 PConv(FasterNet)의 원조 논문 (출처: [[FFCA-YOLO]])
 - [ ] M. Tan, R. Pang, Q. V. Le, "EfficientDet: Scalable and efficient object detection" (CVPR 2020) [29] — FFCA-YOLO의 FFM이 뼈대로 삼은 BiFPN의 원조 논문 (출처: [[FFCA-YOLO]])
 - [ ] (검증 필요) PConv와 LCOR류 헤드 재배치 경량화 기법을 함께 적용한 하이브리드 경량 원격탐사 detector 연구 — 검색 키워드: `lightweight remote sensing object detection partial convolution head reduction combined` (출처: [[FFCA-YOLO]])
+- [ ] C. Xu, J. Wang, W. Yang, H. Yu, L. Yu, G.-S. Xia, "RFLA: Gaussian receptive field based label assignment for tiny object detection" (ECCV 2022) [17] — 이 위키에서 여러 논문이 반복적으로 baseline·비교 대상으로 삼는 핵심 선행 연구. ORFENet도 관련 연구에서 label assignment 갈래의 대표작으로 인용 (출처: [[ORFENet]])
+- [ ] J. Wu, Z. Pan, B. Lei, Y. Hu, "FSANet: Feature-and-spatial-aligned network for tiny object detection in remote sensing images" (IEEE Trans. Geosci. Remote Sens., 2022) [61] — ORFENet이 1-stage SOTA로 직접 비교하는 대상. 원격탐사 tiny object 분야의 또 다른 대표 1-stage 접근 (출처: [[ORFENet]])
+- [ ] Z. Cai, N. Vasconcelos, "Cascade R-CNN: Delving into high quality object detection" (CVPR 2018) [35] — ORFENet의 시각적 비교(Fig. 4)에서 NWD-RKA와 결합해 가장 강력한 2-stage 경쟁자로 등장하는 baseline 아키텍처 (출처: [[ORFENet]])
+- [ ] (검증 필요) auxiliary reconstruction task를 이용한 self-supervised feature regularization 관련 연구(detection 외 도메인) — 검색 키워드: `auxiliary reconstruction task train-time only inference-free regularization object detection` (출처: [[ORFENet]])
+- [ ] S. Tian, B. Zhang, L. Cao, S. Fan, K. Du, C. Fu, Y. Zhang, "Mfdaff-net: Multiscale frequency-aware dual attention-guided feature fusion network for uav object detection" (2025) [18] — RTP-Net이 "필터 설계 어려움·GSD 일반화 한계"의 예로 직접 대조하는 주파수 인식 선행 연구 (출처: [[RTP-Net]])
+- [ ] S. Woo, J. Park, J.-Y. Lee, I. Kweon, "CBAM: Convolutional block attention module" (ECCV 2018) [23] — RTP-Net의 MSAF가 채택한 CBAM의 원조 논문 (출처: [[RTP-Net]])
+- [ ] J. Hu, L. Shen, G. Sun, "Squeeze-and-excitation networks" (TPAMI 2020) [22] — RTP-Net의 AWEM·GLEM 채널 attention이 기반하는 SENet 원조 (출처: [[RTP-Net]])
+- [ ] (검증 필요) Depthwise separable convolution 기반 large-kernel 설계가 파라미터 효율성과 정확도를 동시에 달성하는 다른 경량 backbone 연구 — 검색 키워드: `large kernel depthwise separable convolution lightweight backbone efficiency accuracy tradeoff` (출처: [[RTP-Net]])
 
 ## ai-generated-image-detection
 - [ ] Z. Wang, J. Bao, W. Zhou, W. Wang, H. Hu, H. Chen, H. Li, "DIRE for diffusion-generated image detection" (2023) [40] — LaRE²가 직접 비교·극복하는 baseline. 모든 개선점이 이 논문 대비 설명되므로 배경 이해에 필수 (출처: [[LaRE2]])
@@ -70,6 +78,12 @@
 - [ ] D. Li, Y. Sun, Z. Zheng, F. Zhang, B. Sun, C. Yuan, "A real-world large-scale infrared image dataset and multitask learning framework for power line surveillance" (IEEE Trans. Instrum. Meas. 2025) [8] — SR+instance segmentation 멀티태스크 프레임워크(PowerNet). ORD/DFE 접근과 SR 기반 접근의 실증적 차이를 이해하는 데 도움 (출처: [[Reconstruction_Error_Guided_Instance_Segmentation]])
 - [ ] K. P. Alexandridis, J. Deng, A. Nguyen, S. Luo, "Long-tailed instance segmentation using Gumbel optimized loss" (ECCV 2022) [25] — DFE 모듈이 Gumbel-sigmoid 필터링을 도입할 때 근거로 삼은 원 기법 (출처: [[Reconstruction_Error_Guided_Instance_Segmentation]])
 - [ ] (검증 필요) 적외선/열화상 영상에서의 도메인 특이적 노이즈(NUC 보정 잔여 오차, 방사율 차이)가 reconstruction 기반 anomaly/difference 신호에 미치는 영향 관련 연구 — 검색 키워드: `infrared thermal image non-uniformity correction residual noise reconstruction-based detection` (출처: [[Reconstruction_Error_Guided_Instance_Segmentation]])
+
+## scientific-critique-automation
+- [ ] P. Kargupta, I. Agarwal, T. August, J. Han, "Tree-of-debate: Multi-persona debate trees elicit critical thinking for scientific comparative analysis" (ACL 2025) — Tree-of-Concerns가 직접 비교·차별화하는 가장 가까운 선행 연구. 멀티페르소나 debate tree 설계의 원조 격 (출처: [[Tree-of-Concerns]])
+- [ ] M. D'Arcy, T. Hope, L. Birnbaum, D. Downey, "Marg: Multi-agent review generation for scientific papers" (arXiv 2401.04259, 2024) — Tree-of-Concerns가 review-replication 계열의 대표 baseline으로 직접 비교(성능 최저로 언급됨) (출처: [[Tree-of-Concerns]])
+- [ ] S. Kapoor 외, "Reforms: Consensus-based recommendations for machine-learning-based science" (Science Advances, 2024) — 미기재 한계가 초래하는 재현성 위기 문제의식을 뒷받침하는 인용 논문 (출처: [[Tree-of-Concerns]])
+- [ ] (검증 필요) retrieval-augmented 멀티페이퍼 비평(교차 논문 비교로 재현 실패·방법론적 드리프트를 탐지하는 후속 연구) — 검색 키워드: `retrieval-augmented multi-paper critique cross-paper comparison LLM 2026` (출처: [[Tree-of-Concerns]])
 
 ## salient-object-detection
 - [ ] J. Zhao, J.-J. Liu, D.-P. Fan, Y. Cao, J. Yang, M.-M. Cheng, "EGNet: Edge guidance network for salient object detection" [32] (ICCV 2019) — 이 논문이 대비축으로 삼는 boundary guidance 계열의 대표 논문이자, URA의 ablation(Table VII)에서 경계 추출 방식으로 직접 채택된 baseline (출처: [[Uncertainty_Guided_Refinement]])

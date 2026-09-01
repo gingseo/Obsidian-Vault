@@ -1,31 +1,42 @@
 ---
 pm-task: true
-projectId: "paperwiki-object-detection"
+projectId: paperwiki-object-detection
 parentId:
-id: "t-detr-j94vuetv7h"
-title: "DETR"
-type: "task"
-status: "in-progress"
-priority: "medium"
-start: "2026-08-12"
+id: t-detr-j94vuetv7h
+title: DETR
+type: task
+status: in-progress
+priority: medium
+start: 2026-08-12
 due:
 progress: 0
 assignees: []
 tags: []
 customFields:
-  "nh3oelhxmtcnb377": 2020
-  "gx1mmrf0mtcnb37a": "ECCV"
+  nh3oelhxmtcnb377: 2020
+  gx1mmrf0mtcnb37a: ECCV
 subtaskIds: []
 dependencies: []
 year: 2020
-venue: "ECCV"
+venue: ECCV
 jcr_quartile: Q1
-task: [object-detection]
-direction: [foundational, novel-approach]
-paper_tags: [paper, object-detection, transformer, set-prediction, bipartite-matching, end-to-end, panoptic-segmentation]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2020_ECCV_DETR.pdf"
-createdAt: "2026-08-18T11:00:00.000Z"
-updatedAt: "2026-08-28T16:40:00.000Z"
+task:
+  - object-detection
+direction:
+  - foundational
+  - novel-approach
+paper_tags:
+  - paper
+  - object-detection
+  - transformer
+  - set-prediction
+  - bipartite-matching
+  - end-to-end
+  - panoptic-segmentation
+source: Projects/논문_pdf/Object_Detection/2020_ECCV_DETR.pdf
+source_type: personal
+createdAt: 2026-08-18T11:00:00.000Z
+updatedAt: 2026-08-28T16:40:00.000Z
 ---
 
 Project: [[논문_Object_Detection|Object Detection]]
@@ -34,6 +45,7 @@ Project: [[논문_Object_Detection|Object Detection]]
 > [!quote] 원제
 > **End-to-End Object Detection with Transformers**
 > Carion, Massa, Synnaeve, Usunier, Kirillov, Zagoruyko — Facebook AI, ECCV 2020
+> https://arxiv.org/abs/2005.12872
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Object detection을 "집합(set) 예측 문제"로 재정의해, CNN backbone + Transformer encoder-decoder + bipartite matching loss만으로 anchor·NMS 같은 수작업 컴포넌트 없이 박스와 클래스를 한 번에(end-to-end) 예측하는 DETR.</mark>
@@ -43,15 +55,42 @@ Project: [[논문_Object_Detection|Object Detection]]
 
 # 정리
 
-| | 문제 ① — 수작업 컴포넌트 의존 | 문제 ② — 중복 제거를 위한 후처리 의존 |
-|---|---|---|
-| **문제 정의** | 기존 detector는 anchor box, grid cell, region proposal처럼 "사람이 미리 설계한 위치 후보"를 기준으로 예측하고, 중복 예측은 NMS(비최대 억제)로 사후에 걸러낸다. 이 설계 자체가 사람의 사전 지식(prior knowledge)을 인코딩한 것이라 파이프라인이 복잡해진다. | 같은 객체를 여러 proposal/anchor가 동시에 맞히면 중복 예측이 생기는데, 이를 NMS라는 미분 불가능한 휴리스틱 후처리로 걸러낸다. NMS는 학습 과정에 포함되지 않는 별도 단계이며, 임계값 등 하이퍼파라미터에 성능이 민감하다. |
-| **풀고자 하는 문제** | Anchor/proposal 같은 사람이 설계한 초기 추측 없이, 이미지에서 곧바로 최종 박스 집합을 예측하는 것 | NMS 같은 미분 불가능한 후처리 없이, 학습 과정 자체에서 중복 예측을 억제하는 것 |
-| **선행 연구 접근** | - Two-stage(Faster R-CNN 등): region proposal 생성 후 분류·회귀<br>- Anchor 기반(RetinaNet 등): 격자마다 여러 크기·비율의 anchor 배치<br>- Anchor-free(CenterNet, FCOS 등): grid cell/center point 기준 예측<br>- **갭**: 방식은 달라도 전부 "초기 추측(proposal/anchor/center)"을 사람이 정한 규칙으로 만들고, 그 규칙에 성능이 크게 좌우된다. | - 표준 NMS: IoU 임계값 기준으로 낮은 confidence 박스 제거<br>- Learnable NMS[16], Relation Networks[17]: attention으로 예측 간 관계를 명시적으로 모델링해 NMS 의존도 완화 시도<br>- **갭**: 관계를 모델링하더라도 proposal 좌표 같은 추가적인 손수 설계한(hand-crafted) 문맥 정보에 의존하거나, 여전히 후처리가 필요. |
-| **해결 방법** | Bipartite matching(헝가리안 알고리즘)으로 예측-정답을 1:1 매칭 — 이 매칭 자체가 "무엇이 무엇을 담당할지"를 매번 데이터로부터 계산하므로, anchor처럼 미리 정해둔 위치 규칙이 필요 없다. | 같은 매칭이 정답당 예측을 정확히 하나만 배정하므로, 나머지 중복 예측은 자동으로 "no object"에 매칭되어 억제된다 — 별도 후처리 없이 학습 과정 자체에서 중복이 억제된다. |
-| **예상되는 문제점** | 매칭을 매 스텝 다시 계산하므로 학습 초반 신호가 불안정해, 매우 긴 학습 스케줄(300~500 epoch)이 필요하다(아래 "제안 방법" ⑦ 참고). | 이 억제는 디코더의 self-attention(query끼리 상호 참조)에 의존하는데, object query 개수(N=100)가 고정이라 실제 객체 수가 이를 초과하면 애초에 억제할 예측 자체가 부족해진다(아래 "제안 방법" ⑤, "실험 결과" Fig.12 참고). |
+## 기존 방법의 한계
+- **수작업 컴포넌트 의존**:
+  기존 detector는 anchor box, grid cell, region proposal처럼 "사람이 미리 설계한 위치 후보"를 기준으로 예측하고, 중복 예측은 NMS(비최대 억제)로 사후에 걸러낸다. 이 설계 자체가 사람의 사전 지식(prior knowledge)을 인코딩한 것이라 파이프라인이 복잡해진다.
+- **중복 제거를 위한 후처리 의존**:
+  같은 객체를 여러 proposal/anchor가 동시에 맞히면 중복 예측이 생기는데, 이를 NMS라는 미분 불가능한 휴리스틱 후처리로 걸러낸다. NMS는 학습 과정에 포함되지 않는 별도 단계이며, 임계값 등 하이퍼파라미터에 성능이 민감하다.
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — 초기 위치 추측(proposal/anchor/center) 설계**
+- Two-stage(Faster R-CNN 등): region proposal 생성 후 분류·회귀.
+- Anchor 기반(RetinaNet 등): 격자마다 여러 크기·비율의 anchor 배치.
+- Anchor-free(CenterNet, FCOS 등): grid cell/center point 기준 예측.
+- **타겟/해결**: 수작업 컴포넌트 의존(문제①) — 방식은 달라도 전부 "초기 추측(proposal/anchor/center)"을 사람이 정한 규칙으로 만들고, 그 규칙에 성능이 크게 좌우된다.
+
+**갈래 2 — NMS 의존도 완화 시도**
+- 표준 NMS: IoU 임계값 기준으로 낮은 confidence 박스 제거.
+- Learnable NMS[16], Relation Networks[17]: attention으로 예측 간 관계를 명시적으로 모델링해 NMS 의존도 완화 시도.
+- **타겟/해결**: 중복 제거를 위한 후처리 의존(문제②) — 관계를 모델링하더라도 proposal 좌표 같은 추가적인 손수 설계한(hand-crafted) 문맥 정보에 의존하거나, 여전히 후처리가 필요.
+
+**갭**: <mark style="background: #FFF3A3A6;">두 갈래 모두 "예측과 정답을 어떻게 대응시킬지"를 사람이 정한 규칙(초기 위치 후보 설계 또는 후처리 규칙)에 의존한다는 공통 한계를 벗어나지 못했다.</mark>
+
+## 이 논문이 풀고자 하는 문제
+1. Anchor/proposal 같은 사람이 설계한 초기 추측 없이, 이미지에서 곧바로 최종 박스 집합을 예측하는 것.
+2. NMS 같은 미분 불가능한 후처리 없이, 학습 과정 자체에서 중복 예측을 억제하는 것.
 
 **갭 종합**: <mark style="background: #FFF3A3A6;">"초기 추측을 사람이 설계"하는 문제와 "중복을 후처리로 제거"하는 문제는 서로 다른 단계처럼 보이지만, 둘 다 "예측과 정답을 어떻게 대응시킬지"를 사람이 정한 규칙에 의존한다는 공통 원인에서 나온다. 이 대응 규칙 자체를 학습 가능한 알고리즘(bipartite matching)으로 대체하면 두 문제를 동시에 없앨 수 있다는 것이 DETR의 통찰이다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
+| | 문제 ① — 수작업 컴포넌트 의존 | 문제 ② — 중복 제거를 위한 후처리 의존 |
+|---|---|---|
+| **해결 방법** | Bipartite matching(헝가리안 알고리즘)으로 예측-정답을 1:1 매칭 — 이 매칭 자체가 "무엇이 무엇을 담당할지"를 매번 데이터로부터 계산하므로, anchor처럼 미리 정해둔 위치 규칙이 필요 없다. | 같은 매칭이 정답당 예측을 정확히 하나만 배정하므로, 나머지 중복 예측은 자동으로 "no object"에 매칭되어 억제된다 — 별도 후처리 없이 학습 과정 자체에서 중복이 억제된다. |
+| **예상되는 문제점** | 매칭을 매 스텝 다시 계산하므로 학습 초반 신호가 불안정해, 매우 긴 학습 스케줄(300~500 epoch)이 필요하다(아래 "제안 방법" ⑦ 참고). | 이 억제는 디코더의 self-attention(query끼리 상호 참조)에 의존하는데, object query 개수(N=100)가 고정이라 실제 객체 수가 이를 초과하면 애초에 억제할 예측 자체가 부족해진다(아래 "제안 방법" ⑤, "실험 결과" Fig.12 참고). |
 
 > [!info] 내 메모
 > 
@@ -91,6 +130,11 @@ Project: [[논문_Object_Detection|Object Detection]]
 ```
 
 > [!info] 내 메모
+> ##### Encoder - self attention 만
+> - layer 는 Self attention + Add & Norm + FFN + Add & Norm이 1개
+> - 이 블록들이 파라미터 공유 없이 (각 레이어가 서로 다른 가중치) 6번 쌓여짐.
+> - 
+> 
 > 
 
 ### ① CNN Backbone
@@ -139,6 +183,8 @@ src = h.flatten(2).permute(2, 0, 1)               # (256, H, W) -> (HW, 1, 256)
 - **구조**: self-attention + FFN 블록을 6층 쌓음(각 층마다 Add&Norm 포함).
 - **입출력 shape**: `(HW, d)` → `(HW, d)` (개수·차원 불변, 값만 문맥을 반영해 갱신됨). 이 최종 출력을 "encoder memory"라 부르며 디코더의 cross-attention에 재사용된다.
 - <mark style="background: #FFF9D6A6;">인코더의 self-attention이 이미지 전체를 한 번에 보기 때문에, 서로 멀리 떨어진 두 객체도 한 층 만에 "겹치는 객체인지 아닌지"를 구별할 수 있게 된다 — 이것이 "정리" 표의 초기 추측(anchor) 없이도 객체 후보를 전역적으로 분리해내는 근거가 된다(ablation에서 인코더 층 제거 시 AP가 3.9 하락, Fig.3의 attention map이 인스턴스를 실제로 분리함을 시각적으로 보여줌).</mark>
+- 층이 깊어질수록 AP는 상승, 그러나 소형객체는 상승하지만은 않는다. 
+  ![[2020_ECCV_DETR.pdf#page=10&rect=26,465,384,576|2020_ECCV_DETR, p.10]]
 
 ```python
 memory = encoder_layers(src + pos)   # (HW, 1, 256) -> (HW, 1, 256), 6층 반복
@@ -151,7 +197,7 @@ memory = encoder_layers(src + pos)   # (HW, 1, 256) -> (HW, 1, 256), 6층 반복
 > 
 
 ### ⑤ Transformer Decoder — Object Query
-- **역할**: <span style="color:#c0392b; font-weight:bold;">object query</span>라 부르는 **학습되는(learned) 위치 임베딩 N개(=100개)**를 디코더 입력으로 사용한다. 각 query 슬롯은 학습이 끝나면 "이미지 중앙의 큰 객체", "우측 하단의 작은 객체" 식으로 암묵적인 역할을 갖게 되고(Fig.7에서 실제로 확인됨), 최종적으로 100개의 (클래스, 박스) 예측 후보를 만든다.
+- **역할**: <span style="color:#c0392b; font-weight:bold;">object query</span>라 부르는 **학습되는(learned) 위치 임베딩 N개(=100개)**를 디코더 입력으로 사용한다. !각 query 슬롯은 학습이 끝나면 "이미지 중앙의 큰 객체", "우측 하단의 작은 객체" 식으로 암묵적인 역할을 갖게 되고(Fig.7에서 실제로 확인됨), 최종적으로 100개의 (클래스, 박스) 예측 후보를 만든다.
 - **구조**: 각 디코더 층은 (1) query들끼리의 self-attention → (2) query가 encoder memory를 참고하는 cross-attention → (3) FFN, 순서로 구성되며 이 블록을 6층 쌓는다. 6층 전부의 출력에 보조 손실(auxiliary loss)을 걸어 학습을 돕는다.
 - **입출력 shape**: object query `(N=100, d)` (처음엔 학습된 초기값, self-attention 통과 시마다 갱신) + encoder memory `(HW, d)` → 디코더 출력 `(N=100, d)`.
 - <mark style="background: #FFF9D6A6;">디코더의 self-attention(query끼리 서로 참고)이 "다른 슬롯이 이미 이 객체를 담당하고 있다"는 정보를 슬롯 간에 공유하게 해, 같은 객체에 대해 여러 슬롯이 중복 예측하는 것을 억제한다 — 이것이 "정리" 표의 NMS 없이 중복을 억제하는 메커니즘이다(ablation Fig.4에서 NMS를 추가로 걸어도 층이 깊어질수록 이득이 사라짐 → 모델 스스로 중복을 이미 억제하고 있다는 증거).</mark>

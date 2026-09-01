@@ -19,11 +19,12 @@ subtaskIds: []
 dependencies: []
 year: 2026
 venue: "IEEE TPAMI"
-jcr_quartile: null
+jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement, novel-approach]
 paper_tags: [paper, small-object-detection, restoration, degradation-modeling, mixture-of-experts, multi-task-learning]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2026_TPAMI_Detection-Oriented-Rectification.pdf"
+source: "Projects/논문_pdf/Small_Object_Detection/2026_TPAMI_Detection-Oriented-Rectification.pdf"
+source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-28T17:30:00.000Z"
 ---
@@ -33,6 +34,7 @@ updatedAt: "2026-08-28T17:30:00.000Z"
 > [!quote] 원제
 > **Breathing New Life into Small Object Detection with Detection-Oriented Rectification**
 > Xiang Yuan, Junwei Han, Gong Cheng — Northwestern Polytechnical University / Chongqing University of Posts and Telecommunications, IEEE TPAMI 2026
+> https://doi.org/10.1109/TPAMI.2026.3704810
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Small object의 열화(degradation) 패턴을 학습 가능한 basis 집합으로 명시적으로 분해·학습한 뒤, 그 지식을 위치별 동적 프롬프트로 변환해 탐지(detection) 지향적으로 feature를 교정(rectify)하는 DORA(Detection-Oriented RectificAtion) 프레임워크로, 다양한 detector에 plug-in 방식으로 결합해 5개 벤치마크에서 일관되게 성능을 끌어올린다.</mark>
@@ -42,15 +44,50 @@ updatedAt: "2026-08-28T17:30:00.000Z"
 
 # 정리
 
+## 기존 방법의 한계
+- **Feature space collapse**:
+  잘 학습된 Faster R-CNN(COCO val GT 박스 기준)의 region feature를 t-SNE로 보면(Fig. 1), non-small instance는 클래스별로 뚜렷한 manifold를 형성하지만, small instance는 inter-class semantic entanglement(bird-kite, bottle-cup처럼 다른 클래스끼리 겹침)와 intra-class distributional divergence(같은 클래스인데 클래스 중심에서 크게 벗어남)라는 이중 붕괴를 보인다. GT로도 이 정도로 붕괴한다면, 노이즈 섞인 실제 proposal 상황은 더 심각할 것이다.
+- **Restoration의 degradation modeling 단절**:
+  SR·reconstruction·feature-imitation 세 갈래 restoration 방법 모두 "복원"을 보조 과제로 쓰지만, 좁은 synthetic corruption에서만 학습돼 실제(compound) 열화 양상을 포착하지 못한다. 추론 시 명시적 시뮬레이션이 없어 학습-추론 간 distribution shift가 생긴다.
+- **Restoration-detection task conflict**:
+  Restoration은 pixel-level fidelity를, detection은 semantic 전체 이해를 요구해 두 목표가 근본적으로 충돌한다. 기존 방법들은 이를 복잡한 stage-by-stage 학습으로 회피해 end-to-end 최적화의 우아함을 해친다.
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — SR 기반**
+- Perceptual GAN, SOD-MTGAN, EFPN, SRD 등: 사전학습 SR 모델을 signal magnifier로 붙임 — 별도 SR 네트워크의 구조적 복잡성, GAN 학습 특유의 불안정성.
+- **타겟/해결**: Feature space collapse(문제①) — SR로 신호를 확대하려는 시도이지만, 좁은 synthetic corruption에서만 학습돼 실제 열화 양상을 포착하지 못한다(문제②로도 이어짐).
+
+**갈래 2 — Reconstruction 기반**
+- <mark style="background: #FFF3A3A6;">SR-TOD, DirNet, DFR-Det, UniRestore 등: 병렬 reconstruction과 detection을 공동 최적화 — pixel-space 제약에만 의존해 restoration-detection gap을 오히려 키울 위험.</mark>
+- **타겟/해결**: Restoration의 degradation modeling 단절(문제②), Restoration-detection task conflict(문제③) — reconstruction을 보조 과제로 결합했지만 pixel-space 제약만으로는 두 목표의 충돌을 해소하지 못한다.
+
+**갈래 3 — Feature-imitation 기반**
+- SML, FMD, InterNet, CFINet 등: 열화된 representation이 고품질 representation을 모사 — dense pixel-level 정렬 강제로 공간적으로 뒤틀리기 쉬운 small object에서 잉여 노이즈에 overfitting.
+- **타겟/해결**: Feature space collapse(문제①) — 고품질 표현을 모사시켜 붕괴를 완화하려 하지만, 정렬 강제가 오히려 노이즈를 학습하게 만든다.
+
+**갈래 4 — High-level task-oriented restoration**
+- <mark style="background: #FFF3A3A6;">일반 저수준 비전 도메인의 IA-YOLO·MAET·VRD-IR·UniRestore·DIRNet 등: recognition accuracy가 restoration을 이끌거나 열화 변환을 명시적으로 학습.</mark>
+- **타겟/해결**: Restoration-detection task conflict(문제③) — task-oriented라는 방향은 이 논문과 같지만 SOD에 특화되지 않았고, 보조/주 과제 간 최적화 gap이 미해소로 남는다.
+
+**갭**: <mark style="background: #FFF3A3A6;">네 갈래 모두 "복원"을 보조 과제로 쓰지만, 어느 쪽도 실제 small object의 복합적 열화 양상을 명시적으로 모델링하지 않고, restoration과 detection이라는 서로 다른 목표를 조화시키는 통합적 최적화 구조를 갖추지 못했다.</mark>
+
+## 이 논문이 풀고자 하는 문제
+1. Feature space collapse 자체를 구조적으로 완화하는 것.
+2. Small object에 내재된 실제 열화 패턴을 명시적으로 이해하고, 추론 시에도 이 지식을 재사용해 distribution shift를 완화하는 것.
+3. Restoration과 detection 간 목표 충돌을 근본적으로 해소하는 통합 최적화 구조를 만드는 것.
+
+**갭 종합**: <mark style="background: #FFF3A3A6;">"무엇이 열화를 일으키는지 알아야, 어떻게 교정할지 안다(knowing what degrades, knowing how to rectify)"는 degradation-then-rectification 패러다임으로, 열화를 명시적으로 모델링하는 동시에 그 지식을 detection 지향적으로 재사용하는 통합 구조를 만들면 세 문제를 하나의 틀로 동시에 해소할 수 있다는 것이 이 논문의 통찰이다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
 | | 문제 ① — Feature space collapse | 문제 ② — Restoration의 degradation modeling 단절 | 문제 ③ — Restoration-detection task conflict |
 |---|---|---|---|
-| **문제 정의** | 잘 학습된 Faster R-CNN(COCO val GT 박스 기준)의 region feature를 t-SNE로 보면(Fig. 1), non-small instance는 클래스별로 뚜렷한 manifold를 형성하지만, small instance는 inter-class semantic entanglement(bird-kite, bottle-cup처럼 다른 클래스끼리 겹침)와 intra-class distributional divergence(같은 클래스인데 클래스 중심에서 크게 벗어남)라는 이중 붕괴를 보인다. | SR·reconstruction·feature-imitation 세 갈래 restoration 방법 모두 "복원"을 보조 과제로 쓰지만, 좁은 synthetic corruption에서만 학습돼 실제(compound) 열화 양상을 포착하지 못한다. 추론 시 명시적 시뮬레이션이 없어 학습-추론 간 distribution shift가 생긴다. | Restoration은 pixel-level fidelity를, detection은 semantic 전체 이해를 요구해 두 목표가 근본적으로 충돌한다. 기존 방법들은 이를 복잡한 stage-by-stage 학습으로 회피해 end-to-end 최적화의 우아함을 해친다. |
-| **풀고자 하는 문제** | GT로도 이 정도로 붕괴한다면, 노이즈 섞인 실제 proposal 상황은 더 심각할 것 — 이 표현 붕괴 자체를 구조적으로 완화하는 것 | Small object에 내재된 실제 열화 패턴을 명시적으로 이해하고, 추론 시에도 이 지식을 재사용해 distribution shift를 완화하는 것 | Restoration과 detection 간 목표 충돌을 근본적으로 해소하는 통합 최적화 구조를 만드는 것 |
-| **선행 연구 접근** | - **SR 기반**(Perceptual GAN, SOD-MTGAN, EFPN, SRD 등): 사전학습 SR 모델을 signal magnifier로 붙임 — 별도 SR 네트워크의 구조적 복잡성, GAN 학습 특유의 불안정성.<br>- **Reconstruction 기반**(SR-TOD, DirNet, DFR-Det, UniRestore 등): 병렬 reconstruction과 detection을 공동 최적화 — pixel-space 제약에만 의존해 restoration-detection gap을 오히려 키울 위험.<br>- **Feature-imitation 기반**(SML, FMD, InterNet, CFINet 등): 열화된 representation이 고품질 representation을 모사 — dense pixel-level 정렬 강제로 공간적으로 뒤틀리기 쉬운 small object에서 잉여 노이즈에 overfitting. | 위 세 갈래 + **High-level task-oriented restoration**(일반 저수준 비전, IA-YOLO·MAET·VRD-IR·UniRestore·DIRNet 등): recognition accuracy가 restoration을 이끌거나 열화 변환을 명시적으로 학습 — 다만 SOD에 특화되지 않았고, 보조/주 과제 간 최적화 gap이 미해소로 남음. | 위 네 갈래 공통 — restoration을 보조 과제로 쓰는 방법 어디도 pixel-space 제약을 넘어선 통합 최적화 구조를 갖추지 못함. |
 | **해결 방법** | Degradation basis를 명시적으로 학습해 small object가 겪는 실제 corruption 패턴을 구조화된 지식으로 포착하고, 이를 조건으로 한 rectification으로 feature를 재정렬 | Degradation Engine이 매 iteration 다양한 corruption을 확률적으로 샘플링하고, 학습 가능한 degradation basis로 이를 명시적으로 모사·학습(Degradation-aware Learning) — 추론 시에도 이 지식을 조건으로 재사용 | Entity 단위 reconstruction(pixel이 아닌 인스턴스 단위 supervision)과 self-correction term으로 restoration objective를 detection 목표와 정렬 |
 | **예상되는 문제점** | Basis가 학습 데이터의 corruption 분포에 종속적으로 특화될 위험 | Degradation Engine의 corruption 목록(curated suite)에 없는 열화 양상에는 일반화가 검증되지 않음 | Entity reconstruction의 bipartite matching·contrastive alignment가 하이퍼파라미터(α, ε, N)에 민감 |
-
-**갭 종합**: <mark style="background: #FFF3A3A6;">네 갈래 모두 "복원"을 보조 과제로 쓰지만, 어느 쪽도 실제 small object의 복합적 열화 양상을 명시적으로 모델링하지 않고, restoration과 detection이라는 서로 다른 목표를 조화시키는 통합적 최적화 구조를 갖추지 못했다. 이 논문은 "무엇이 열화를 일으키는지 알아야, 어떻게 교정할지 안다(knowing what degrades, knowing how to rectify)"는 degradation-then-rectification 패러다임으로 이 갭을 메운다.</mark>
 
 > [!info] 내 메모
 > 

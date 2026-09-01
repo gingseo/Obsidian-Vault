@@ -52,7 +52,7 @@ updated: 2026-08-24
 
 **Dynamic Query DETR 계열** — Deformable DETR을 공통 baseline으로 삼아, object query의 개수·구성을 이미지 내용에 따라 동적으로 조정하는 6편. 두 하위 갈래로 나뉜다(자세한 비교는 [[Small_Object_Detection_Approaches]]의 전용 절 참고).
 - *하위 갈래 A(전역 밀도 기반, [[Density_Guided_Dynamic_Query]])*: [[DQ-DETR]](density map 4단계 분류로 query 수 결정, 원조) → [[Density-Aware-DETR]](분류를 연속 회귀로 대체, DQ-DETR과 직접 대조 실험) → [[IG-DETR]](6단계 세분화 + 덧셈 residual feature 강화) → [[DQP-DETR]](density를 encoder memory 주입·토큰 순위 학습까지 확장, 가장 포괄적).
-- *하위 갈래 B(인스턴스 레벨 패턴/품질 기반, [[Pattern_Quality_Aware_Query_Refinement]])*: [[PaQ-DETR]](클러스터링 병합+품질 pruning, 유일하게 COCO 일반 탐지 검증) → [[DQA-DETR]](유일한 oriented detection, one-to-one matching의 gradient 왜곡을 이론적으로 증명하고 병합으로만 해결).
+- *하위 갈래 B(query 개수가 아니라 query 자체를 재구성)*: [[PaQ-DETR]](공유 패턴 기반 query 표현 재구성 + 품질 기반 1:多 assignment, [[Pattern_Quality_Aware_Query_Refinement]], 유일하게 COCO 일반 탐지 검증) → [[DQA-DETR]](유일한 oriented detection, one-to-one matching의 gradient 왜곡을 이론적으로 증명하고 attention 기반 병합으로 해결 — PaQ-DETR과는 서로 다른 문제를 다룸).
 - 6편 모두에서 반복되는 패턴: "다중 신호를 쓴다는 것 자체"의 기여가 "그 신호를 얼마나 정교화하는가"보다 일관되게 크다(DQP-DETR의 RCS, Density-Aware DETR의 IDE&QA 등). DQA-DETR의 query 900→2400 확장 실험(baseline mAP 붕괴)은 "query를 늘리는 것 자체는 위험하다"는 이 계열 전체의 문제의식을 가장 극적으로 보여준다.
 
 # 이 분야를 관통하는 개념
@@ -66,7 +66,7 @@ updated: 2026-08-24
 - [[Cascade_Sparse_Query]] — querydet의 핵심 기여. 연산 가속 계열의 시작점.
 - [[Deformable_Sampling_Offset]] — Deformable Convolutional Networks의 핵심 기여. 이후 DETR 계열에서 attention sampling location을 변형하는 데 재사용되는 원조 메커니즘.
 - [[Density_Guided_Dynamic_Query]] — DQ-DETR의 핵심 기여. Dynamic query DETR 계열 하위 갈래 A(전역 밀도 기반)의 시작점. DQ-DETR·Density-Aware DETR·IG-DETR·DQP-DETR 4편이 공유.
-- [[Pattern_Quality_Aware_Query_Refinement]] — PaQ-DETR의 핵심 기여. Dynamic query DETR 계열 하위 갈래 B(인스턴스 레벨 패턴/품질 기반)의 시작점. PaQ-DETR·DQA-DETR 2편이 공유.
+- [[Pattern_Quality_Aware_Query_Refinement]] — PaQ-DETR의 핵심 기여. Query 표현을 공유 패턴의 볼록결합으로 구성하고 품질 기반 1:多 assignment로 supervision을 확장. Dynamic query DETR 계열 하위 갈래 B(query 개수가 아니라 query 자체를 재구성)의 한 축.
 - [[Class_Balanced_Spatial_Copy_Paste]] — YOFOR의 CBM 핵심 기여. 이 위키에서 long-tailed detection을 다룬 유일한 개념.
 - [[Dual_Stream_Foreground_Background_Attention]] — BAFNet의 DSAM 핵심 기여. 전경 attention의 여집합으로 배경 attention을 별도 파라미터 없이 유도하는 경량 설계.
 - [[Collaborative_Receptive_Field_Texture_Optimization]] — RTP-Net의 핵심 기여. 수용영역 확장과 texture 보존의 trade-off를 backbone 소스 단계 병렬 브랜치로 해소.

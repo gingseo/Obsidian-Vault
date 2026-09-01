@@ -23,7 +23,8 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, detr, dynamic-query, density-map, remote-sensing]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2024_ECCV_DQ-DETR.pdf"
+source: "Projects/논문_pdf/Small_Object_Detection/2024_ECCV_DQ-DETR.pdf"
+source_type: personal
 createdAt: "2026-08-24T03:07:00.000Z"
 updatedAt: "2026-08-28T18:00:00.000Z"
 ---
@@ -34,6 +35,7 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 > [!quote] 원제
 > **DQ-DETR: DETR with Dynamic Query for Tiny Object Detection**
 > Yi-Xin Huang, Hou-I Liu, Hong-Han Shuai, Wen-Huang Cheng — National Yang Ming Chiao Tung University / National Taiwan University, ECCV 2024
+> https://arxiv.org/abs/2404.03507
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">항공 이미지의 이미지별 인스턴스 수 불균형(1개~2667개)에 대응하기 위해, density map 기반 categorical counting 모듈로 이미지마다 object query 개수(300/500/900/1500) 자체를 다르게 선택하고, 같은 density map으로 encoder feature와 query의 content·position을 함께 강화하는 DQ-DETR을 제안해 AI-TOD-V2에서 기존 SOTA 대비 AP +4.3%p를 달성한 Deformable DETR 기반 tiny object detector.</mark>
@@ -43,15 +45,42 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 
 # 정리
 
+## 기존 방법의 한계
+- **고정된 query 개수의 부적합성**:
+  DETR/Deformable DETR은 각각 K=100/300으로 query 수가 고정되어 있는데, 항공 데이터셋(AI-TOD-V2)은 이미지당 인스턴스 수가 1~2667개까지 극단적으로 편차가 크다(평균 24.64, 표준편차 63.94). 밀집 이미지에서는 query가 부족해 미검출(FN)이 급증하고, 희소 이미지에서는 과잉 query가 오탐(FP)을 유발하며 decoder self-attention의 이차 복잡도로 연산 자원도 낭비된다.
+- **Query 위치의 이미지 무관성**:
+  기존 DETR 계열의 object query 위치는 학습된 임베딩일 뿐 특정 물리적 의미가 없어, 현재 입력 이미지의 실제 객체 분포와 무관하다 — 인스턴스가 특정 영역에 밀집되거나 흩어져 있는 항공 이미지 특성에 대응하지 못한다.
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — Query 개수 전략 (sparse vs dense)**
+- Deformable DETR: Sparse query(K=300), one-to-one assignment — recall이 낮음.
+- DDQ-DETR: Dense distinct query(K=900)로 recall을 일부 완화하지만 여전히 고정된 상한.
+- **타겟/해결**: 고정된 query 개수의 부적합성(문제①) — 두 방법 모두 "이미지마다 인스턴스 수가 다르다"는 imbalance 자체는 다루지 않음(Table 1에서 직접 대조).
+
+**갈래 2 — Query 형식·초기화 개선**
+- Dynamic DETR: decoder에 ROI 기반 dynamic attention 도입.
+- DN-DETR: denoising training으로 이분 매칭 불안정성 완화.
+- Conditional DETR, DAB-DETR: query를 content+position(4D anchor box)으로 분해해 물리적 의미 부여 — 그러나 query 개수는 데이터셋 전체에 대해 고정.
+- **타겟/해결**: Query 위치의 이미지 무관성(문제②) — query의 형식(형태·초기화)은 개선했지만 "몇 개를 쓸지"는 다루지 않음.
+
+**갭**: <mark style="background: #FFF3A3A6;">DETR 계열의 query 형식 개선(갈래 2)과 sparse/dense 전략(갈래 1) 모두 "이미지마다 인스턴스 수가 다르다"는 imbalance를 정면으로 다루지 않았다.</mark>
+
+## 이 논문이 풀고자 하는 문제
+1. 이미지마다 크게 다른 인스턴스 수에 맞춰 object query 개수를 동적으로 조정하는 것.
+2. Query의 content·position을 현재 이미지의 실제 객체 분포(위치·밀도)에 맞게 강화하는 것.
+
+**갭 종합**: <mark style="background: #FFF3A3A6;">Query의 "개수"와 "위치" 둘 다를 입력 이미지 내용에 따라 동적으로 조정하는 DETR 계열은 없었다는 것이 이 논문의 통찰이다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
 | | 문제 ① — 고정된 query 개수의 부적합성 | 문제 ② — Query 위치의 이미지 무관성 |
 |---|---|---|
-| **문제 정의** | DETR/Deformable DETR은 각각 K=100/300으로 query 수가 고정되어 있는데, 항공 데이터셋(AI-TOD-V2)은 이미지당 인스턴스 수가 1~2667개까지 극단적으로 편차가 크다(평균 24.64, 표준편차 63.94). 밀집 이미지에서는 query가 부족해 미검출(FN)이 급증하고, 희소 이미지에서는 과잉 query가 오탐(FP)을 유발하며 decoder self-attention의 이차 복잡도로 연산 자원도 낭비된다. | 기존 DETR 계열의 object query 위치는 학습된 임베딩일 뿐 특정 물리적 의미가 없어, 현재 입력 이미지의 실제 객체 분포와 무관하다 — 인스턴스가 특정 영역에 밀집되거나 흩어져 있는 항공 이미지 특성에 대응하지 못한다. |
-| **풀고자 하는 문제** | 이미지마다 크게 다른 인스턴스 수에 맞춰 object query 개수를 동적으로 조정하는 것 | Query의 content·position을 현재 이미지의 실제 객체 분포(위치·밀도)에 맞게 강화하는 것 |
-| **선행 연구 접근** | - Deformable DETR: Sparse query(K=300), one-to-one assignment — recall이 낮음<br>- DDQ-DETR: Dense distinct query(K=900)로 recall을 일부 완화하지만 여전히 고정된 상한<br>- **갭**: 두 방법 모두 "이미지마다 인스턴스 수가 다르다"는 imbalance 자체는 다루지 않음(Table 1에서 직접 대조) | - Dynamic DETR: decoder에 ROI 기반 dynamic attention 도입<br>- DN-DETR: denoising training으로 이분 매칭 불안정성 완화<br>- Conditional DETR, DAB-DETR: query를 content+position(4D anchor box)으로 분해해 물리적 의미 부여 — 그러나 query 개수는 데이터셋 전체에 대해 고정<br>- **갭**: query의 형식(형태·초기화)은 개선했지만 "몇 개를 쓸지"는 다루지 않음 |
 | **해결 방법** | Categorical Counting Module(CCM)이 density map을 4단계로 분류해 decoder에 투입할 query 개수(K=300/500/900/1500)를 이미지별로 선택 | Counting-Guided Feature Enhancement(CGFE)로 density map을 encoder feature에 spatial+channel attention으로 주입한 뒤, 이 강화 feature에서 top-K를 선별해 query의 content·position을 생성(Dynamic Query Selection) |
 | **예상되는 문제점** | CCM의 분류 오류가 이후 파이프라인 전체에 연쇄적으로 영향(특히 N>500 구간처럼 학습 샘플이 적은 구간) | Query 수가 최대 1500까지 늘어나면 decoder self-attention의 이차 복잡도 문제가 재발할 위험이 있으나 논문은 FLOPs·FPS를 보고하지 않음 |
-
-**갭 종합**: <mark style="background: #FFF3A3A6;">DETR 계열의 query 형식 개선(문제②의 선행 연구)과 sparse/dense 전략(문제①의 선행 연구) 모두 "이미지마다 인스턴스 수가 다르다"는 imbalance를 정면으로 다루지 않았다. Query의 "개수"와 "위치" 둘 다를 입력 이미지 내용에 따라 동적으로 조정하는 DETR 계열은 없었다는 것이 이 논문의 통찰이다.</mark>
 
 > [!info] 내 메모
 > 
@@ -284,7 +313,7 @@ L_total = L_hungarian + L_aux + cross_entropy(N_class_pred, N_class_gt)   # L_co
 
 ### 생각할 점
 - <mark style="background: #A6E3A1A6;">Ablation(Table 5)에서 CGFE(feature enhancement)의 단독 기여(+3.2 AP)가 DQS(query selection)의 단독 기여(+2.2 AP)보다 크다는 점은, "query를 몇 개 쓸지 정교하게 정하는 것"보다 "feature 자체를 밀도 정보로 보강하는 것"이 더 근본적인 개선 지점일 수 있음을 시사한다 — 이는 이 위키의 [[ORFENet]], [[Deformable-DETR]] 등에서 반복 관찰된 "다중 소스 활용 자체의 기여가 정교화보다 크다"는 패턴과 다시 일치한다.</mark>
-- <mark style="background: #A6E3A1A6;">이 논문은 뒤이어 비교할 dynamic query DETR 계열 중 "density map(회귀가 아닌 분류)으로 query 개수를 정하고, 같은 density map으로 feature까지 보강한다"는 방식을 취한다 — 이후 처리할 IG-DETR(instance-guided)이나 PaQ-DETR(pattern/quality-aware)이 query를 어떻게 다르게 생성하는지와 정확히 대조할 지점.</mark>
+- <mark style="background: #A6E3A1A6;">이 논문은 dynamic query DETR 계열 중 "density map(회귀가 아닌 분류)으로 query 개수를 정하고, 같은 density map으로 feature까지 보강한다"는 방식을 취한다 — 같은 계열의 IG-DETR(instance-guided seed 기반 개수 결정)과는 "개수를 무엇으로 정하는가"라는 축에서 대조되고, [[PaQ-DETR]](공유 패턴 기반 query 표현 + 품질 기반 1:다 할당)은 개수 조정이 아니라 query 표현·supervision 자체를 재설계한다는 점에서 아예 다른 축을 다룬다.</mark>
 
 ### 내 주제와 연관된 후속 연구 아이디어
 - <mark style="background: #A6E3A1A6;">CCM의 밀도 분류가 4단계 이산 값이라는 점은, 이 위키에서 다루는 Gaussian 기반 label assignment 계열([[Unc-SOD]], [[CDATOD-Diff]])의 "연속값 uncertainty/의미 정보" 접근과 대조된다 — query 개수 결정에도 이산 분류 대신 연속적인 신뢰도 기반 조정을 적용하면 더 세밀한 대응이 가능할지 검토할 가치가 있다.</mark>

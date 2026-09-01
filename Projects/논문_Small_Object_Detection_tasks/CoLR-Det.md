@@ -23,7 +23,8 @@ jcr_quartile: arXiv
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, low-resolution, super-resolution, detr, latent-regularization, token-routing, saliency]
-source: "/Users/GyeongSeo/Workspace/논문_pdf/Small_Object_Detection/2026_arXiv_CoLR-Det.pdf"
+source: "Projects/논문_pdf/Small_Object_Detection/2026_arXiv_CoLR-Det.pdf"
+source_type: personal
 createdAt: "2026-08-24T03:36:00.000Z"
 updatedAt: "2026-08-28T17:00:00.000Z"
 ---
@@ -33,6 +34,7 @@ updatedAt: "2026-08-28T17:00:00.000Z"
 > [!quote] 원제
 > **CoLR-Det: Collaborative Latent Restoration for Small Object Detection in Low-Resolution Remote Sensing Images**
 > Ruo Qi, Linhui Dai, Yusong Qin, Chaolei Yang, Yanshan Li — Shenzhen University, arXiv 2026
+> https://arxiv.org/abs/2601.12507
 
 # 한 줄 요약
 <mark style="background: #FFF3A3A6;">Super-resolution(SR)을 추론 시 이미지 복원 단계가 아니라 학습 시에만 encoder를 정규화하는 latent 제약으로 재정의하고, saliency 기반 비파괴적 token routing으로 배경 텍스처가 DINO 기반 detection encoder를 오염시키지 않게 막는 CoLR-Det — 저해상도 원격탐사 3개 벤치마크에서 Swin-T DINO baseline 대비 AP 최대 7.0%p, AP_s 최대 16.2%p 개선.</mark>
@@ -42,15 +44,46 @@ updatedAt: "2026-08-28T17:00:00.000Z"
 
 # 정리
 
-| | 문제 ① — Restoration-first 인터페이스의 목표 불일치 | 문제 ② — 배경 텍스처의 detection feature 오염 | 문제 ③ — SR·detection 최적화 선호 충돌 |
-|---|---|---|---|
-| **문제 정의** | 기존 SR 보조 탐지기는 이미지·영역·feature를 명시적으로 복원해 화질을 높인 뒤 detector에 넣는다. 이는 "시각적으로 충실한 복원이 인식에 도움된다"는 암묵적 전제인데, SR은 조밀한 텍스처·edge fidelity를 우선하는 반면 detection은 sparse한 instance-level semantic 증거에 의존해 두 목표가 근본적으로 어긋난다(Fig. 1). | SR supervision은 텍스처가 풍부한 배경 구조·edge를 강조하는 경향이 있어, 이 복원 신호를 그대로 detection feature에 주입하면 배경 텍스처가 객체 semantic을 오히려 오염시킨다(Fig. 1(d)에서 SR-지향 응답이 배경 영역과 크게 겹침). | Dense한 pixel-level 복원 목표와 sparse한 semantic 목표는 서로 다른 gradient 방향을 요구한다. Stepwise(독립 전처리)는 closed-loop 최적화가 없어 SR이 화질은 올려도 detection 성능은 개선 못 하거나 pseudo-texture로 악화시키고, joint 최적화는 두 loss를 처음부터 함께 최적화해 gradient 불일치로 수렴을 저해한다. |
-| **풀고자 하는 문제** | SR을 명시적 이미지 복원이 아니라 순수 latent 정규화로 재구성해, 추론 시 SR 연산 자체를 완전히 제거하는 것 | 복원 신호가 배경 텍스처로 detection feature를 오염시키지 않도록, 정보는 잃지 않으면서 선택적으로 필터링하는 것 | Dense SR supervision과 sparse detection supervision의 최적화 선호도를 학습 스케줄로 조율하는 것 |
-| **선행 연구 접근** | - Stepwise(Shermeyer & Van Etten [35], Yei et al. [36]): SR을 독립 전처리로 사용<br>- Joint(Kim et al. [37] SR4IR, Wu & Xu [38]): SR-detection을 직렬 파이프라인으로 묶어 end-to-end 학습<br>- Selective(HSOD-Net [39]): 키포인트로 관심 영역만 SR<br>**갭**: 세 갈래 모두 "SR이 이미지/영역/feature를 명시적으로 향상시킨다"는 restoration-first 인터페이스를 공유 — 이 인터페이스 자체가 detection-optimal이 아닐 수 있다는 문제는 다루지 않음. | 위와 동일한 restoration-first 계열 전체가 배경 텍스처 억제 메커니즘을 갖고 있지 않음 — HSOD-Net도 hard region cropping으로 관심 영역만 골라낼 뿐, 선택되지 않은 영역의 정보를 남겨두면서 계산만 아끼는 비파괴적 필터링은 없음. | Joint 최적화 계열(SR4IR 등)이 두 loss를 동시에 최적화하려 시도했으나, pixel fidelity와 semantic invariance 간 내재적 충돌을 학습 스케줄 분리가 아니라 단일 손실 함수/가중치 설계로 풀려 해서 gradient 불일치 문제가 남음. |
-| **해결 방법** | 학습 시에만 존재하는 latent restoration branch가 공유 encoder에 SR reconstruction loss를 역전파해 encoder representation을 정규화하고, 추론 시 이 브랜치를 통째로 제거한다. | Saliency-guided object-preserving token routing — 고saliency 토큰만 비싼 attention 정제를 받고, 저saliency 토큰은 영구 폐기 대신 bypass 경로로 정보 흐름만 유지한다. | Detection-prioritized 2단계 학습 — 먼저 SR 브랜치를 얼리고 detection semantic만 안정화(Stage 1)한 뒤, SR 브랜치를 보수적인 학습률(scaling factor ρ)로 풀어 공동 최적화(Stage 2). |
-| **예상되는 문제점** | SR 브랜치가 학습에만 관여하므로, encoder가 실제로 SR-유용한 표현과 detection-유용한 표현을 얼마나 잘 분리해 담아내는지는 간접적으로만(ablation으로) 확인 가능하다. | Saliency 예측 자체가 학습 초기 불안정할 수 있어(저자 인정), 이 시기에 실제 소형 객체가 저saliency로 잘못 분류되면 bypass되어 충분한 attention 정제를 못 받을 위험이 있다. | 2단계 학습 스케줄의 `T_det`(1단계 길이) 등 하이퍼파라미터에 성능이 민감하며(Table VII), 이 민감도가 데이터셋마다 다를 수 있는지는 NWPU VHR-10-Split에서만 검증되었다. |
+## 기존 방법의 한계
+- **Restoration-first 인터페이스의 목표 불일치**:
+  기존 SR 보조 탐지기는 이미지·영역·feature를 명시적으로 복원해 화질을 높인 뒤 detector에 넣는다. 이는 "시각적으로 충실한 복원이 인식에 도움된다"는 암묵적 전제인데, SR은 조밀한 텍스처·edge fidelity를 우선하는 반면 detection은 sparse한 instance-level semantic 증거에 의존해 두 목표가 근본적으로 어긋난다(Fig. 1).
+- **배경 텍스처의 detection feature 오염**:
+  SR supervision은 텍스처가 풍부한 배경 구조·edge를 강조하는 경향이 있어, 이 복원 신호를 그대로 detection feature에 주입하면 배경 텍스처가 객체 semantic을 오히려 오염시킨다(Fig. 1(d)에서 SR-지향 응답이 배경 영역과 크게 겹침).
+- **SR·detection 최적화 선호 충돌**:
+  Dense한 pixel-level 복원 목표와 sparse한 semantic 목표는 서로 다른 gradient 방향을 요구한다. Stepwise(독립 전처리)는 closed-loop 최적화가 없어 SR이 화질은 올려도 detection 성능은 개선 못 하거나 pseudo-texture로 악화시키고, joint 최적화는 두 loss를 처음부터 함께 최적화해 gradient 불일치로 수렴을 저해한다.
+
+## 선행 연구는 어떻게 접근했고, 어떤 갭이 남았는가
+
+**갈래 1 — Stepwise (독립 전처리)**
+- Shermeyer & Van Etten [35], Yei et al. [36]: SR을 독립 전처리로 사용.
+- **타겟/해결**: 목표 불일치(문제①) — closed-loop 최적화가 없어 SR이 화질은 올려도 detection 성능은 개선 못 하거나 pseudo-texture로 악화시킬 수 있다.
+
+**갈래 2 — Joint (직렬 end-to-end 학습)**
+- <mark style="background: #FFF3A3A6;">Kim et al. [37] SR4IR, Wu & Xu [38]: SR-detection을 직렬 파이프라인으로 묶어 end-to-end 학습.</mark>
+- **타겟/해결**: 목표 불일치(문제①)·최적화 선호 충돌(문제③) — 두 loss를 처음부터 함께 최적화하지만, pixel fidelity와 semantic invariance 간 내재적 충돌을 학습 스케줄 분리가 아니라 단일 손실 함수/가중치 설계로 풀려 해 gradient 불일치 문제가 남는다.
+
+**갈래 3 — Selective (관심 영역만 SR)**
+- HSOD-Net [39]: 키포인트로 관심 영역만 SR.
+- **타겟/해결**: 배경 텍스처 오염(문제②) — hard region cropping으로 관심 영역만 골라낼 뿐, 선택되지 않은 영역의 정보를 남겨두면서 계산만 아끼는 비파괴적 필터링은 없다.
+
+**갭**: <mark style="background: #FFF3A3A6;">세 갈래 모두 "SR이 이미지/영역/feature를 명시적으로 향상시킨다"는 restoration-first 인터페이스를 공유 — 이 인터페이스 자체가 detection-optimal이 아닐 수 있다는 문제는 다루지 않는다. 또한 이 계열 전체가 배경 텍스처 억제를 위한 비파괴적 필터링 메커니즘을 갖고 있지 않다.</mark>
+
+## 이 논문이 풀고자 하는 문제
+1. SR을 명시적 이미지 복원이 아니라 순수 latent 정규화로 재구성해, 추론 시 SR 연산 자체를 완전히 제거하는 것.
+2. 복원 신호가 배경 텍스처로 detection feature를 오염시키지 않도록, 정보는 잃지 않으면서 선택적으로 필터링하는 것.
+3. Dense SR supervision과 sparse detection supervision의 최적화 선호도를 학습 스케줄로 조율하는 것.
 
 **갭 종합**: <mark style="background: #FFF3A3A6;">세 문제 모두 "SR이 이미지/영역/feature를 명시적으로 향상시켜야 한다"는 restoration-first 인터페이스를 공유 전제로 깔고 있다는 공통 원인에서 나온다. 이 논문의 통찰은 "복원이 탐지를 보조해야지 지배해서는 안 된다(restoration should assist detection, rather than dominate it)"는 원칙을 인터페이스 자체의 재설계(latent 정규화 + 비파괴적 라우팅 + 학습 스케줄 분리)로 구현하면, 명시적 이미지 복원 없이도 SR supervision의 이득만 취할 수 있다는 것이다.</mark>
+
+> [!info] 내 메모
+> 
+
+# 해결 방법 요약
+
+| | 문제 ① — Restoration-first 인터페이스의 목표 불일치 | 문제 ② — 배경 텍스처의 detection feature 오염 | 문제 ③ — SR·detection 최적화 선호 충돌 |
+|---|---|---|---|
+| **해결 방법** | 학습 시에만 존재하는 latent restoration branch가 공유 encoder에 SR reconstruction loss를 역전파해 encoder representation을 정규화하고, 추론 시 이 브랜치를 통째로 제거한다. | Saliency-guided object-preserving token routing — 고saliency 토큰만 비싼 attention 정제를 받고, 저saliency 토큰은 영구 폐기 대신 bypass 경로로 정보 흐름만 유지한다. | Detection-prioritized 2단계 학습 — 먼저 SR 브랜치를 얼리고 detection semantic만 안정화(Stage 1)한 뒤, SR 브랜치를 보수적인 학습률(scaling factor ρ)로 풀어 공동 최적화(Stage 2). |
+| **예상되는 문제점** | SR 브랜치가 학습에만 관여하므로, encoder가 실제로 SR-유용한 표현과 detection-유용한 표현을 얼마나 잘 분리해 담아내는지는 간접적으로만(ablation으로) 확인 가능하다. | Saliency 예측 자체가 학습 초기 불안정할 수 있어(저자 인정), 이 시기에 실제 소형 객체가 저saliency로 잘못 분류되면 bypass되어 충분한 attention 정제를 못 받을 위험이 있다. | 2단계 학습 스케줄의 `T_det`(1단계 길이) 등 하이퍼파라미터에 성능이 민감하며(Table VII), 이 민감도가 데이터셋마다 다를 수 있는지는 NWPU VHR-10-Split에서만 검증되었다. |
 
 > [!info] 내 메모
 > 
@@ -158,10 +191,10 @@ L_sr = L1(I_SR, I_HR)   # GT 고해상도 이미지와 비교
 ### ③ Multiscale Saliency Prediction
 - **역할**: Encoder의 각 stage feature마다 "여기가 객체(전경)일 가능성이 얼마나 되는지"를 나타내는 saliency map을 예측한다. 이 saliency map이 다음 단계(④ token routing)에서 어떤 토큰에 비싼 attention을 쓸지 결정하는 근거가 된다.
 - **구현**: 각 레벨 feature `F_l`을 local branch(공간 디테일 보존, 별도 conv/MLP 경로)와 global branch(GAP(global average pooling)로 장면 레벨 문맥을 뽑은 뒤 다시 공간 크기로 broadcast)로 나눠 처리한 뒤 채널 방향으로 concat, MLP로 차원을 줄여 단일 채널 saliency 점수 `S_l`을 만든다(Eq. 5).
-  - Top-down propagation: 고레벨(deep, semantic이 강한) saliency를 upsample해 저레벨(shallow, 공간 디테일이 강한) saliency 예측과 학습 가능한 modulation 계수 `α`로 결합, 레벨 간 saliency 일관성을 확보(Eq. 6). `α`는 `U(-0.3, 0.3)`에서 초기화되는 학습 파라미터.
-  - Saliency confidence target `C_l`: 단순 이진 전경/배경 마스크 대신, 쿼리 위치 `(i,j)`에서 자신을 감싸는 GT 박스의 좌/상/우/하 경계까지의 정규화된 상대 거리(`δ_x, δ_y`)로 정의되는 **연속값 centrality 신호**(Eq. 7) — 객체 중심에 가까울수록 confidence가 1에 가깝고 경계 근처에서 0에 수렴. 각 쿼리는 자신의 stride/receptive field에 대응하는 크기 범위 `(τ_{l-1}, τ_l]`의 객체에만 배정되어, 작은 객체는 얕은 레벨, 큰 객체는 깊은 레벨에 배정됨으로써 스케일 간 간섭을 없앤다.
-  - Supervision: sigmoid focal loss 기반 saliency constraint loss `L_sa`(Eq. 8), 예측 saliency `S_l`을 GT confidence `C_l`에 맞추도록 학습.
-- **입출력 shape**: `{F_l}_{l=1}^4` → 레벨별 saliency map `{S_l}` (각 `(1, H_l, W_l)`, 원래 feature와 같은 공간 해상도).
+  - Top-down propagation: 고레벨(deep, semantic이 강한) saliency를 upsample해 저레벨(shallow, 공간 디테일이 강한) saliency 예측과 학습 가능한 modulation 계수 $\alpha$로 결합, 레벨 간 saliency 일관성을 확보(Eq. 6). $\alpha$는 $U(-0.3, 0.3)$에서 초기화되는 학습 파라미터.
+  - Saliency confidence target $C_l$: 단순 이진 전경/배경 마스크 대신, 쿼리 위치 $(i,j)$에서 자신을 감싸는 GT 박스의 좌/상/우/하 경계까지의 정규화된 상대 거리($\delta_x, \delta_y$)로 정의되는 **연속값 centrality 신호**(Eq. 7) — 객체 중심에 가까울수록 confidence가 1에 가깝고 경계 근처에서 0에 수렴. 각 쿼리는 자신의 stride/receptive field에 대응하는 크기 범위 $(\tau_{l-1}, \tau_l]$의 객체에만 배정되어, 작은 객체는 얕은 레벨, 큰 객체는 깊은 레벨에 배정됨으로써 스케일 간 간섭을 없앤다.
+  - Supervision: sigmoid focal loss 기반 saliency constraint loss $L_{sa}$(Eq. 8), 예측 saliency $S_l$을 GT confidence $C_l$에 맞추도록 학습.
+- **입출력 shape**: $\{F_l\}_{l=1}^4$ → 레벨별 saliency map $\{S_l\}$ (각 `(1, H_l, W_l)`, 원래 feature와 같은 공간 해상도).
 
 ```python
 # 논문 Eq.(5)~(7) 기반 의사코드
