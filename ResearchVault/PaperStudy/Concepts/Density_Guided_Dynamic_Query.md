@@ -9,11 +9,11 @@ updated: 2026-08-24
 DETR 계열 decoder에서 고정된 개수·위치의 object query 대신, 입력 이미지로부터 추정한 density map(객체 밀도/위치 정보)을 이용해 query의 개수와 content·position을 이미지마다 동적으로 결정하는 메커니즘. 밀집 이미지에서는 query 수를 늘려 미검출(FN)을 줄이고, 희소 이미지에서는 query 수를 줄여 오탐(FP)과 연산 낭비를 줄인다.
 
 # 등장 논문
-- [[DQ-DETR]] — 원조. Density map으로 이미지 인스턴스 수를 4단계로 분류(회귀 대신 분류를 택함)해 query 개수(300/500/900/1500)를 선택하고, 동일 density map으로 encoder feature를 spatial+channel attention 보강한 뒤 top-K 선별로 query content·position을 생성.
-- [[Density-Aware-DETR]] (D3Q) — DQ-DETR의 이산 분류를 crowd counting 기법 기반 연속적 density map 회귀로 대체. 점 단위 density focal loss로 supervision하고, static embedding+동적 위치 정보를 결합하는 dynamic mix selection으로 query 초기화. DQ-DETR과 직접 대조 실험(같은 DINO baseline 기준)으로 회귀 방식의 우위를 실증.
-- [[IG-DETR]] — DQ-DETR의 4단계 분류를 6단계로 세분화(HIP 모듈). Feature 강화 시 곱셈 마스킹 대신 덧셈 residual 주입(`1+W`)을 써 semantic backbone 정보를 보존한다는 점이 차별점. Query 생성도 "salient seed" top-K 선택으로 구체화.
-- [[DQA-DETR]] — DQ-DETR과 유사한 4단계 밀도 분류(ACP)를 쓰지만, 그 출력이 "최종 query 수"가 아니라 이후 병합(aggregation) 단계를 위한 대략적 사전(prior)일 뿐이라는 점에서 역할이 다르다. 실제 핵심 기여는 [[Pattern_Quality_Aware_Query_Refinement]]에 더 가까운 "유사 query를 attention으로 병합"(제거가 아님)이라는 메커니즘.
-- [[DQP-DETR]] — Density map을 query 개수 결정뿐 아니라 encoder memory 강화(양방향 cross-modulation, BCME)와 토큰별 순위 결정(Ranking Consistency Supervision, RCS)까지 확장한 가장 포괄적인 사례. GT 밀도 기반 참조 우선순위로 "순위 결정 능력 자체"를 margin ranking loss로 직접 감독한다는 점이 이 계열에서 처음.
+- [[2024_ECCV_DQ-DETR|DQ-DETR]] — 원조. Density map으로 이미지 인스턴스 수를 4단계로 분류(회귀 대신 분류를 택함)해 query 개수(300/500/900/1500)를 선택하고, 동일 density map으로 encoder feature를 spatial+channel attention 보강한 뒤 top-K 선별로 query content·position을 생성.
+- [[2025_JSTARS_Density-Aware-DETR|Density-Aware-DETR]] (D3Q) — DQ-DETR의 이산 분류를 crowd counting 기법 기반 연속적 density map 회귀로 대체. 점 단위 density focal loss로 supervision하고, static embedding+동적 위치 정보를 결합하는 dynamic mix selection으로 query 초기화. DQ-DETR과 직접 대조 실험(같은 DINO baseline 기준)으로 회귀 방식의 우위를 실증.
+- [[2026_ICASSP_IG-DETR|IG-DETR]] — DQ-DETR의 4단계 분류를 6단계로 세분화(HIP 모듈). Feature 강화 시 곱셈 마스킹 대신 덧셈 residual 주입(`1+W`)을 써 semantic backbone 정보를 보존한다는 점이 차별점. Query 생성도 "salient seed" top-K 선택으로 구체화.
+- [[2026_JSTARS_DQA-DETR|DQA-DETR]] — DQ-DETR과 유사한 4단계 밀도 분류(ACP)를 쓰지만, 그 출력이 "최종 query 수"가 아니라 이후 병합(aggregation) 단계를 위한 대략적 사전(prior)일 뿐이라는 점에서 역할이 다르다. 실제 핵심 기여는 [[Pattern_Quality_Aware_Query_Refinement]]에 더 가까운 "유사 query를 attention으로 병합"(제거가 아님)이라는 메커니즘.
+- [[2026_SSRN_DQP-DETR|DQP-DETR]] — Density map을 query 개수 결정뿐 아니라 encoder memory 강화(양방향 cross-modulation, BCME)와 토큰별 순위 결정(Ranking Consistency Supervision, RCS)까지 확장한 가장 포괄적인 사례. GT 밀도 기반 참조 우선순위로 "순위 결정 능력 자체"를 margin ranking loss로 직접 감독한다는 점이 이 계열에서 처음.
 
 # 변형/발전
 시간 순 정리(등장 논문이 늘어날 때마다 갱신):

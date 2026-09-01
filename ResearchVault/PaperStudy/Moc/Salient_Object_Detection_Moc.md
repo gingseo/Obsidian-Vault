@@ -12,8 +12,8 @@ updated: 2026-08-24
 
 # 지금까지 다룬 흐름
 2편을 읽었으며, 서로 다른 도메인(자연 이미지 vs 원격탐사)과 접근(반복 정제 vs 다중 레벨 feature 통합)을 대표한다.
-- [[Uncertainty_Guided_Refinement]] — 자연 이미지 SOD. 별도의 경계 라벨/가이던스 없이, 예측 saliency map 자체에서 불확실성 맵을 만들어 attention을 마스킹하는 방식으로 반복 정제.
-- [[AIMRINet]] — 원격탐사(ORSI) SOD. PVT-v2 backbone의 얕은/깊은 feature에 점진적 그룹 spatial attention(SAI)을 적용하고, 다중 레벨 feature의 공통 saliency를 곱셈으로 추출한 뒤 residual로 고유 정보를 보존하는 통합(MRFI)을 결합. Uncertainty_Guided_Refinement와 달리 반복적 정제가 아니라 단일 forward pass에서 다중 레벨 feature 상호작용으로 완결되는 구조.
+- [[2025_TIP_Uncertainty_Guided_Refinement|Uncertainty_Guided_Refinement]] — 자연 이미지 SOD. 별도의 경계 라벨/가이던스 없이, 예측 saliency map 자체에서 불확실성 맵을 만들어 attention을 마스킹하는 방식으로 반복 정제.
+- [[2026_Image-and-Vision-Computing_AIMRINet|AIMRINet]] — 원격탐사(ORSI) SOD. PVT-v2 backbone의 얕은/깊은 feature에 점진적 그룹 spatial attention(SAI)을 적용하고, 다중 레벨 feature의 공통 saliency를 곱셈으로 추출한 뒤 residual로 고유 정보를 보존하는 통합(MRFI)을 결합. Uncertainty_Guided_Refinement와 달리 반복적 정제가 아니라 단일 forward pass에서 다중 레벨 feature 상호작용으로 완결되는 구조.
 
 두 논문은 "무엇이 애매한 영역인지 어떻게 식별할 것인가"(URA)와 "여러 레벨의 정보를 어떻게 결합해야 완전한 경계를 얻는가"(AIMRINet)라는 서로 다른 질문에 답한다는 점에서 상호보완적이다.
 
@@ -26,9 +26,9 @@ updated: 2026-08-24
 (아직 없음 — 2편이 도메인·접근이 상당히 달라(자연 이미지 반복 정제 vs 원격탐사 다중 레벨 통합) 비교표를 만들기엔 이르다. 3편째가 추가되면 검토)
 
 # 아직 못 채운 빈틈
-- 원격탐사 SOD([[AIMRINet]])와 자연 이미지 SOD([[Uncertainty_Guided_Refinement]])를 같은 프레임워크에서 직접 비교한 논문이 없어, 두 도메인 간 접근법의 실질적 차이(전이 가능성)를 아직 검증할 수 없다.
+- 원격탐사 SOD([[2026_Image-and-Vision-Computing_AIMRINet|AIMRINet]])와 자연 이미지 SOD([[2025_TIP_Uncertainty_Guided_Refinement|Uncertainty_Guided_Refinement]])를 같은 프레임워크에서 직접 비교한 논문이 없어, 두 도메인 간 접근법의 실질적 차이(전이 가능성)를 아직 검증할 수 없다.
 - AIMRINet이 참고문헌에서 반복 인용하는 다수의 최신 ORSI-SOD 논문(TSCNet, UDCNet-R, LGIPNet 등)이 아직 이 위키에 없어, 이 서브필드의 전체 지형을 파악하기엔 이르다.
 
 # 관련 MOC
 - [[000-Home]]
-- [[Small_Object_Detection_Moc]] — 원격탐사 도메인을 공유하는 인접 분야. AIMRINet의 MRFI(곱셈+residual 통합)와 [[ORFENet]]의 MRFAFEM(동적 가중합)이 "여러 소스를 결합하되 원본 정보를 잃지 않는다"는 유사한 상위 패턴을 공유한다.
+- [[Small_Object_Detection_Moc]] — 원격탐사 도메인을 공유하는 인접 분야. AIMRINet의 MRFI(곱셈+residual 통합)와 [[2024_TGRS_ORFENet|ORFENet]]의 MRFAFEM(동적 가중합)이 "여러 소스를 결합하되 원본 정보를 잃지 않는다"는 유사한 상위 패턴을 공유한다.

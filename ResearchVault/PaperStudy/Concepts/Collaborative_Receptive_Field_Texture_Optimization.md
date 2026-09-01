@@ -9,7 +9,7 @@ updated: 2026-08-24
 수용영역 확장(전역 문맥 포착)과 texture 보존(국소 디테일 유지)이 근본적으로 상충한다는 관찰에서, 이 둘을 순차적으로 절충하는 대신 backbone의 feature 추출 단계부터 대·소 커널 병렬 브랜치로 동시에 추구해 trade-off 자체를 설계로 해소하는 프레임워크. 이후 단계에서 발생하는 잔여 texture 손실은 별도의 적응적 강화 모듈로 추가 보상한다.
 
 # 등장 논문
-- [[RTP-Net]] — 원조. GLEM(대·소 커널 depthwise conv 병렬 추출, backbone 소스 단계에서부터 개입) + AWEM(다중 pooling 기반 texture 적응적 복원) + MSAF(CBAM 기반 스케일 간 융합 정제) 3단계로 구현. GFLOPs를 오히려 27.2% 줄이면서 정확도도 개선한 예외적 사례.
+- [[2026_JSTARS_RTP-Net|RTP-Net]] — 원조. GLEM(대·소 커널 depthwise conv 병렬 추출, backbone 소스 단계에서부터 개입) + AWEM(다중 pooling 기반 texture 적응적 복원) + MSAF(CBAM 기반 스케일 간 융합 정제) 3단계로 구현. GFLOPs를 오히려 27.2% 줄이면서 정확도도 개선한 예외적 사례.
 
 # 변형/발전
 시간 순 정리(등장 논문이 늘어날 때마다 갱신):

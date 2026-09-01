@@ -81,11 +81,13 @@ Projects/                볼트 최상위. 논문 분석 노트와 PDF 원본 �
 - 논문 노트(task 노트): `Projects/논문_<Task>_tasks/<논문-슬러그>.md` — 그 task 프로젝트에 속한 논문 노트들을 모아두는, 프로젝트 노트와 이름이 같은 폴더. 이 폴더는(프로젝트 노트와 달리) 재귀적으로 스캔되므로 하위 폴더로 둬도 Project Manager가 정상 인식한다. 어느 분야인지는 어느 프로젝트에 속하는지(`projectId`)와 노트의 `task` 속성 둘 다로 확인 가능하고, `Projects/논문_PaperWiki.base`에서 `task` 컬럼으로 필터링해서도 본다(아래 "상태 확인하기" 절 참고).
 - 논문 하나가 여러 task에 걸치면(드묾), 가장 핵심적인 task 하나의 프로젝트·폴더에만 노트를 두고 `task` 속성에 해당되는 task를 전부 배열로 적는다.
 
-파일명(슬러그): `<논문-슬러그>.md` (슬러그는 예: 저자 성 + 핵심 키워드, 또는 잘 알려진 약칭. 리네임한 PDF의 제목 부분을 재사용해도 된다)
+파일명: `<년도>_<venue>_<논문-슬러그>.md` — PDF 파일명("PDF 파일명 규칙" 절)의 `{년도}_{venue}` 접두어를 그대로 가져와 슬러그 앞에 붙인다(예: `2022_CVPR_QueryDet.md`). `<년도>_<venue>` 부분은 PDF 리네임 시 이미 정해진 값을 그대로 재사용하고, venue 표기가 PDF 파일명과 노트 파일명 사이에서 달라지지 않게 한다. 이 접두어는 파일 정렬·탐색 편의를 위한 것으로, `title`/`paper_tags`/링크 표시 텍스트에는 영향을 주지 않는다(아래 "파일명과 title" 절 참고).
 
-**슬러그 대소문자 규칙**: 논문에 저자가 스스로 붙인 short title(예: "QueryDet: Cascaded Sparse Query for..."처럼 제목 앞부분에 오는 약칭)이 있으면, 그 표기를 대소문자까지 정확히 그대로 슬러그로 쓴다 (`FANet`, `LSOD-YOLO`, `QueryDet`, `RS-TOD`, `UAV-DETR`, `Unc-SOD`, `ReContrast`처럼). 전부 소문자로 뭉뚱그리지 않는다 — 실제 논문에서 쓰는 표기가 그 자체로 식별성을 갖기 때문이다(예: `ReContrast`를 `recontrast`로 쓰면 다른 논문 제목의 일부처럼 보일 수 있다). 원문에 명시적 short title이 없으면(예: 제목이 일반 서술형 문장인 논문) 슬러그는 위 "폴더·파일 네이밍 규칙"의 일반 서술형 이름 규칙(`Word_Word`, 예: `Detection_Oriented_Rectification`)을 따른다. 애매하면 PDF를 다시 확인해 저자가 스스로 어떻게 부르는지(본문에서 반복 사용하는 모델/프레임워크 이름) 찾아보고, 그래도 불명확하면 사용자에게 묻는다 — 나중에 슬러그를 바꾸면 위키 전체의 `[[링크]]`를 전수 갱신해야 하는 비용이 크므로 처음에 정확히 정하는 편이 낫다.
+**슬러그(접두어를 뺀 나머지 부분) 대소문자 규칙**: 논문에 저자가 스스로 붙인 short title(예: "QueryDet: Cascaded Sparse Query for..."처럼 제목 앞부분에 오는 약칭)이 있으면, 그 표기를 대소문자까지 정확히 그대로 슬러그로 쓴다 (`FANet`, `LSOD-YOLO`, `QueryDet`, `RS-TOD`, `UAV-DETR`, `Unc-SOD`, `ReContrast`처럼). 전부 소문자로 뭉뚱그리지 않는다 — 실제 논문에서 쓰는 표기가 그 자체로 식별성을 갖기 때문이다(예: `ReContrast`를 `recontrast`로 쓰면 다른 논문 제목의 일부처럼 보일 수 있다). 원문에 명시적 short title이 없으면(예: 제목이 일반 서술형 문장인 논문) 슬러그는 위 "폴더·파일 네이밍 규칙"의 일반 서술형 이름 규칙(`Word_Word`, 예: `Detection_Oriented_Rectification`)을 따른다. 애매하면 PDF를 다시 확인해 저자가 스스로 어떻게 부르는지(본문에서 반복 사용하는 모델/프레임워크 이름) 찾아보고, 그래도 불명확하면 사용자에게 묻는다 — 나중에 슬러그를 바꾸면 위키 전체의 `[[링크]]`를 전수 갱신해야 하는 비용이 크므로 처음에 정확히 정하는 편이 낫다.
 
-**파일명과 title은 항상 동일한 이름(위 슬러그 규칙 기준)으로 통일한다** — short title이 있으면 파일명·`title` 필드 둘 다 그 short title로, short title이 없으면 둘 다 논문 원제로 채운다. `title`에 연도·venue 등 접두어를 붙이지 않는다(그 정보는 `year`/`venue`/`customFields`가 이미 담당). 원제 전체(특히 short title로 줄였을 때 사라지는 부제까지)는 본문 최상단의 `> [!quote] 원제` 콜아웃에 남긴다(아래 "본문 구성" 절 참고).
+**파일명과 title은 서로 다른 규칙을 따른다.** `title`(및 파일명의 `<논문-슬러그>` 부분)은 short title이 있으면 그 short title로, 없으면 논문 원제로 채운다 — `title`에는 연도·venue 접두어를 붙이지 않는다(그 정보는 `year`/`venue`/`customFields`가 이미 담당하고, 파일명 접두어로도 확인 가능하다). 원제 전체(특히 short title로 줄였을 때 사라지는 부제까지)는 본문 최상단의 `> [!quote] 원제` 콜아웃에 남긴다(아래 "본문 구성" 절 참고).
+
+**위키링크는 항상 `[[<년도>_<venue>_<슬러그>|<슬러그>]]` 형태로 쓴다** — 파일명(링크 대상)에는 연도·venue 접두어가 붙지만, 화면에 보이는 표시 텍스트는 접두어 없는 순수 슬러그로 유지해 본문 가독성을 지킨다(예: `[[2022_CVPR_QueryDet|QueryDet]]`). 새 논문 노트를 만들 때 그 노트를 참조하는 다른 문서의 링크도 전부 이 형태로 쓴다.
 
 > [!warning] Project Manager의 Task 편집 모달을 통해 title을 저장하면 파일명·frontmatter가 깨질 수 있다
 > Project Manager는 Task 모달에서 title을 저장할 때마다 **파일명을 title 기반 slug(소문자+하이픈, 최대 60자)로 자동 리네임**하고, 이 동작을 끄는 설정이 없다(플러그인에 하드코딩됨). 자동 리네임되면 task 폴더 밖으로 파일이 튀어나오고, 지정한 슬러그(`QueryDet` 등)가 망가진다. 더 나아가 **PaperWiki 고유 속성(`year`/`venue`/`jcr_quartile`/`task`/`direction`/`paper_tags`/`source`)이 저장 과정에서 통째로 사라지는 사고가 실제로 관찰됐다** — Project Manager가 자신이 아는 스키마 필드만 다시 써서 frontmatter를 재구성하고, 모르는 커스텀 필드는 버리는 것으로 보인다. 따라서 **Project Manager UI에서 논문 task의 title은 편집하지 않는다.** title을 고칠 필요가 있으면 Obsidian 편집기로 파일을 직접 열어 frontmatter만 수정한다. 만약 실수로 UI에서 title을 저장해버렸다면: (1) 파일명과 폴더 위치를 원래대로 되돌리고, (2) frontmatter에 PaperWiki 속성이 남아있는지 확인해서 없으면 이 문서와 해당 `Projects/논문_<Task>.md`의 링크 텍스트(원제)를 참고해 복구한다.
@@ -195,7 +197,7 @@ updatedAt: "<ISO 8601>"
 - 새 프로젝트 노트에는 다른 프로젝트들과 동일하게 `customFields`에 4개 필드를 정의한다: `Year`(number), `Venue`(text), `Summary`(text), `Tags`(multiselect, `options: []`로 시작). 각 필드 `id`는 다른 프로젝트와 절대 겹치지 않는 새 임의 문자열로 만든다(기존 프로젝트에서 쓰는 id를 재사용하지 않는다).
 - Project Manager의 `select`/`multiselect` custom field는 이 워크플로우에서 쓰지 않는다(위 Frontmatter 절 참고, PaperWiki 속성은 전부 최상위 필드).
 
-### 본문 구성 — 분석 노트 (`<Slug>.md`)
+### 본문 구성 — 분석 노트 (`<년도>_<venue>_<Slug>.md`)
 
 **독자 전제**: 이 노트는 object detection의 기본 개념(anchor, IoU, NMS, mAP 등)은 이미 아는 사람이, 그 논문이 제안하는 **모델 구조**(어떤 레이어가 무엇을 어떻게 하는지)를 처음부터 상세히 배우기 위한 자료다. 목표는 "이 노트만 보고 전체 흐름을 이해해서 다른 사람에게 설명할 수 있는 수준" — 단순 요약이 아니라 학습 자료로 취급한다.
 
@@ -443,7 +445,7 @@ Obsidian의 Highlightr 플러그인으로 의미 단위를 색으로 구분한�
 
 ### 콜아웃(접기) 규칙
 
-Obsidian 콜아웃은 제목 뒤에 `-`를 붙이면 기본적으로 접힌 상태로 렌더링된다 (`> [!note]-`처럼). 분석 노트(`<Slug>.md`)에서 아래 두 지점에는 반드시 콜아웃을 써서 세부 내용을 기본적으로 접어둔다 — 파일을 열었을 때 스크롤 없이 핵심만 먼저 보이게 하기 위함이다.
+Obsidian 콜아웃은 제목 뒤에 `-`를 붙이면 기본적으로 접힌 상태로 렌더링된다 (`> [!note]-`처럼). 분석 노트(`<년도>_<venue>_<Slug>.md`)에서 아래 두 지점에는 반드시 콜아웃을 써서 세부 내용을 기본적으로 접어둔다 — 파일을 열었을 때 스크롤 없이 핵심만 먼저 보이게 하기 위함이다.
 
 - **제안 방법의 구현 디테일**: 수식, 의사코드, 하이퍼파라미터 값처럼 "필요할 때만 펼쳐보는" 내용은 `> [!example]- 구현 디테일` 콜아웃 안에 넣는다. 기법의 핵심 아이디어(bullet 3~5개)는 콜아웃 밖에 그대로 둔다.
 - **실험 결과의 세부 ablation**: 핵심 벤치마크 표 1~2개만 콜아웃 밖에 두고, 나머지 벤치마크·ablation 표·세부 발견은 `> [!note]- 세부 결과 및 Ablation` 콜아웃 안에 몰아넣는다.
@@ -694,7 +696,7 @@ task 경계와 무관하게 여러 분야에서 반복 등장하는 개념·신�
 1. `Projects/논문_pdf/_inbox/`와 `Projects/논문_pdf/_issue_paper/` 양쪽에 있는 각 PDF를 읽는다. 어느 폴더에서 읽었는지 기억해둔다(4번의 `source_type` 판단에 쓴다) — `_inbox/`면 `personal`, `_issue_paper/`면 `community`.
 2. PDF 내용을 바탕으로 이 논문의 task를 판단한다 (기존 `Projects/논문_pdf/<Task>/` 폴더 중 맞는 게 있으면 그걸 쓰고, 없으면 새 task 폴더명을 정한다). `_inbox/`와 `_issue_paper/` 어느 쪽에서 왔든 task 판단·폴더 배정 방식은 동일하다.
 3. "PDF 파일명 규칙"대로 `{년도}_{venue}_{제목}.pdf`로 리네임하고 `Projects/논문_pdf/<Task>/`로 이동한다 (원래 있던 `_inbox/`나 `_issue_paper/`에는 남기지 않는다 — 처리 완료된 PDF는 출처 폴더 구분 없이 `<Task>/` 한 곳에 모인다).
-4. `Projects/논문_<Task>_tasks/<Slug>.md`(분석 노트, task 노트)를 만든다. `title`은 논문 원제만 채운다(접두어 없음). `source`에 이동 후 PDF 경로(`Projects/논문_pdf/<Task>/<리네임된 파일명>`)를 채우고, `source_type`에 1번에서 기억해둔 출처(`personal` 또는 `community`)를 채운다. `task`, `direction` 속성을 채운다. 해당 `Projects/논문_<Task>.md`의 `customFields:` 정의에서 Year/Venue 필드 id를 확인해, task 노트의 `customFields`에 같은 값을 채운다(위 Frontmatter 절 참고). `status`는 항상 `in-progress`로 시작한다(사용자가 직접 다 읽고 나서 `done`으로 바꾸는 값이므로, 새로 처리했다고 `done`으로 채우지 않는다). `start`(PDF의 `_inbox/`·`_issue_paper/` 진입 날짜, mtime 기준)도 함께 채운다. `jcr_quartile`은 위 Frontmatter 절의 규칙대로 채운다 — 학회가 명백한 top-tier면 `Q1`, 저널이거나 등급을 모르면 `null`로 두고 나중에 사용자에게 물어볼 목록에 추가한다(추측 금지). 분석 노트 템플릿(콜아웃·bullet 규칙 포함)을 따르고, `> [!quote] 원제` 콜아웃의 링크 줄에 DOI(있으면) 또는 arXiv/공식 페이지 링크(없으면)를 채운다. 마지막으로 해당 `Projects/논문_<Task>.md` 프로젝트 노트의 `taskIds`와 "## Tasks" 목록에 이 논문을 추가한다(프로젝트 노트가 아직 없으면 위 "새 task 노트 생성 시 프로젝트 노트도 함께 갱신" 절 규칙대로 새로 만든다). `projectId`는 이 프로젝트 노트의 `id`와 일치시킨다.
+4. `Projects/논문_<Task>_tasks/<년도>_<venue>_<Slug>.md`(분석 노트, task 노트, 위 "파일명" 절의 접두어 규칙을 따른다 — PDF와 동일한 `{년도}_{venue}` 접두어)를 만든다. `title`은 논문 원제만 채운다(접두어 없음, 파일명과 title은 다른 규칙을 따름 — 위 "파일명과 title은 서로 다른 규칙을 따른다" 절 참고). 이 노트를 참조하는 다른 문서의 위키링크는 전부 `[[<년도>_<venue>_<Slug>|<Slug>]]` 형태로 쓴다. `source`에 이동 후 PDF 경로(`Projects/논문_pdf/<Task>/<리네임된 파일명>`)를 채우고, `source_type`에 1번에서 기억해둔 출처(`personal` 또는 `community`)를 채운다. `task`, `direction` 속성을 채운다. 해당 `Projects/논문_<Task>.md`의 `customFields:` 정의에서 Year/Venue 필드 id를 확인해, task 노트의 `customFields`에 같은 값을 채운다(위 Frontmatter 절 참고). `status`는 항상 `in-progress`로 시작한다(사용자가 직접 다 읽고 나서 `done`으로 바꾸는 값이므로, 새로 처리했다고 `done`으로 채우지 않는다). `start`(PDF의 `_inbox/`·`_issue_paper/` 진입 날짜, mtime 기준)도 함께 채운다. `jcr_quartile`은 위 Frontmatter 절의 규칙대로 채운다 — 학회가 명백한 top-tier면 `Q1`, 저널이거나 등급을 모르면 `null`로 두고 나중에 사용자에게 물어볼 목록에 추가한다(추측 금지). 분석 노트 템플릿(콜아웃·bullet 규칙 포함)을 따르고, `> [!quote] 원제` 콜아웃의 링크 줄에 DOI(있으면) 또는 arXiv/공식 페이지 링크(없으면)를 채운다. 마지막으로 해당 `Projects/논문_<Task>.md` 프로젝트 노트의 `taskIds`와 "## Tasks" 목록에 이 논문을 추가한다(프로젝트 노트가 아직 없으면 위 "새 task 노트 생성 시 프로젝트 노트도 함께 갱신" 절 규칙대로 새로 만든다). `projectId`는 이 프로젝트 노트의 `id`와 일치시킨다.
 5. `grep -r "#pending:<이번 논문의 슬러그>" .`(`ResearchVault/PaperStudy/`와 `Projects/` 양쪽에서 실행)를 실행해서, 기존 노트 중 이 논문을 미완성 링크(`#pending:` 마커)로 남겨둔 곳이 있는지 확인한다. 있으면 해당 문장을 실제 `[[wiki-link]]`로 갱신하고 마커를 지운다.
 6. 논문에서 "독립적으로 설명할 가치가 있는" 개념/기법(핵심 기여인 기법·아이디어)이 있는지 판단한다 — 재사용 여부와 무관하게, 이 논문 1편만 보고 판단한다.
    - 그런 개념이 있고 `Concepts/`에 이미 있으면: 해당 concept 문서의 "등장 논문"에 이번 논문을 추가하고, 필요하면 "변형/발전" 섹션을 갱신한다.

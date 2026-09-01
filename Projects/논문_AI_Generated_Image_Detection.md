@@ -34,4 +34,4 @@ updatedAt: "2026-08-28T06:02:30.000Z"
 PaperWiki — AI Generated Image Detection 분야 논문
 
 ## Tasks
-- [ ] [[LaRE2|LaRE²: Latent Reconstruction Error Based Method for Diffusion-Generated Image Detection]]
+- [ ] [[2024_CVPR_LaRE2|LaRE²: Latent Reconstruction Error Based Method for Diffusion-Generated Image Detection]]

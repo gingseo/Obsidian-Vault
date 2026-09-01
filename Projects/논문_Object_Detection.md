@@ -34,6 +34,6 @@ updatedAt: "2026-08-28T07:42:50.000Z"
 PaperWiki — Object Detection 분야 논문 (small/tiny 특화가 아닌 범용 detection)
 
 ## Tasks
-- [ ] [[DETR|End-to-End Object Detection with Transformers]]
-- [ ] [[Deformable-DETR|Deformable DETR: Deformable Transformers for End-to-End Object Detection]]
-- [ ] [[PaQ-DETR|PaQ-DETR: Learning Pattern and Quality-Aware Dynamic Queries for Object Detection]]
+- [ ] [[2020_ECCV_DETR|End-to-End Object Detection with Transformers]]
+- [ ] [[2021_ICLR_Deformable-DETR|Deformable DETR: Deformable Transformers for End-to-End Object Detection]]
+- [ ] [[2025_arXiv_PaQ-DETR|PaQ-DETR: Learning Pattern and Quality-Aware Dynamic Queries for Object Detection]]

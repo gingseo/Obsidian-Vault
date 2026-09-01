@@ -16,10 +16,10 @@ Small object의 열화(degradation)를 먼저 명시적으로 학습한 뒤, 그
 일반적인 restoration-then-detection 파이프라인과 달리, degradation을 "미리 알고 있는 지식"으로 명시화해 조건부 프롬프트를 만든다는 점, 그리고 rectification 자체가 pixel 복원이 아니라 detection-friendly한 feature 교정을 직접 목표로 한다는 점이 핵심 차별점이다.
 
 # 등장 논문
-- [[Detection_Oriented_Rectification]] — 이 개념을 최초로 제안. DORA(Detection-Oriented RectificAtion) 프레임워크로 구현하여 degradation basis 기반 학습, MoE 기반 task-oriented rectification, entity reconstruction, self-correction term을 결합해 다양한 detector에 plug-in 형태로 적용. SODA-D/SODA-A/AITOD-R/COCO/VisDrone 5개 벤치마크에서 일관된 성능 향상을 입증.
+- [[2026_TPAMI_Detection_Oriented_Rectification|Detection_Oriented_Rectification]] — 이 개념을 최초로 제안. DORA(Detection-Oriented RectificAtion) 프레임워크로 구현하여 degradation basis 기반 학습, MoE 기반 task-oriented rectification, entity reconstruction, self-correction term을 결합해 다양한 detector에 plug-in 형태로 적용. SODA-D/SODA-A/AITOD-R/COCO/VisDrone 5개 벤치마크에서 일관된 성능 향상을 입증.
 
 # 변형/발전
-현재는 [[Detection_Oriented_Rectification]] 1편에서만 제안된 개념으로, 이후 변형·확장 사례는 아직 없다.
+현재는 [[2026_TPAMI_Detection_Oriented_Rectification|Detection_Oriented_Rectification]] 1편에서만 제안된 개념으로, 이후 변형·확장 사례는 아직 없다.
 
 # 관련 개념
 - (없음 — 현재 위키 내 관련 concept 미등록)

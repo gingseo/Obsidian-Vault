@@ -27,4 +27,4 @@ updated: 2026-08-28
 - **왜 여러 dilation rate를 병렬로 쓰는 경우가 많은가**: 물체마다 크기가 다르므로, 작은 dilation(좁은 수용영역)과 큰 dilation(넓은 수용영역)을 병렬 브랜치로 두면 서로 다른 크기의 문맥 정보를 동시에 포착할 수 있다 — 이 특성 때문에 multi-scale feature 강화 모듈에서 자주 여러 rate를 병렬로 결합한다.
 
 # 등장 논문
-- [[BAFNet]] — DSAM(Dual-Stream Attention Module)에서 FPAM/BPAM으로 강조된 저레벨 feature를 rate 3/5/7의 병렬 dilated convolution 4개 브랜치(1×1 conv 포함)로 처리해, 서로 다른 크기의 전경·배경 문맥을 동시에 포착.
+- [[2025_TGRS_BAFNet|BAFNet]] — DSAM(Dual-Stream Attention Module)에서 FPAM/BPAM으로 강조된 저레벨 feature를 rate 3/5/7의 병렬 dilated convolution 4개 브랜치(1×1 conv 포함)로 처리해, 서로 다른 크기의 전경·배경 문맥을 동시에 포착.

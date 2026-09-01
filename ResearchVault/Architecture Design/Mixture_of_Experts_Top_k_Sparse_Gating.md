@@ -34,4 +34,4 @@ updated: 2026-08-28
 - **한계**: 라우터가 무엇을 기준으로 expert를 고르는지(라우팅에 쓰는 feature의 품질)에 따라 라우팅 품질이 크게 좌우된다 — 얽혀 있거나(entangled) 노이즈가 섞인 feature로 라우팅하면, sparsity를 줘도 무작위 선택과 큰 차이가 없어질 수 있다(아래 등장 논문 참고).
 
 # 등장 논문
-- [[Detection_Oriented_Rectification]] — task-specific router가 학습된 degradation basis `B_d`에 대한 Top-ρ(ρ=4, D=8) 게이팅으로 rectification prompt를 합성. 라우팅 기준을 "얽힌 원본 feature"가 아니라 "열화 semantic으로 재문맥화된 feature"로 바꿔 라우팅 품질을 크게 높였음(Uniform 29.7% → Degradation-aware 30.4% AP).
+- [[2026_TPAMI_Detection_Oriented_Rectification|Detection_Oriented_Rectification]] — task-specific router가 학습된 degradation basis `B_d`에 대한 Top-ρ(ρ=4, D=8) 게이팅으로 rectification prompt를 합성. 라우팅 기준을 "얽힌 원본 feature"가 아니라 "열화 semantic으로 재문맥화된 feature"로 바꿔 라우팅 품질을 크게 높였음(Uniform 29.7% → Degradation-aware 30.4% AP).

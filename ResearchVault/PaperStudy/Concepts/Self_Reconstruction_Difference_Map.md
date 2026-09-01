@@ -9,8 +9,8 @@ updated: 2026-08-19
 탐지 모델의 neck(FPN)에서 나온 저수준 feature map으로부터 원본 입력 이미지를 복원하는 reconstruction head를 붙이고, 복원된 이미지와 원본 이미지의 픽셀 차이("difference map")를 계산하는 기법. 이미지 재구성은 픽셀 변화에 민감한 low-level vision 과제이므로, backbone의 downsampling 과정에서 구조·텍스처 정보가 심하게 손실된 영역일수록 복원이 어려워 difference map에서 큰 값을 갖는다. 이 성질을 이용해, 별도의 supervision 없이(원본 이미지 자체가 재구성 target) 정보 손실이 심한 영역 — 전형적으로 tiny object가 있는 영역 — 을 찾아내는 self-supervised prior로 활용한다. 생성(GAN/super-resolution) 기반 방법과 달리 없는 디테일을 새로 만들어내는 것이 아니라, "어디서 정보가 사라졌는가"를 진단하는 방식이라는 점이 핵심 차별점이다.
 
 # 등장 논문
-- [[SR-TOD]] — 이 개념을 최초로 제안. FPN의 P2 feature map에서 reconstruction head로 이미지를 복원해 difference map을 얻고, Difference Map Guided Feature Enhancement(DGFE) 모듈을 통해 difference map을 element-wise attention 형태로 tiny object feature 강화에 사용. Pixel-level difference map 외에 FFT 기반 high-frequency difference map도 실험.
-- [[Reconstruction_Error_Guided_Instance_Segmentation]] — 적외선 배전설비 instance segmentation 도메인으로 확장. 단일 FPN 레벨이 아닌 multi-level object reconstruction decoder(ORD)로 원본 이미지를 복원하고, difference map을 Gumbel-sigmoid로 필터링한 뒤 전역 cross-attention(DFE)으로 backbone feature와 융합 — element-wise attention 대신 pixel-to-pixel 전역 상호작용으로 확장한 사례.
+- [[2024_ECCV_SR-TOD|SR-TOD]] — 이 개념을 최초로 제안. FPN의 P2 feature map에서 reconstruction head로 이미지를 복원해 difference map을 얻고, Difference Map Guided Feature Enhancement(DGFE) 모듈을 통해 difference map을 element-wise attention 형태로 tiny object feature 강화에 사용. Pixel-level difference map 외에 FFT 기반 high-frequency difference map도 실험.
+- [[2025_Sensors_Reconstruction_Error_Guided_Instance_Segmentation|Reconstruction_Error_Guided_Instance_Segmentation]] — 적외선 배전설비 instance segmentation 도메인으로 확장. 단일 FPN 레벨이 아닌 multi-level object reconstruction decoder(ORD)로 원본 이미지를 복원하고, difference map을 Gumbel-sigmoid로 필터링한 뒤 전역 cross-attention(DFE)으로 backbone feature와 융합 — element-wise attention 대신 pixel-to-pixel 전역 상호작용으로 확장한 사례.
 
 # 변형/발전
 - 원조(SR-TOD, ECCV 2024): reconstruction head는 U-Net과 FPN의 구조적 유사성에서 착안한 단순한 Up Block(Transpose Conv + Conv + ReLU) 스택으로 구성되며, MSE reconstruction loss로 학습. Difference map은 학습 가능한 threshold로 이진화(filtration)한 뒤 채널 방향 reweighting과 결합해 attention matrix로 변환.

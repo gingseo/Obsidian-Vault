@@ -34,5 +34,5 @@ updatedAt: "2026-08-28T06:02:30.000Z"
 PaperWiki — Salient Object Detection 분야 논문
 
 ## Tasks
-- [ ] [[AIMRINet|Attention interaction and multiple residual integration network for salient object detection in remote sensing images]]
-- [ ] [[Uncertainty_Guided_Refinement|Uncertainty-Guided Refinement for Fine-Grained Salient Object Detection]]
+- [ ] [[2026_Image-and-Vision-Computing_AIMRINet|Attention interaction and multiple residual integration network for salient object detection in remote sensing images]]
+- [ ] [[2025_TIP_Uncertainty_Guided_Refinement|Uncertainty-Guided Refinement for Fine-Grained Salient Object Detection]]

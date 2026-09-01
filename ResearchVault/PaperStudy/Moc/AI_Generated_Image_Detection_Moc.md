@@ -13,7 +13,7 @@ updated: 2026-08-05
 
 # 지금까지 다룬 흐름
 아직 1편만 읽어 흐름을 서술하기에는 이르다. 다음 논문이 들어오면 이 절을 채운다.
-- [[LaRE2]] — Diffusion model의 forward process가 닫힌 형태 해를 갖는다는 성질을 이용해, 완전 재구성 없이 latent space에서 단일 스텝 디노이징만으로 재구성 오차(LaRE)를 얻고, 이를 공간·채널 attention으로 원본 feature에 결합해 판별력을 높이는 접근. DIRE(다단계 샘플링 기반)의 비효율을 정면으로 겨냥한 첫 시도.
+- [[2024_CVPR_LaRE2|LaRE2]] — Diffusion model의 forward process가 닫힌 형태 해를 갖는다는 성질을 이용해, 완전 재구성 없이 latent space에서 단일 스텝 디노이징만으로 재구성 오차(LaRE)를 얻고, 이를 공간·채널 attention으로 원본 feature에 결합해 판별력을 높이는 접근. DIRE(다단계 샘플링 기반)의 비효율을 정면으로 겨냥한 첫 시도.
 
 # 이 분야를 관통하는 개념
 - [[Latent_Reconstruction_Error]] — lare2의 핵심 기여. Small-object-detection의 [[Self_Reconstruction_Difference_Map]]과 "재구성 난이도를 판별 신호로 쓴다"는 원리를 공유하는 타 도메인 사례.

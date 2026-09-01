@@ -15,7 +15,7 @@ Feature reconstruction 기반 비지도 이상 탐지(UAD)에서, 전통적으�
 - **Hard-normal mining**: 정상 영역 중 재구성이 원래 어려운 edge/디테일 영역(hard-normal)의 gradient에 집중시켜, 이 intrinsic error가 실제 이상에 의한 epistemic error와 혼동되는 것을 완화한다.
 
 # 등장 논문
-- [[ReContrast]] — 이 개념을 최초로 제안한 논문. RD4AD(Reverse Distillation)를 baseline으로 삼아 위 네 요소를 단계적으로 도입하며, MVTec AD/VisA 등 산업 결함 탐지와 OCT2017/APTOS/ISIC2018 등 의료 영상 UAD에서 SOTA를 달성.
+- [[2023_NeurIPS_ReContrast|ReContrast]] — 이 개념을 최초로 제안한 논문. RD4AD(Reverse Distillation)를 baseline으로 삼아 위 네 요소를 단계적으로 도입하며, MVTec AD/VisA 등 산업 결함 탐지와 OCT2017/APTOS/ISIC2018 등 의료 영상 UAD에서 SOTA를 달성.
 
 # 변형/발전
 - 원조: 이 프레임워크 자체가 ReContrast(NeurIPS 2023)에서 처음 제안됨. Reverse Distillation(RD4AD, CVPR 2022)의 frozen-encoder feature reconstruction 구조를 출발점으로 삼고, SimSiam(CVPR 2021)의 stop-gradient 기반 collapse 방지 아이디어를 결합해 만들어졌다.

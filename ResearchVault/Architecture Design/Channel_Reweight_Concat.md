@@ -33,4 +33,4 @@ updated: 2026-08-28
 - **왜 SENet류 channel attention 대신 고정 학습 가중치를 쓰는가**: Channel attention은 입력마다 가중치를 동적으로 계산하므로 표현력은 크지만 추가 conv·FC 연산이 필요해 비용이 늘어난다. 학습된 (입력에 무관한) 고정 가중치는 훨씬 적은 파라미터로 비슷한 효과를 낼 수 있어 경량성이 중요한 상황에서 유리한 트레이드오프다.
 
 # 등장 논문
-- [[FFCA-YOLO]] — FFM(Feature Fusion Module)의 핵심 재가중 전략. BiFPN 뼈대에 CRC를 적용해(3가지 변형 중 "먼저 concat 후 균일 채널별 가중치" 방식을 채택) 다중 스케일 feature를 손실 없이 결합.
+- [[2024_TGRS_FFCA-YOLO|FFCA-YOLO]] — FFM(Feature Fusion Module)의 핵심 재가중 전략. BiFPN 뼈대에 CRC를 적용해(3가지 변형 중 "먼저 concat 후 균일 채널별 가중치" 방식을 채택) 다중 스케일 feature를 손실 없이 결합.

@@ -33,4 +33,4 @@ updated: 2026-08-31
 - **비용/트레이드오프**: Depthwise 분해이므로 채널 간 상호작용은 별도의 1×1 conv에 의존한다 — 공간 정보(수평·수직 1D conv)와 채널 정보(1×1 conv)를 단계적으로 분리해 처리하는 구조라는 점에서, 완전한 2D joint 커널보다는 표현력이 다소 제한될 수 있다.
 
 # 등장 논문
-- [[LSOD-YOLO]] — SPPFL(Spatial Pyramid Pooling Fusion with LSKA) 모듈에서, SPPF의 multi-scale pooling 출력에 LSKA를 적용해 LCOR로 단순화된 계층 구조에서 손실될 수 있는 semantic/global 정보를 attention 가중치 재분배만으로 보완하는 데 사용.
+- [[2025_ESWA_LSOD-YOLO|LSOD-YOLO]] — SPPFL(Spatial Pyramid Pooling Fusion with LSKA) 모듈에서, SPPF의 multi-scale pooling 출력에 LSKA를 적용해 LCOR로 단순화된 계층 구조에서 손실될 수 있는 semantic/global 정보를 attention 가중치 재분배만으로 보완하는 데 사용.

@@ -9,7 +9,7 @@ updated: 2026-08-24
 서로 다른 레벨(얕은/중간/깊은)의 feature를 element-wise 곱으로 결합해 공통으로 나타나는 saliency 정보만 추출(비공통 정보·노이즈는 곱셈 과정에서 자연히 억제)한 뒤, 이 공통 정보를 각 레벨의 원본 feature에 residual로 다시 더해 레벨별 고유 디테일 정보를 보존하는 다중 레벨 feature 통합 기법.
 
 # 등장 논문
-- [[AIMRINet]] — 원조. MRFI(Multiple Residual Feature Integration) 모듈로 이 개념을 제안. 세 레벨(X/Y/Z) 곱으로 공통 saliency `F_m`을 얻고, 각 레벨에 residual로 더한 뒤 concat+최종 residual로 마무리. Ablation에서 이 모듈의 단독 기여가 attention 기반 SAI 모듈보다 큼을 확인.
+- [[2026_Image-and-Vision-Computing_AIMRINet|AIMRINet]] — 원조. MRFI(Multiple Residual Feature Integration) 모듈로 이 개념을 제안. 세 레벨(X/Y/Z) 곱으로 공통 saliency `F_m`을 얻고, 각 레벨에 residual로 더한 뒤 concat+최종 residual로 마무리. Ablation에서 이 모듈의 단독 기여가 attention 기반 SAI 모듈보다 큼을 확인.
 
 # 변형/발전
 시간 순 정리(등장 논문이 늘어날 때마다 갱신):

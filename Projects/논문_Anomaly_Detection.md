@@ -34,5 +34,5 @@ updatedAt: "2026-08-28T06:02:30.000Z"
 PaperWiki — Anomaly Detection 분야 논문
 
 ## Tasks
-- [ ] [[LogicAL|LogicAL: Towards logical anomaly synthesis for unsupervised anomaly localization]]
-- [ ] [[ReContrast|ReContrast: Domain-Specific Anomaly Detection via Contrastive Reconstruction]]
+- [ ] [[2024_CVPRW_LogicAL|LogicAL: Towards logical anomaly synthesis for unsupervised anomaly localization]]
+- [ ] [[2023_NeurIPS_ReContrast|ReContrast: Domain-Specific Anomaly Detection via Contrastive Reconstruction]]

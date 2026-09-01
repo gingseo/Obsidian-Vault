@@ -29,4 +29,4 @@ updated: 2026-08-28
 - **왜 "위치 정보를 안 섞는다"는 게 중요한가**: transformer의 FFN(feed-forward network)이 "각 토큰(위치)마다 독립적으로 적용되는 2-layer network"인데, 이게 1x1 conv 2개를 이어붙인 것과 동일한 구조다 — 토큰 간 정보 교환은 attention이 담당하고, FFN/1x1conv는 "각 토큰 내부에서 채널 정보만 재조합"하는 역할 분담이 이뤄진다.
 
 # 등장 논문
-- [[DETR]] — (1) 트랜스포머 인코더 직전, CNN backbone의 출력 채널을 `2048 → d(=256)`로 줄이는 데 1x1 conv 사용. (2) 트랜스포머 내부 FFN이 "1x1 conv 2겹(with ReLU)"과 동일한 연산이라고 논문이 명시(Appendix A.1) — attention이 원소 간 정보를 섞고, FFN(=1x1conv)이 각 원소 내부에서 채널을 재조합하는 역할 분담.
+- [[2020_ECCV_DETR|DETR]] — (1) 트랜스포머 인코더 직전, CNN backbone의 출력 채널을 `2048 → d(=256)`로 줄이는 데 1x1 conv 사용. (2) 트랜스포머 내부 FFN이 "1x1 conv 2겹(with ReLU)"과 동일한 연산이라고 논문이 명시(Appendix A.1) — attention이 원소 간 정보를 섞고, FFN(=1x1conv)이 각 원소 내부에서 채널을 재조합하는 역할 분담.

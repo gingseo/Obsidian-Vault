@@ -35,4 +35,4 @@ Feature map의 **모든 픽셀 쌍 사이의 관계**를 계산해 채널·공�
 - **한계**: 압축 과정에서 세부 공간 정보 일부가 손실되므로, NLNet만큼 정교한 위치별 관계를 포착하지는 못한다 — 정확도와 비용 사이의 트레이드오프를 비용 쪽으로 기울인 설계.
 
 # 등장 논문
-- [[FFCA-YOLO]] — SCAM(Spatial Context Aware Module)에서 GAP+GMP로 전역 정보를 집약(GCNet/SCP 대비 GMP 추가)하고, 채널 방향·공간 방향 문맥을 각각 계산해 배경 혼동을 억제하는 데 사용.
+- [[2024_TGRS_FFCA-YOLO|FFCA-YOLO]] — SCAM(Spatial Context Aware Module)에서 GAP+GMP로 전역 정보를 집약(GCNet/SCP 대비 GMP 추가)하고, 채널 방향·공간 방향 문맥을 각각 계산해 배경 혼동을 억제하는 데 사용.

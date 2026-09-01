@@ -34,4 +34,4 @@ Feature map의 채널마다 "이 채널이 지금 얼마나 중요한 정보를 
 - **비용/트레이드오프**: 공간적으로 "어느 위치가 중요한지"는 구별하지 못한다(채널 전체에 같은 가중치가 곱해짐) — 위치별 선택성이 필요하면 spatial attention과 결합해야 한다.
 
 # 등장 논문
-- [[FANet]] — CAREM(Channel Attention-based RoI Enhancement Module)에서, RoI feature의 고주파 성분(2D-DCT 기반 Gaussian 필터로 추출)에 대해 GMP+GAP 두 분기를 1×1 conv로 합산 후 sigmoid로 채널 가중치를 만들어, "어떤 채널이 tiny object의 고주파 특징을 잘 대변하는지"를 학습하는 데 사용.
+- [[2025_RemoteSensing_FANet|FANet]] — CAREM(Channel Attention-based RoI Enhancement Module)에서, RoI feature의 고주파 성분(2D-DCT 기반 Gaussian 필터로 추출)에 대해 GMP+GAP 두 분기를 1×1 conv로 합산 후 sigmoid로 채널 가중치를 만들어, "어떤 채널이 tiny object의 고주파 특징을 잘 대변하는지"를 학습하는 데 사용.

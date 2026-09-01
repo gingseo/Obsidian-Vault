@@ -34,4 +34,4 @@ updatedAt: "2026-08-28T06:02:30.000Z"
 PaperWiki — Visual Grounding 분야 논문
 
 ## Tasks
-- [ ] [[VGRSS|VGRSS: Datasets and Models for Visual Grounding in Remote Sensing Ship Images]]
+- [ ] [[2025_TGRS_VGRSS|VGRSS: Datasets and Models for Visual Grounding in Remote Sensing Ship Images]]

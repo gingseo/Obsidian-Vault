@@ -9,7 +9,7 @@ updated: 2026-08-04
 이미지 또는 feature map을 공간(spatial) 영역이 아니라 주파수(frequency) 영역으로 변환(2D-DFT, 2D-DCT, wavelet 등)한 뒤, 특정 주파수 대역(주로 고주파=경계·텍스처, 저주파=매끄러운 배경)에 학습 가능한 가중치를 적용해 선택적으로 강조하거나 억제하는 기법. 주파수 변환 자체는 정보 손실이 없는 가역 연산이므로, 성능 향상의 원천은 "새로운 정보"가 아니라 고주파/저주파가 자연스럽게 분리되어 있어 spatial-domain보다 더 유연하고 해석 가능한 방식으로 특징을 조작(필터링)할 수 있다는 데 있다. Spatial attention(예: 채널/공간 attention)이 원본 픽셀·특징 배치에서 직접 가중치를 학습하는 것과 달리, 이 기법은 먼저 신호를 주파수 성분으로 분해한 뒤 그 성분에 대해 가중치를 학습한다는 점이 구별점이다.
 
 # 등장 논문
-- [[FANet]] — Multi-Scale Frequency Feature Enhancement Module(MSFFEM, feature map을 patch로 나눠 2D-DFT 적용 후 적응형 주파수 가중치로 tiny object의 contour/texture를 강조하고 배경을 억제)과 Channel Attention-based RoI Enhancement Module(CAREM, RoI feature에 2D-DCT 기반 Gaussian 고주파 필터를 적용한 뒤 채널 attention으로 고주파 응답이 강한 채널을 선택)이라는 두 가지 형태로 이 개념을 확장·적용.
+- [[2025_RemoteSensing_FANet|FANet]] — Multi-Scale Frequency Feature Enhancement Module(MSFFEM, feature map을 patch로 나눠 2D-DFT 적용 후 적응형 주파수 가중치로 tiny object의 contour/texture를 강조하고 배경을 억제)과 Channel Attention-based RoI Enhancement Module(CAREM, RoI feature에 2D-DCT 기반 Gaussian 고주파 필터를 적용한 뒤 채널 attention으로 고주파 응답이 강한 채널을 선택)이라는 두 가지 형태로 이 개념을 확장·적용.
 
 # 변형/발전
 - 원류: Discrete Fourier Transform(DFT)/wavelet transform을 이용해 노이즈·조명 변화에 덜 민감한 주파수 성분을 추출하는 고전적 신호처리 접근이 컴퓨터 비전에 도입됨.

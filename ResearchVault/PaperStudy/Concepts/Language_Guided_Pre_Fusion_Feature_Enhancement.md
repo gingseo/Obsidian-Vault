@@ -9,7 +9,7 @@ updated: 2026-08-24
 Visual grounding에서 시각-언어 융합(fusion) 모듈에 들어가기 전에, 언어 feature를 query/key로 활용한 attention으로 시각 feature 자체를 미리 강화하는 기법. 전통적 방법이 언어와 시각 정보를 융합 단계에서만 상호작용시키는 것과 달리, 이 기법은 시각 feature 추출 단계와 융합 단계 사이에 별도의 언어 가이드 강화 단계를 둔다.
 
 # 등장 논문
-- [[VGRSS]] — 원조. LVFE(Language-guided Visual Feature Enhancement) 모듈로 이 개념을 제안. 시각 feature를 query, 언어 feature를 key/value로 하는 multihead self-attention을 3회 반복해 언어 정보를 점진적으로 시각 feature에 주입, 이후 원본 언어 feature와 채널 방향으로 concat(차원 압축 없이 공간 정보 보존).
+- [[2025_TGRS_VGRSS|VGRSS]] — 원조. LVFE(Language-guided Visual Feature Enhancement) 모듈로 이 개념을 제안. 시각 feature를 query, 언어 feature를 key/value로 하는 multihead self-attention을 3회 반복해 언어 정보를 점진적으로 시각 feature에 주입, 이후 원본 언어 feature와 채널 방향으로 concat(차원 압축 없이 공간 정보 보존).
 
 # 변형/발전
 시간 순 정리(등장 논문이 늘어날 때마다 갱신):

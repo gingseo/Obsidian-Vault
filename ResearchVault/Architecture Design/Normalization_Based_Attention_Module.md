@@ -33,4 +33,4 @@ CBAM류의 channel+spatial attention 구조를 계승하되, attention 가중치
 - **비용/트레이드오프**: 중요도 척도가 BN 파라미터라는 간접 신호에 묶여 있어, self-attention이나 CBAM처럼 입력 content에 직접 조건화된 정교한 attention만큼의 표현력은 없을 수 있다.
 
 # 등장 논문
-- [[LSOD-YOLO]] — C2f 모듈의 residual branch 출력에 NAM을 삽입한 C2f-N 구조로, Neck의 저해상도 feature map에 적용. Table 8 ablation에서 CBAM(mAP0.5 36.6)·CA(36.7)·SA(36.7)·SE(36.9) 대비 C2f-N(37.0)이 최소 파라미터로 최고 성능을 기록.
+- [[2025_ESWA_LSOD-YOLO|LSOD-YOLO]] — C2f 모듈의 residual branch 출력에 NAM을 삽입한 C2f-N 구조로, Neck의 저해상도 feature map에 적용. Table 8 ablation에서 CBAM(mAP0.5 36.6)·CA(36.7)·SA(36.7)·SE(36.9) 대비 C2f-N(37.0)이 최소 파라미터로 최고 성능을 기록.

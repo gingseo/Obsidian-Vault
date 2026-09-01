@@ -12,7 +12,7 @@ updated: 2026-08-24
 
 # 지금까지 다룬 흐름
 아직 1편만 읽어서 "흐름"을 서술하기엔 이르다. 다음 논문이 추가되면 이 섹션을 갱신한다.
-- [[VGRSS]] — 이 위키에서 visual grounding을 처음 다루는 논문. 원격탐사 선박 영상 특화 대규모 벤치마크(RSSVG, SARVG)를 자동화된 표현 생성으로 구축하고, 언어 정보로 시각 feature를 융합 이전에 미리 강화하는 LVFE와 공간 정보를 압축 없이 보존하는 VLF를 결합한 Transformer 기반 모델을 제안. 자연 이미지 VG 방법(TransVG, VLTVG 등)과 기존 원격탐사 VG 방법(RSVG/MGVLF)이 대형 타겟에 최적화되어 소형 선박에는 성능이 제한적이라는 갭을 메운다.
+- [[2025_TGRS_VGRSS|VGRSS]] — 이 위키에서 visual grounding을 처음 다루는 논문. 원격탐사 선박 영상 특화 대규모 벤치마크(RSSVG, SARVG)를 자동화된 표현 생성으로 구축하고, 언어 정보로 시각 feature를 융합 이전에 미리 강화하는 LVFE와 공간 정보를 압축 없이 보존하는 VLF를 결합한 Transformer 기반 모델을 제안. 자연 이미지 VG 방법(TransVG, VLTVG 등)과 기존 원격탐사 VG 방법(RSVG/MGVLF)이 대형 타겟에 최적화되어 소형 선박에는 성능이 제한적이라는 갭을 메운다.
 
 # 이 분야를 관통하는 개념
 - [[Language_Guided_Pre_Fusion_Feature_Enhancement]] — VGRSS의 LVFE 핵심 기여. 융합 이전 단계에서 언어로 시각 feature를 미리 강화하는 전략.

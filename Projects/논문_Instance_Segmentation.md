@@ -34,4 +34,4 @@ updatedAt: "2026-08-28T06:02:30.000Z"
 PaperWiki — Instance Segmentation 분야 논문
 
 ## Tasks
-- [ ] [[Reconstruction_Error_Guided_Instance_Segmentation|Reconstruction Error Guided Instance Segmentation for Infrared Inspection of Power Distribution Equipment]]
+- [ ] [[2025_Sensors_Reconstruction_Error_Guided_Instance_Segmentation|Reconstruction Error Guided Instance Segmentation for Infrared Inspection of Power Distribution Equipment]]

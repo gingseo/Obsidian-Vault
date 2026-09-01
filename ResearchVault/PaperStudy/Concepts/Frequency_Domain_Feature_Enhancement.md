@@ -15,7 +15,7 @@ X_out  = α · X_freq + β · X_spatial   (α, β는 학습 파라미터, residu
 ```
 
 # 등장 논문
-- [[UAV-DETR]] — 이 기법을 "Frequency-Focused (FF) 모듈"로 정식화해 제안한 논문. MSFF-FE(멀티스케일 feature fusion), FD(다운샘플링), SAC(서로 다른 fusion 경로 간 정렬) 세 곳 모두에 반복 삽입해 재사용하는 공통 빌딩 블록으로 사용.
+- [[2025_arXiv_UAV-DETR|UAV-DETR]] — 이 기법을 "Frequency-Focused (FF) 모듈"로 정식화해 제안한 논문. MSFF-FE(멀티스케일 feature fusion), FD(다운샘플링), SAC(서로 다른 fusion 경로 간 정렬) 세 곳 모두에 반복 삽입해 재사용하는 공통 빌딩 블록으로 사용.
 
 # 변형/발전
 - UAV-DETR(2025)에서 최초로 "FF 모듈"이라는 재사용 가능한 단위로 정식화됨. 논문 내에서도 세 가지 변형으로 응용됨:

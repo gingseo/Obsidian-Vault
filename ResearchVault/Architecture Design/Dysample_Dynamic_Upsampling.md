@@ -34,4 +34,4 @@ Nearest-neighbor 업샘플링(픽셀의 공간 위치만으로 커널을 결정,
 - **비용/트레이드오프**: Offset을 예측하는 linear layer 하나만 추가되므로 CARAFE 대비 파라미터·GFLOPs가 낮다. 다만 dynamic convolution만큼의 표현력(커널 형태 자체를 바꾸는 능력)은 없고, "샘플링 위치 이동"이라는 제한된 자유도만 갖는다.
 
 # 등장 논문
-- [[LSOD-YOLO]] — Neck의 feature fusion 단계에서 기존 nearest-neighbor 업샘플링을 대체. Table 7 ablation에서 nearest-neighbor(mAP0.5 36.7) · CARAFE(36.9, GFLOPs 35.8) 대비 Dysample(37.0, GFLOPs 33.9)이 정확도·연산량·FPS(93) 모두에서 우위를 보임.
+- [[2025_ESWA_LSOD-YOLO|LSOD-YOLO]] — Neck의 feature fusion 단계에서 기존 nearest-neighbor 업샘플링을 대체. Table 7 ablation에서 nearest-neighbor(mAP0.5 36.7) · CARAFE(36.9, GFLOPs 35.8) 대비 Dysample(37.0, GFLOPs 33.9)이 정확도·연산량·FPS(93) 모두에서 우위를 보임.

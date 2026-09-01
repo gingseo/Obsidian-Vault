@@ -11,7 +11,7 @@ updated: 2026-08-19
 - 저해상도·저대비 센서 도메인(적외선 등)에서, 별도 라벨 없이 self-supervised 신호만으로 이런 정보 손실을 진단하고 feature를 보강할 수 있는가?
 
 # 지금까지 다룬 흐름
-- [[Reconstruction_Error_Guided_Instance_Segmentation]] — 이 task의 첫 논문. Backbone feature로부터 원본 이미지를 재구성(ORD)하고, 그 재구성 오차(difference map)를 전역 cross-attention(DFE)으로 backbone feature에 재주입해 소형·복잡구조 객체를 동시에 강화하는 model-agnostic 프레임워크. Small_Object_Detection의 [[SR-TOD]]가 제안한 [[Self_Reconstruction_Difference_Map]] 원리를 object detection에서 instance segmentation으로, 가시광/드론 영상에서 적외선 영상으로 확장한 사례라는 점에서 두 task 사이의 중요한 다리 역할을 한다.
+- [[2025_Sensors_Reconstruction_Error_Guided_Instance_Segmentation|Reconstruction_Error_Guided_Instance_Segmentation]] — 이 task의 첫 논문. Backbone feature로부터 원본 이미지를 재구성(ORD)하고, 그 재구성 오차(difference map)를 전역 cross-attention(DFE)으로 backbone feature에 재주입해 소형·복잡구조 객체를 동시에 강화하는 model-agnostic 프레임워크. Small_Object_Detection의 [[2024_ECCV_SR-TOD|SR-TOD]]가 제안한 [[Self_Reconstruction_Difference_Map]] 원리를 object detection에서 instance segmentation으로, 가시광/드론 영상에서 적외선 영상으로 확장한 사례라는 점에서 두 task 사이의 중요한 다리 역할을 한다.
 
 # 이 분야를 관통하는 개념
 - [[Self_Reconstruction_Difference_Map]] — reconstruction-error-guided-instance-segmentation의 핵심 원리가 기반하는 개념(원조는 Small_Object_Detection의 SR-TOD). "재구성이 어려운 영역=정보가 손실된 영역"이라는 self-supervised 진단 신호를 이 task에서는 multi-level decoder + 전역 cross-attention 형태로 확장해 사용한다.

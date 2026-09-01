@@ -46,4 +46,4 @@ updated: 2026-08-28
 - **비용**: 시퀀스 길이 N에 대해 `Q·Kᵀ`가 `(N, N)` 행렬이므로 계산량이 `O(N²)`로 커진다 — 이미지처럼 N(=H×W)이 큰 경우 비용이 크다는 게 흔한 트레이드오프.
 
 # 등장 논문
-- [[DETR]] — 인코더의 self-attention(이미지 feature 전체를 서로 참조), 디코더의 self-attention(object query끼리 서로 참조해 중복 예측 억제) 두 곳에 사용.
+- [[2020_ECCV_DETR|DETR]] — 인코더의 self-attention(이미지 feature 전체를 서로 참조), 디코더의 self-attention(object query끼리 서로 참조해 중복 예측 억제) 두 곳에 사용.

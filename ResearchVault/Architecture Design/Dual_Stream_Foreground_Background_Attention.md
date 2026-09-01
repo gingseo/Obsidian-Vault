@@ -34,4 +34,4 @@ updated: 2026-08-28
 - **한계**: 배경 attention이 전경 attention의 단순 여집합이라, 전경 attention 자체가 부정확하면 배경 attention도 함께 부정확해지는 구조적 종속성이 있다 — 두 attention이 독립적으로 검증되지 않는다.
 
 # 등장 논문
-- [[BAFNet]] — Dual-Stream Attention Module(DSAM)의 핵심 기여. `P4`(최고레벨)로 FPAM/BPAM을 만들고 `P0`(최저레벨)에 적용, 이후 [[Dilated_Convolution]] 브랜치로 각각 처리해 전경·배경 문맥을 모두 반영한 강화 feature를 생성.
+- [[2025_TGRS_BAFNet|BAFNet]] — Dual-Stream Attention Module(DSAM)의 핵심 기여. `P4`(최고레벨)로 FPAM/BPAM을 만들고 `P0`(최저레벨)에 적용, 이후 [[Dilated_Convolution]] 브랜치로 각각 처리해 전경·배경 문맥을 모두 반영한 강화 feature를 생성.

@@ -37,4 +37,4 @@ updated: 2026-08-28
 - **비용**: 1000 timestep짜리 전체 diffusion을 그대로 쓰면 추론이 매우 느려지므로 DDIM으로 스텝 수를 줄여 근사한다 — 그래도 반복 없이 한 번에 위치를 예측하는 방식보다는 여러 스텝의 U-Net forward가 필요해 연산 비용이 늘어나는 트레이드오프가 있다.
 
 # 등장 논문
-- [[CDATOD-Diff]] — GT 박스 면적 비례 개수의 Gaussian 샘플을 생성한 뒤, CLIP 이미지·텍스트 임베딩을 조건으로 한 DDIM 기반 diffusion denoising으로 anchor 샘플링 포인트를 정제. RFLA의 계층적 Gaussian receptive field 매칭과 결합해 소형 객체의 양성 샘플 부족 문제를 완화하는 데 사용.
+- [[2025_RemoteSensing_CDATOD-Diff|CDATOD-Diff]] — GT 박스 면적 비례 개수의 Gaussian 샘플을 생성한 뒤, CLIP 이미지·텍스트 임베딩을 조건으로 한 DDIM 기반 diffusion denoising으로 anchor 샘플링 포인트를 정제. RFLA의 계층적 Gaussian receptive field 매칭과 결합해 소형 객체의 양성 샘플 부족 문제를 완화하는 데 사용.

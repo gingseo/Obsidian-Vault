@@ -27,4 +27,4 @@ updated: 2026-08-28
 - **트레이드오프**: 처리 비율(`C_p/C`)을 너무 낮추면 정보가 갱신되지 않는 채널이 늘어 정확도가 떨어진다. FasterNet은 이를 표준 convolution 2개를 뒤이어 배치해(모든 채널에 정보가 흐르도록) 보완한다 — PConv를 곧바로 여러 층 쌓지 않고, 반드시 표준 conv와 함께 블록을 구성하는 이유.
 
 # 등장 논문
-- [[FFCA-YOLO]] — L-FFCA-YOLO(경량판)에서 backbone/neck의 CSPBlock 안 bottleneck을 PConv 기반 FasterBlock으로 교체(CSPFasterBlock). 채널 재가중 비율 M=3/4(1×1 conv 채널) 설정, PConv 뒤에 표준 conv 2개를 이어 붙여 정보 흐름을 보완. 파라미터 30% 감소, 정확도 손실은 거의 없음(mAP50 0.909→0.907).
+- [[2024_TGRS_FFCA-YOLO|FFCA-YOLO]] — L-FFCA-YOLO(경량판)에서 backbone/neck의 CSPBlock 안 bottleneck을 PConv 기반 FasterBlock으로 교체(CSPFasterBlock). 채널 재가중 비율 M=3/4(1×1 conv 채널) 설정, PConv 뒤에 표준 conv 2개를 이어 붙여 정보 흐름을 보완. 파라미터 30% 감소, 정확도 손실은 거의 없음(mAP50 0.909→0.907).
