@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [general-deep-learning-techniques]
 direction: [foundational]
 paper_tags: [paper, deformable-convolution, geometric-transformation, object-detection, semantic-segmentation, backbone-module]
-source: "Projects/논문_pdf/General_Deep_Learning_Techniques/2017_ICCV_Deformable-Convolutional-Networks.pdf"
+source: "Projects/_pdf/General_Deep_Learning_Techniques/2017_ICCV_Deformable-Convolutional-Networks.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:00:00.000Z"
 updatedAt: "2026-08-24T03:00:00.000Z"
@@ -141,13 +141,132 @@ updatedAt: "2026-08-24T03:00:00.000Z"
 > [!info] 내 메모
 > 
 
+### 배경지식 — 표준 Convolution의 "고정 grid" 샘플링
+- **역할**:
+  Deformable convolution이 정확히 무엇을 바꾸는지 보려면, 먼저 표준 convolution이 "고정된 grid에서 샘플링한다"는 게 코드 레벨로 뭘 뜻하는지 짚어야 한다. 이 절 자체는 이 논문의 기여가 아니라 사전 지식.
+- **구현**:
+  3×3 conv라면 중심 `p0`를 기준으로 한 9개의 상대 좌표 집합 `R = {(-1,-1), ..., (1,1)}`이 있고, 각 출력 위치 `p0`마다 이 **동일한** `R`을 더해 9개 지점의 값을 읽어 가중합한다. 왼쪽 위 모서리를 계산하든 이미지 중앙을 계산하든 `R`은 항상 같은 정사각형 모양 — 이게 "고정 grid"라는 말의 정확한 의미다. `R`의 상대 좌표는 항상 정수이므로 값을 그대로 읽으면 되고, bilinear interpolation 같은 보간이 필요 없다.
+- **입출력 shape**:
+  `(C, H, W)` → `(C', H, W)` (padding으로 공간 크기 유지).
+
+```python
+# 3x3 conv의 grid R: 중심(p0) 기준 상대 좌표 9개, 모든 p0에서 항상 동일
+R = [(-1,-1), (-1,0), (-1,1),
+     ( 0,-1), ( 0,0), ( 0,1),
+     ( 1,-1), ( 1,0), ( 1,1)]   # len(R) = N = 9
+
+def standard_conv(x, weight):
+    # x: (C, H, W), weight: (C_out, C, 3, 3) — pn(9개) 각각에 대응하는 학습된 가중치 w(pn)
+    y = zeros((C_out, H, W))
+    for p0 in spatial_positions(x):        # p0는 좌표 값(픽셀 값 X) — (세로, 가로) 튜플, 예: (5, 10)
+        for pn in R:                        # pn도 좌표 튜플, 예: (-1, -1) — 9개 상대 위치는 항상 고정
+            i = p0[0] + pn[0]               # p0[0]=세로좌표, pn[0]=세로 오프셋 → 더해서 실제 세로 좌표
+            j = p0[1] + pn[1]               # p0[1]=가로좌표, pn[1]=가로 오프셋 → 더해서 실제 가로 좌표
+            sample = x[:, i, j]              # x는 (C,H,W). 맨 앞 ':'는 "채널 축 전체를 다 가져와라"
+                                              # → (i,j) 위치에서 채널 C개 값 전부를 꺼낸 (C,) 벡터
+            w_pn = weight[:, :, pn[0]+1, pn[1]+1]   # weight(C_out,C,3,3)에서 이 pn 전용 (C_out,C) 행렬만 추출
+                                                      # (pn이 -1~1이라 배열 인덱스로 쓰려면 +1 필요)
+            y[:, p0[0], p0[1]] += w_pn @ sample      # (C_out,C)@(C,) = (C_out,) 행렬-벡터곱, p0 위치에 누적
+    return y
+
+# 논문 Eq.(1)과 대응: y(p0) = Σ_{pn∈R} w(pn) · x(p0+pn)
+#   p0+pn  = 위 코드의 (i, j)         — 실제로 읽을 절대 좌표
+#   x(p0+pn) = 위 코드의 sample        — 그 좌표의 (C,) 입력 벡터
+#   w(pn)  = 위 코드의 w_pn            — 그 상대위치 전용 (C_out,C) 변환 행렬
+```
+
+> [!info] 내 메모
+> 
+
+### 배경지식 → 제안 방법으로: 정확히 무엇이 달라지는가
+아래 ①의 `deformable_conv`와 위 `standard_conv`는 **딱 한 줄**이 다르다:
+
+```python
+# 표준:      sample = x[p0 + pn]                                  # pn 그대로, 정수 좌표
+# deformable: sample = bilinear_interpolate(x, p0 + pn + dpn)      # pn에 offset Δpn을 더함, 분수 좌표
+```
+
+- `dpn`은 `pn`처럼 고정된 상수가 아니라, **위치 `p0`마다 다른 값**이다 — 별도 offset-conv가 입력 feature를 보고 실시간으로 예측한다(아래 ①의 "구현" 참고).
+- `pn + dpn`은 더 이상 정수가 아닐 수 있어(분수 좌표) `bilinear_interpolate`로 값을 추정해서 읽어야 한다 — 실제 픽셀 grid에 없는 위치의 값을 주변 4개 정수 좌표 픽셀의 가중평균으로 만들어낸다.
+- 결과적으로 표준 conv는 "9개 샘플링 위치가 이미지 전체에서 항상 같은 정사각형 모양"이지만, deformable conv는 "9개 위치가 매 위치·매 입력마다 다른 모양(예: 객체 윤곽을 따라 휘어진 모양)"으로 바뀐다.
+
+바뀐 한 줄을 위 `standard_conv` 전체에 실제로 반영하면 이렇게 된다 — 달라진 부분만 `# <-- 변경`으로 표시:
+
+%% col-start %%
+
+%% col-break:b:secondary %%
+
+conv
+```python
+# 3x3 conv의 grid R: 중심(p0) 기준 상대 좌표 9개, 모든 p0에서 항상 동일
+R = [(-1,-1), (-1,0), (-1,1),
+     ( 0,-1), ( 0,0), ( 0,1),
+     ( 1,-1), ( 1,0), ( 1,1)]   # len(R) = N = 9
+
+def standard_conv(x, weight):
+    # x: (C, H, W), weight: (C_out, C, 3, 3) — pn(9개) 각각에 대응하는 학습된 가중치 w(pn)
+    y = zeros((C_out, H, W))
+    for p0 in spatial_positions(x):        # p0는 좌표 값(픽셀 값 X) — (세로, 가로) 튜플, 예: (5, 10)
+        for pn in R:                        # pn도 좌표 튜플, 예: (-1, -1) — 9개 상대 위치는 항상 고정
+            i = p0[0] + pn[0]               # p0[0]=세로좌표, pn[0]=세로 오프셋 → 더해서 실제 세로 좌표
+            j = p0[1] + pn[1]               # p0[1]=가로좌표, pn[1]=가로 오프셋 → 더해서 실제 가로 좌표
+            sample = x[:, i, j]              # x는 (C,H,W). 맨 앞 ':'는 "채널 축 전체를 다 가져와라"
+                                              # → (i,j) 위치에서 채널 C개 값 전부를 꺼낸 (C,) 벡터
+            w_pn = weight[:, :, pn[0]+1, pn[1]+1]   # weight(C_out,C,3,3)에서 이 pn 전용 (C_out,C) 행렬만 추출
+                                                      # (pn이 -1~1이라 배열 인덱스로 쓰려면 +1 필요)
+            y[:, p0[0], p0[1]] += w_pn @ sample      # (C_out,C)@(C,) = (C_out,) 행렬-벡터곱, p0 위치에 누적
+    return y
+
+# 논문 Eq.(1)과 대응: y(p0) = Σ_{pn∈R} w(pn) · x(p0+pn)
+#   p0+pn  = 위 코드의 (i, j)         — 실제로 읽을 절대 좌표
+#   x(p0+pn) = 위 코드의 sample        — 그 좌표의 (C,) 입력 벡터
+#   w(pn)  = 위 코드의 w_pn            — 그 상대위치 전용 (C_out,C) 변환 행렬
+```
+
+%% col-break:b:secondary %%
+
+Deformable
+```python
+def deformable_conv(x, weight, offset_conv_weight):
+    offsets = conv(x, offset_conv_weight)   # <-- 추가: (C,H,W) -> (2N,H,W), 위치마다 다른 오프셋 예측
+                                              #     N=9(3x3 커널)이므로 오프셋 9쌍(Δi,Δj) = 18채널
+
+    y = zeros((C_out, H, W))
+    for p0 in spatial_positions(x):
+        for n, pn in enumerate(R):           # <-- 변경: pn의 순번 n을 같이 꺼냄 (offsets에서 조회하려고)
+            dpn = offsets[2*n:2*n+2, p0[0], p0[1]]   # <-- 추가: 이 위치 p0, 이 pn 전용 오프셋 (Δi,Δj) 벡터
+                                                        #     offsets 채널 중 n번째 쌍(2채널)을 꺼냄
+
+            i = p0[0] + pn[0] + dpn[0]       # <-- 변경: 정수 pn만 더하던 것에 dpn까지 더함 → 분수 좌표
+            j = p0[1] + pn[1] + dpn[1]       # <-- 변경: 마찬가지로 가로좌표도 분수가 됨
+
+            sample = bilinear_interpolate(x, i, j)   # <-- 변경: x[:, i, j]로 못 읽음(i,j가 정수가 아님)
+                                                        #     → 주변 4개 정수좌표 픽셀의 가중평균으로 추정
+            w_pn = weight[:, :, pn[0]+1, pn[1]+1]     # (변경 없음) — 가중치는 여전히 pn 기준 그대로 조회
+            y[:, p0[0], p0[1]] += w_pn @ sample
+    return y
+
+# 논문 Eq.(1)-(4)와 대응:
+#   offsets = 오프셋 예측 conv의 출력 → Δp_n
+#   i, j    = p0 + pn + Δpn  (Eq.3의 p0+pn+Δpn)
+#   sample  = bilinear_interpolate(x, i, j) → Eq.(4)의 x(p) = Σ_q G(q,p)·x(q)
+
+%% col-end %%
+
+
+
+`standard_conv`와 나란히 놓고 보면 바뀐 지점은 정확히 세 곳뿐이다: (1) 오프셋을 만드는 conv 하나가 추가됐고, (2) 좌표 계산에 `dpn`이 더해졌고, (3) 정수 인덱싱이 `bilinear_interpolate` 호출로 바뀌었다 — 가중치 `w_pn`을 조회하는 방식이나 `y`에 누적하는 방식은 표준 conv와 완전히 동일하다.
+
+> [!info] 내 메모
+> 
+
 ### ① Deformable Convolution
 - **역할**:
   같은 레이어의 모든 위치가 동일한 크기·형태의 수용영역을 갖는다는 CNN 구조 자체의 제약을 없애, 객체마다 다른 크기·형태에 맞춰 위치별로 수용영역이 스스로 조정되게 한다.
 - **구현**:
   입력 feature map과 같은 spatial resolution·dilation을 갖는 별도 conv 레이어(커널 크기·dilation은 원래 conv와 동일)를 하나 더 두어, grid `R`의 각 샘플링 위치 `p_n`(n=1..N, N=|R|)마다 2D offset `Δp_n`을 출력한다. 출력 채널은 `2N`(예: 3×3 kernel → N=9 → 18채널) — [[1x1_Convolution]]과 달리 이 offset-conv는 원래 conv와 동일한 3×3/dilation 구조를 그대로 쓴다. Offset은 대개 분수(fractional) 좌표이므로 bilinear interpolation으로 값을 읽는다. Offset 예측 conv는 0 가중치로 초기화되어, 학습 초기에는 표준 convolution과 동일하게 시작한다. Deformable convolution은 마지막 몇 개 conv 레이어(kernel size>1)에만 선택 적용한다 — Table 1 ablation에서 3개 레이어가 여러 과제에 걸쳐 가장 좋은 trade-off로 확인됨.
 - **입출력 shape**:
-  `(C, H, W)` → offset field `(2N, H, W)` (N=커널 크기², 예: 3×3→18) → deformable conv 출력 `(C', H, W)` (공간 크기는 padding으로 유지, 표준 conv와 동일).
+  `(C, H, W)` → offset field `(2N, H, W)` (N=커널 크기², 예: 3×3→18) → deformable conv 출력 `(C', H, W)` (공간 크기는 padding으로 유지, 표준 conv와 동일).₩ 
 
 ```python
 # 논문 Eq.(1)-(4) 기반. R: 표준 grid(예: 3x3 dilation1 → {(-1,-1),...,(1,1)}), N=|R|

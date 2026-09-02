@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [novel-approach, foundational]
 paper_tags: [paper, small-object-detection, sparse-convolution, inference-acceleration, feature-pyramid, query-mechanism]
-source: "Projects/논문_pdf/Small_Object_Detection/2022_CVPR_QueryDet.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2022_CVPR_QueryDet.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-18T11:07:50.810Z"

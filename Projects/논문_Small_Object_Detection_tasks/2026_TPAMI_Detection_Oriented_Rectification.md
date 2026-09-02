@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement, novel-approach]
 paper_tags: [paper, small-object-detection, restoration, degradation-modeling, mixture-of-experts, multi-task-learning]
-source: "Projects/논문_pdf/Small_Object_Detection/2026_TPAMI_Detection-Oriented-Rectification.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2026_TPAMI_Detection-Oriented-Rectification.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-28T17:30:00.000Z"

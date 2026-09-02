@@ -23,7 +23,7 @@ jcr_quartile: Q2
 task: [small-object-detection]
 direction: [novel-approach]
 paper_tags: [paper, small-object-detection, sar, remote-sensing, vision-language-model, clip, diffusion-model, label-assignment, bounding-box-regression]
-source: "Projects/논문_pdf/Small_Object_Detection/2025_RemoteSensing_CDATOD-Diff.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2025_RemoteSensing_CDATOD-Diff.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-28T00:00:00.000Z"

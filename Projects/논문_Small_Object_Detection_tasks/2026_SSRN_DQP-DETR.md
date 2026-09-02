@@ -23,7 +23,7 @@ jcr_quartile: arXiv
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, detr, dynamic-query, density-map, uav, query-ranking]
-source: "Projects/논문_pdf/Small_Object_Detection/2026_SSRN_DQP-DETR.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2026_SSRN_DQP-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:19:00.000Z"
 updatedAt: "2026-08-28T18:40:00.000Z"

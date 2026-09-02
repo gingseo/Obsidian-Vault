@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, yolo, lightweight, attention-mechanism, feature-fusion]
-source: "Projects/논문_pdf/Small_Object_Detection/2024_TGRS_FFCA-YOLO.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2024_TGRS_FFCA-YOLO.pdf"
 source_type: personal
 createdAt: "2026-08-20T00:00:00.000Z"
 updatedAt: "2026-08-28T00:00:00.000Z"

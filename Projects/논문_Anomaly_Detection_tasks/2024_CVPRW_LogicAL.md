@@ -23,7 +23,7 @@ jcr_quartile: Workshop
 task: [anomaly-detection]
 direction: [novel-approach, improvement]
 paper_tags: [paper, anomaly-detection, anomaly-synthesis, logical-anomaly, edge-manipulation, unsupervised, industrial-inspection]
-source: "Projects/논문_pdf/Anomaly_Detection/2024_CVPRW_LogicAL.pdf"
+source: "Projects/_pdf/Anomaly_Detection/2024_CVPRW_LogicAL.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:44:00.000Z"
 updatedAt: "2026-08-24T03:44:00.000Z"

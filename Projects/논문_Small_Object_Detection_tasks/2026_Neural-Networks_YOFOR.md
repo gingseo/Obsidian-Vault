@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, aerial-image, coarse-to-fine, long-tailed-detection, plug-in, unsupervised]
-source: "Projects/논문_pdf/Small_Object_Detection/2026_Neural-Networks_YOFOR.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2026_Neural-Networks_YOFOR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:24:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"

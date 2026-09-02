@@ -9,7 +9,6 @@
   "highlightr-plugin",
   "obsidian-git",
   "periodic-notes",
-  "pdf-plus",
   "project-manager",
   "obsidian-tracker",
   "open-tab-settings",
@@ -21,5 +20,7 @@
   "obsidian-markmind",
   "canvas-mindmap",
   "obsidian-excalidraw-plugin",
-  "advanced-canvas"
+  "advanced-canvas",
+  "study-pdf",
+  "side-note"
 ]

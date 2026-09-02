@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, full-scene-image, focus-detection, super-resolution, region-filtering]
-source: "Projects/논문_pdf/Small_Object_Detection/2026_TGRS_FFSSTD-Net.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2026_TGRS_FFSSTD-Net.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"

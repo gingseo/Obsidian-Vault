@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [novel-approach, improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, attention-mechanism, feature-fusion, boundary-supervision, auxiliary-task]
-source: "Projects/논문_pdf/Small_Object_Detection/2025_TGRS_BAFNet.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2025_TGRS_BAFNet.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:28:00.000Z"
 updatedAt: "2026-08-28T17:30:00.000Z"

@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, uncertainty, two-stage-detector, rpn]
-source: "Projects/논문_pdf/Small_Object_Detection/2026_TIP_Unc-SOD.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2026_TIP_Unc-SOD.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"

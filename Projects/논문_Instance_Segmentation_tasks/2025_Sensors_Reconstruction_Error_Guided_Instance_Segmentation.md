@@ -23,7 +23,7 @@ jcr_quartile: Q2
 task: [instance-segmentation]
 direction: [novel-approach]
 paper_tags: [paper, instance-segmentation, infrared-inspection, reconstruction-error, feature-enhancement, uav, power-distribution]
-source: "Projects/논문_pdf/Instance_Segmentation/2025_Sensors_Reconstruction-Error-Guided-Instance-Segmentation.pdf"
+source: "Projects/_pdf/Instance_Segmentation/2025_Sensors_Reconstruction-Error-Guided-Instance-Segmentation.pdf"
 source_type: personal
 createdAt: "2026-08-19T11:16:30.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"

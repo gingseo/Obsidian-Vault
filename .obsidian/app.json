@@ -8,5 +8,6 @@
   "focusNewTab": false,
   "defaultViewMode": "source",
   "livePreview": true,
-  "readableLineLength": false
+  "readableLineLength": false,
+  "showLineNumber": true
 }

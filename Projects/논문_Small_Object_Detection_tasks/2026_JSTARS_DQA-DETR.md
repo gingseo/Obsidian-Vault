@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, oriented-object-detection, detr, dynamic-query, remote-sensing, query-aggregation, label-assignment]
-source: "Projects/논문_pdf/Small_Object_Detection/2026_JSTARS_DQA-DETR.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2026_JSTARS_DQA-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:17:00.000Z"
 updatedAt: "2026-08-28T18:20:00.000Z"

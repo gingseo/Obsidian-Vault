@@ -33,7 +33,7 @@ paper_tags:
   - bipartite-matching
   - end-to-end
   - panoptic-segmentation
-source: Projects/논문_pdf/Object_Detection/2020_ECCV_DETR.pdf
+source: Projects/_pdf/Object_Detection/2020_ECCV_DETR.pdf
 source_type: personal
 createdAt: 2026-08-18T11:00:00.000Z
 updatedAt: 2026-08-28T16:40:00.000Z
@@ -182,12 +182,47 @@ src = h.flatten(2).permute(2, 0, 1)               # (256, H, W) -> (HW, 1, 256)
 - **역할**: HW개의 이미지 패치(토큰)들이 서로의 정보를 참고해, "이 근처에 객체가 있다/여기는 배경이다" 같은 전역적 문맥을 반영한 feature로 업데이트된다. Multi-head self-attention의 정확한 동작은 [[Multi_Head_Self_Attention]] 참고.
 - **구조**: self-attention + FFN 블록을 6층 쌓음(각 층마다 Add&Norm 포함).
 - **입출력 shape**: `(HW, d)` → `(HW, d)` (개수·차원 불변, 값만 문맥을 반영해 갱신됨). 이 최종 출력을 "encoder memory"라 부르며 디코더의 cross-attention에 재사용된다.
-- <mark style="background: #FFF9D6A6;">인코더의 self-attention이 이미지 전체를 한 번에 보기 때문에, 서로 멀리 떨어진 두 객체도 한 층 만에 "겹치는 객체인지 아닌지"를 구별할 수 있게 된다 — 이것이 "정리" 표의 초기 추측(anchor) 없이도 객체 후보를 전역적으로 분리해내는 근거가 된다(ablation에서 인코더 층 제거 시 AP가 3.9 하락, Fig.3의 attention map이 인스턴스를 실제로 분리함을 시각적으로 보여줌).</mark>
-- 층이 깊어질수록 AP는 상승, 그러나 소형객체는 상승하지만은 않는다. 
-  ![[2020_ECCV_DETR.pdf#page=10&rect=26,465,384,576|2020_ECCV_DETR, p.10]]
+- <mark style="background: #FFF9D6A6;">인코더의 self-attention이 이미지 전체를 한 번에 보기 때문에, 서로 멀리 떨어진 두 객체도 한 층 만에 "겹치는 객체인지 아닌지"를 구별할 수 있게 된다 — 이것이 "정리" 표의 초기 추측(anchor) 없이도 객체 후보를 전역적으로 분리해내는 근거가 된다(ablation에서 인코더 층 제거 시 AP가 3.9 하락, Fig.3의 attention map이 인스턴스를 실제로 분리함을 시각적으로 보여줌).</mark> [[attention-FFN 결과를 원본에 더한 뒤 LayerNorm 방식|↗]] ^ba6a2y
+
 
 ```python
-memory = encoder_layers(src + pos)   # (HW, 1, 256) -> (HW, 1, 256), 6층 반복
+# 한 층(층 하나)의 정의 — self-attention + FFN, 각각 뒤에 Add & Norm
+class TransformerEncoderLayer(nn.Module):
+    def __init__(self, d=256, n_heads=8, d_ffn=2048):
+        super().__init__()
+        self.self_attn = nn.MultiheadAttention(d, n_heads)
+        self.linear1 = nn.Linear(d, d_ffn)
+        self.linear2 = nn.Linear(d_ffn, d)
+        self.norm1 = nn.LayerNorm(d)
+        self.norm2 = nn.LayerNorm(d)
+
+    def forward(self, src, pos):
+        # src: (HW,1,256) 이번 층 입력(첫 층=backbone feature, 이후=이전 층 출력)
+        # pos: (HW,1,256) positional encoding, 매 층 q·k에만 다시 더함(value엔 안 더함)
+        q = k = src + pos
+        attn_out, _ = self.self_attn(q, k, value=src)      # (HW,1,256) -> (HW,1,256)
+        src = self.norm1(src + attn_out)                   # Add & Norm (Post-LN)
+
+        ffn_out = self.linear2(F.relu(self.linear1(src)))  # (HW,1,256)->(HW,1,2048)->(HW,1,256)
+        src = self.norm2(src + ffn_out)                    # Add & Norm
+        return src
+
+# 층 6개를 쌓아 encoder 전체를 구성 — self.layers가 바로 그 6개짜리 리스트
+class TransformerEncoder(nn.Module):
+    def __init__(self, d=256, n_heads=8, d_ffn=2048, num_layers=6):
+        super().__init__()
+        # 리스트 컴프리헨션으로 층을 num_layers번 "새로 생성" → 층마다 가중치 독립(비공유)
+        self.layers = nn.ModuleList([
+            TransformerEncoderLayer(d, n_heads, d_ffn) for _ in range(num_layers)
+        ])
+
+    def forward(self, src, pos):
+        for layer in self.layers:   # 6개 층을 순서대로 통과
+            src = layer(src, pos)
+        return src   # 최종 층 출력 = encoder memory
+
+encoder = TransformerEncoder()
+memory = encoder(src, pos)   # (HW, 1, 256) -> (HW, 1, 256), 6층 반복
 ```
 
 > [!warning] 이 구조 때문에 예상되는 문제점
@@ -203,8 +238,59 @@ memory = encoder_layers(src + pos)   # (HW, 1, 256) -> (HW, 1, 256), 6층 반복
 - <mark style="background: #FFF9D6A6;">디코더의 self-attention(query끼리 서로 참고)이 "다른 슬롯이 이미 이 객체를 담당하고 있다"는 정보를 슬롯 간에 공유하게 해, 같은 객체에 대해 여러 슬롯이 중복 예측하는 것을 억제한다 — 이것이 "정리" 표의 NMS 없이 중복을 억제하는 메커니즘이다(ablation Fig.4에서 NMS를 추가로 걸어도 층이 깊어질수록 이득이 사라짐 → 모델 스스로 중복을 이미 억제하고 있다는 증거).</mark>
 
 ```python
+# 한 층의 정의 — self-attention → cross-attention → FFN, 각각 뒤에 Add & Norm
+class TransformerDecoderLayer(nn.Module):
+    def __init__(self, d=256, n_heads=8, d_ffn=2048):
+        super().__init__()
+        self.self_attn = nn.MultiheadAttention(d, n_heads)    # query끼리
+        self.cross_attn = nn.MultiheadAttention(d, n_heads)   # query -> encoder memory
+        self.linear1 = nn.Linear(d, d_ffn)
+        self.linear2 = nn.Linear(d_ffn, d)
+        self.norm1 = nn.LayerNorm(d)
+        self.norm2 = nn.LayerNorm(d)
+        self.norm3 = nn.LayerNorm(d)
+
+    def forward(self, tgt, memory, query_pos, pos):
+        # tgt: (100,1,256) 디코더가 갱신해나가는 슬롯 값(첫 층 입력은 0으로 초기화)
+        # query_pos: (100,1,256) object query, 매 층 q·k에 다시 더해짐(학습되는 고정 파라미터)
+        # memory: (HW,1,256) encoder 최종 출력, pos: (HW,1,256) encoder의 positional encoding
+
+        # (1) Self-attention: 슬롯끼리 "누가 이미 담당 중인지" 공유
+        q = k = tgt + query_pos
+        sa_out, _ = self.self_attn(q, k, value=tgt)         # (100,1,256)
+        tgt = self.norm1(tgt + sa_out)
+
+        # (2) Cross-attention: 슬롯이 encoder memory(이미지 feature)를 조회
+        q = tgt + query_pos # tgt: 디코더가 가지고 있는 값, 지금까지 이 query가 알아낸 내용
+        k = memory + pos # memory: 인코더가 가지고 있는 값. 인코더가 만든 각 픽셀 위치의 feature 값
+        ca_out, _ = self.cross_attn(q, k, value=memory)      # (100,1,256)
+        # q와 k가 얼마나 비슷한지로 attention 가중치를 결정
+        tgt = self.norm2(tgt + ca_out)
+
+        # (3) FFN
+        ffn_out = self.linear2(F.relu(self.linear1(tgt)))
+        tgt = self.norm3(tgt + ffn_out)
+        return tgt
+
+# 층 6개를 쌓아 decoder 전체를 구성 — self.layers가 바로 그 6개짜리 리스트
+class TransformerDecoder(nn.Module):
+    def __init__(self, d=256, n_heads=8, d_ffn=2048, num_layers=6):
+        super().__init__()
+        self.layers = nn.ModuleList([
+            TransformerDecoderLayer(d, n_heads, d_ffn) for _ in range(num_layers)
+        ])
+
+    def forward(self, query_pos, memory, pos):
+        tgt = torch.zeros_like(query_pos)   # (100,1,256), 초기 슬롯 값은 0
+        outputs = []
+        for layer in self.layers:           # 6개 층을 순서대로 통과, layers는 6개
+            tgt = layer(tgt, memory, query_pos, pos) # 여기서 위의 forward 실행
+            outputs.append(tgt)             # 6층 전부 저장 -> auxiliary loss에 사용
+        return tgt, outputs
+
 self.query_pos = nn.Parameter(torch.rand(100, hidden_dim))   # (100, 256), 학습되는 파라미터
-h = decoder_layers(query=self.query_pos, memory=memory)      # (100, 256) -> (100, 256), 6층 반복
+decoder = TransformerDecoder()
+h, _ = decoder(query_pos=self.query_pos, memory=memory, pos=pos)  # (100,256) -> (100,256), 6층 반복
 ```
 
 > [!warning] 이 구조 때문에 예상되는 문제점
@@ -215,15 +301,38 @@ h = decoder_layers(query=self.query_pos, memory=memory)      # (100, 256) -> (10
 
 ### ⑥ Prediction FFN
 - **역할**: 디코더가 만든 N개의 출력 임베딩 각각을, 최종 (클래스, 박스) 예측으로 변환한다. 모든 슬롯이 같은 FFN 가중치를 공유한다.
-- **구현**: 3-layer perceptron(ReLU, hidden dim=d) + 박스용 linear projection, 클래스용 별도 linear + softmax. 박스는 (중심 x, 중심 y, 너비, 높이) 4개 값을 sigmoid로 0~1 정규화해 출력, 클래스는 실제 클래스 + "no object(∅)" 포함 `num_classes+1`개 중 하나.
-- **입출력 shape**: `(N=100, d)` → 클래스 `(N=100, num_classes+1)` + 박스 `(N=100, 4)`.
+- **구현**: 클래스는 단일 linear projection으로 logit만 출력(softmax 없음 — softmax는 이 모듈이 아니라 이후 loss 계산·추론 후처리 단계에서 별도로 적용). 박스는 3-layer perceptron(ReLU, hidden dim=d)으로 (중심 x, 중심 y, 너비, 높이) 4개 값을 만들고 sigmoid로 0~1 정규화. 클래스는 실제 클래스 + "no object(∅)" 포함 `num_classes+1`개 중 하나.
+- **입출력 shape**: `(N=100, d)` → 클래스 logit `(N=100, num_classes+1)` + 박스 `(N=100, 4)`.
 
 ```python
-self.linear_class = nn.Linear(hidden_dim, num_classes + 1)
-self.linear_bbox = nn.Linear(hidden_dim, 4)
+class MLP(nn.Module):   # 3-layer perceptron, 박스 회귀 전용
+    def __init__(self, d, hidden_dim, output_dim, num_layers=3):
+        super().__init__()
+        dims = [d] + [hidden_dim] * (num_layers - 1) + [output_dim]
+        # 실제 숫자(d=256, hidden_dim=256, output_dim=4, num_layers=3) 대입 시:
+        # dims = [256, 256, 256, 4]  (4개 값)
+        self.linears = nn.ModuleList(nn.Linear(a, b) for a, b in zip(dims[:-1], dims[1:]))
+        # dims[:-1] = [256, 256, 256]  (마지막 값 4 제외)
+        # dims[1:]  = [256, 256, 4]    (첫 값 256 제외)
+        # zip으로 대응: (256,256), (256,256), (256,4) -> 3쌍
+        # self.linears = [Linear(256,256), Linear(256,256), Linear(256,4)]  (원소 3개)
 
-logits = self.linear_class(h)          # (100, 256) -> (100, num_classes+1)
-boxes = self.linear_bbox(h).sigmoid()  # (100, 256) -> (100, 4), 0~1 정규화
+    def forward(self, x):
+        # self.linears 원소가 3개이므로 이 for문은 정확히 3번 반복(i=0,1,2)
+        for i, linear in enumerate(self.linears):
+            # len(self.linears)-1 == 2 이므로: i=0,1(<2)엔 ReLU 적용, i=2(마지막)엔 미적용
+            x = F.relu(linear(x)) if i < len(self.linears) - 1 else linear(x)
+        return x   # for 블록 밖 — 3번 다 돈 뒤 최종 x를 반환
+
+# 마지막 층에 ReLU를 안 씌우는 이유: 이 MLP의 출력은 곧바로 sigmoid()에 들어가는데(아래),
+# ReLU는 음수를 전부 0으로 눌러버려 sigmoid 입력이 표현할 수 있는 값의 범위를 절반(음수 쪽)만큼 줄인다.
+# 마지막 층은 활성함수 없이 raw 값(logit)을 그대로 다음 단계(sigmoid)에 넘기는 것이 표준 MLP 관례.
+
+self.linear_class = nn.Linear(hidden_dim, num_classes + 1)   # 단일 linear, softmax 없이 logit만 출력
+self.bbox_embed = MLP(hidden_dim, hidden_dim, 4, num_layers=3)
+
+logits = self.linear_class(h)          # (100, 256) -> (100, num_classes+1), 학습 시 cross-entropy가 내부적으로 softmax 처리
+boxes = self.bbox_embed(h).sigmoid()   # (100, 256) -> (100, 4), 0~1 정규화
 ```
 
 > [!info] 내 메모

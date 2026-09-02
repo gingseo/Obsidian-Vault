@@ -23,7 +23,7 @@ jcr_quartile: arXiv
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, low-resolution, super-resolution, detr, latent-regularization, token-routing, saliency]
-source: "Projects/논문_pdf/Small_Object_Detection/2026_arXiv_CoLR-Det.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2026_arXiv_CoLR-Det.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:36:00.000Z"
 updatedAt: "2026-08-28T17:00:00.000Z"

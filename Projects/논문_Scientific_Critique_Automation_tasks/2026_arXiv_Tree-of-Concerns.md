@@ -23,7 +23,7 @@ jcr_quartile: arXiv
 task: [scientific-critique-automation]
 direction: [novel-approach]
 paper_tags: [paper, multi-agent-debate, llm-agent, scientific-critique, peer-review-automation, benchmark]
-source: "Projects/논문_pdf/Scientific_Critique_Automation/2026_arXiv_Tree-of-Concerns.pdf"
+source: "Projects/_pdf/Scientific_Critique_Automation/2026_arXiv_Tree-of-Concerns.pdf"
 source_type: community
 createdAt: "2026-08-31T03:48:07.000Z"
 updatedAt: "2026-08-31T03:48:07.000Z"

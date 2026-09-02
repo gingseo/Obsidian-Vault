@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, detr, dynamic-query, density-estimation, remote-sensing, label-assignment]
-source: "Projects/논문_pdf/Small_Object_Detection/2025_JSTARS_Density-Aware-DETR.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2025_JSTARS_Density-Aware-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:09:00.000Z"
 updatedAt: "2026-08-28T19:00:00.000Z"

@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [ai-generated-image-detection]
 direction: [novel-approach]
 paper_tags: [paper, ai-generated-image-detection, diffusion-model, reconstruction-error, latent-space, feature-refinement, deepfake-detection]
-source: "Projects/논문_pdf/AI_Generated_Image_Detection/2024_CVPR_LaRE2.pdf"
+source: "Projects/_pdf/AI_Generated_Image_Detection/2024_CVPR_LaRE2.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"

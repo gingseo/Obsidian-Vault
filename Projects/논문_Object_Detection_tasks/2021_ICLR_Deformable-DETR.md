@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [object-detection]
 direction: [improvement, foundational]
 paper_tags: [paper, object-detection, transformer, deformable-attention, multi-scale-feature, sparse-attention, end-to-end]
-source: "Projects/논문_pdf/Object_Detection/2021_ICLR_Deformable-DETR.pdf"
+source: "Projects/_pdf/Object_Detection/2021_ICLR_Deformable-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:03:00.000Z"
 updatedAt: "2026-08-24T03:03:00.000Z"
@@ -61,7 +61,7 @@ Project: [[논문_Object_Detection|Object Detection]]
 
 **갈래 2 — 데이터 기반 학습된 sparse attention**
 - LSH 기반 해싱(Kitaev et al. 2020), k-means 기반 클러스터링(Roy et al. 2020), block permutation(Tay et al. 2020a): query·key를 유사도로 그룹화해 sparse 연산 — 여전히 이미지 특화 설계는 아니며, 도입 사례가 드물다.
-- **타겟/해결**: 느린 수렴(문제 ①) — 갈래 1과 마찬가지로 attention 연산 자체를 sparse화하려는 시도.
+- **타겟/해결**: 느린 수렴(문제 ①) — 갈래 1과 마찬가지로 attention 연산 자체를 sparse화하려는 시도. [[babo|↗]] ^od6wi1
 
 **갈래 3 — Low-rank 근사**
 - Linear projection(Wang et al. 2020b), kernelization(Katharopoulos et al. 2020; Choromanski et al. 2020): attention의 저랭크 성질을 활용해 연산량 감소 — 근사 오차가 발생하고 이미지 feature map 처리에 특화되지 않는다.
@@ -85,10 +85,10 @@ Project: [[논문_Object_Detection|Object Detection]]
 
 # 해결 방법 요약
 
-| | 문제 ① — DETR의 극도로 느린 수렴 | 문제 ② — 소형 객체 성능 열세 / 고해상도 feature 사용 불가 |
-|---|---|---|
-| **해결 방법** | 각 query가 reference point 주변 소수(K=4) sampling point만 보는 deformable attention module을 encoder/decoder 전체에 적용해, attention이 처음부터 sparse하게 시작하므로 "균일 → sparse"로 바뀌는 학습 부담 자체가 사라짐 | 같은 deformable attention을 feature level별로 확장(multi-scale deformable attention)해, query당 연산량이 feature map 크기와 무관한 상수에 가깝게 유지되므로 고해상도·멀티스케일 feature를 그대로 입력에 사용 가능 |
-| **예상되는 문제점** | Sampling location이 무작위 접근(unordered memory access)을 유발해 표준 convolution보다는 여전히 느림 | Reference point 근방만 sampling하므로 reference point 자체가 부정확하면 관련 정보를 원천적으로 놓칠 위험 |
+|              | 문제 ① — DETR의 극도로 느린 수렴                                                                                                                                                       | 문제 ② — 소형 객체 성능 열세 / 고해상도 feature 사용 불가                                                                                                                         |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **해결 방법**    | 각 query가 reference point 주변 소수(K=4) sampling point만 보는 deformable attention module을 encoder/decoder 전체에 적용해, attention이 처음부터 sparse하게 시작하므로 "균일 → sparse"로 바뀌는 학습 부담 자체가 사라짐 | 같은 deformable attention을 feature level별로 확장(multi-scale deformable attention)해, query당 연산량이 feature map 크기와 무관한 상수에 가깝게 유지되므로 고해상도·멀티스케일 feature를 그대로 입력에 사용 가능 |
+| **예상되는 문제점** | Sampling location이 무작위 접근(unordered memory access)을 유발해 표준 convolution보다는 여전히 느림                                                                                             | Reference point 근방만 sampling하므로 reference point 자체가 부정확하면 관련 정보를 원천적으로 놓칠 위험                                                                                    |
 
 > [!info] 내 메모
 > 
@@ -136,6 +136,45 @@ Prediction FFN (3-layer MLP + Linear)                → 클래스(300, K+1) + �
        ▼
 출력: 300개의 (클래스, 박스) 예측
 ```
+
+> [!info] 내 메모
+> 
+
+### 인코더 레이어 전체에서 DETR과 무엇이 달라지는가
+Encoder에 실제로 쓰이는 것은 아래 ①(단일 스케일)이 아니라 ②(멀티스케일) — 인코더 입력이 이미 4개 레벨 feature map을 이어붙인 것이기 때문이다([[2020_ECCV_DETR|DETR]]의 encoder는 단일 스케일 feature 하나만 다뤘던 것과 대비). ①·②의 세부 구현으로 들어가기 전에, 먼저 인코더 레이어 전체 구조에서 DETR과 정확히 무엇이 달라지는지부터 본다. [[2020_ECCV_DETR|DETR]] 노트의 `TransformerEncoderLayer`와 나란히 놓으면 바뀐 지점이 드러난다.
+
+```python
+# DETR의 TransformerEncoderLayer.forward (비교 대상)
+def forward(self, src, pos):
+    q = k = src + pos
+    attn_out, _ = self.self_attn(q, k, value=src)   # 표준 multi-head self-attention
+    src = self.norm1(src + attn_out)
+
+    ffn_out = self.linear2(F.relu(self.linear1(src)))
+    src = self.norm2(src + ffn_out)
+    return src
+
+# Deformable DETR의 인코더 레이어 — 바뀐 곳은 self_attn 호출 한 줄뿐
+def forward(self, src, pos, reference_points, spatial_shapes):
+    query = src + pos
+    attn_out = self.ms_deform_attn(query, reference_points, src, spatial_shapes)  # <-- 교체
+    src = self.norm1(src + attn_out)
+
+    ffn_out = self.linear2(F.relu(self.linear1(src)))   # (변경 없음)
+    src = self.norm2(src + ffn_out)                      # (변경 없음)
+    return src
+```
+
+Add&Norm·FFN·6층을 쌓는 바깥 구조(`TransformerEncoder`)는 전혀 안 바뀐다. 표준 self-attention 호출 한 줄이 `ms_deform_attn` 호출로 교체될 뿐이지만, 그 한 줄 안에서 벌어지는 연산은 근본적으로 다르다:
+
+| | 표준 self-attention(`self.self_attn`) | Deformable attention(`self.ms_deform_attn`) |
+|---|---|---|
+| key 후보 | `k`(=`src+pos`) 전체, 즉 HW개 픽셀 전부 | reference point 주변 레벨당 `K=4`개씩, 총 `L·K=16`개뿐 |
+| "어디를 볼지" 결정 방식 | q·k 내적으로 HW개 전부와 유사도 계산(softmax) | 유사도 계산 없음 — sampling location과 attention weight를 query feature에서 직접 선형 투영으로 예측 |
+| 값을 가져오는 방식 | 정수 인덱스로 존재하는 key 값을 그대로 사용 | reference point+offset(분수 좌표)의 값을 bilinear interpolation으로 읽음 |
+| 연산량 | `O(H²W²C)` — 이미지 크기의 제곱 | `O(HWC²)` — 이미지 크기에 선형(아래 ① "구현 디테일" Appendix A.1 근거) |
+
+DETR 인코더가 겪던 `O(H²W²C)` 병목이 정확히 "HW개 전부를 서로 비교한다"는 지점에서 나왔기 때문에("정리" 표 문제②), 이 지점만 sparse sampling으로 바꾸는 것이 이 논문의 핵심 개입 지점이다. 이 표에서 "유사도 계산 없음"이라고 뭉뚱그린 부분, 즉 offset·attention weight를 실제로 어떻게 예측하는지가 아래 ①의 세부 구현이다.
 
 > [!info] 내 메모
 > 
@@ -202,6 +241,9 @@ def ms_deform_attn(zq, p_hat_q, feature_levels, M=8, K=4, L=4):
     return out
 # K=1, L=1, Wv=I 로 축소하면 원조 deformable convolution과 수식적으로 동일
 ```
+
+> [!info] 내 메모
+> 
 
 <mark style="background: #FFF9D6A6;">"정리" 표 문제 ②(고해상도·멀티스케일 처리 불가)를, attention의 sampling location을 레벨마다 별도로 두는 것만으로 해결한다 — query당 연산량이 `min(HWC², N_qKC²)`로 feature map 크기에 무관해지므로 고해상도 feature도 그대로 입력 가능하고, Table 2 ablation에서 FPN을 추가로 결합해도 성능이 개선되지 않아(43.8→43.8 AP) cross-level 정보 교환이 attention 메커니즘 자체로 이미 충분함을 뒷받침한다.</mark>
 

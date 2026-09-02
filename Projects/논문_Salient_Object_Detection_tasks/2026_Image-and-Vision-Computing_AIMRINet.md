@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [salient-object-detection]
 direction: [improvement]
 paper_tags: [paper, salient-object-detection, remote-sensing, transformer, spatial-attention, residual-fusion, multi-scale-feature]
-source: "Projects/논문_pdf/Salient_Object_Detection/2026_Image-and-Vision-Computing_AIMRINet.pdf"
+source: "Projects/_pdf/Salient_Object_Detection/2026_Image-and-Vision-Computing_AIMRINet.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:40:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"

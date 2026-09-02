@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, receptive-field, texture-preservation, attention-mechanism, feature-fusion, lightweight]
-source: "Projects/논문_pdf/Small_Object_Detection/2026_JSTARS_RTP-Net.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2026_JSTARS_RTP-Net.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:31:00.000Z"
 updatedAt: "2026-08-24T03:31:00.000Z"

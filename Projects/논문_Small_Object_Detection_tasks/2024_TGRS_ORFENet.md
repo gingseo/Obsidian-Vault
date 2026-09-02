@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [small-object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, self-supervision, multi-receptive-field, feature-enhancement, fcos]
-source: "Projects/논문_pdf/Small_Object_Detection/2024_TGRS_ORFENet.pdf"
+source: "Projects/_pdf/Small_Object_Detection/2024_TGRS_ORFENet.pdf"
 source_type: personal
 createdAt: "2026-08-19T00:00:00.000Z"
 updatedAt: "2026-08-19T00:00:00.000Z"

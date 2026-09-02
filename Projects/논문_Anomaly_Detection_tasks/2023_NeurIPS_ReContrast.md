@@ -23,7 +23,7 @@ jcr_quartile: "Q1"
 task: [anomaly-detection]
 direction: [novel-approach, improvement]
 paper_tags: [paper, anomaly-detection, contrastive-learning, feature-reconstruction, domain-adaptation, mvtec-ad]
-source: "Projects/논문_pdf/Anomaly_Detection/2023_NeurIPS_ReContrast.pdf"
+source: "Projects/_pdf/Anomaly_Detection/2023_NeurIPS_ReContrast.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-18T11:00:00.000Z"

@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [visual-grounding]
 direction: [novel-approach, foundational]
 paper_tags: [paper, visual-grounding, remote-sensing, ship-detection, multimodal, transformer, dataset, sar]
-source: "Projects/논문_pdf/Visual_Grounding/2025_TGRS_VGRSS.pdf"
+source: "Projects/_pdf/Visual_Grounding/2025_TGRS_VGRSS.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:48:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"
