@@ -140,8 +140,19 @@ Prediction FFN (3-layer MLP + Linear)                → 클래스(300, K+1) + �
 > [!info] 내 메모
 > 
 
-### 인코더 레이어 전체에서 DETR과 무엇이 달라지는가
-Encoder에 실제로 쓰이는 것은 아래 ①(단일 스케일)이 아니라 ②(멀티스케일) — 인코더 입력이 이미 4개 레벨 feature map을 이어붙인 것이기 때문이다([[2020_ECCV_DETR|DETR]]의 encoder는 단일 스케일 feature 하나만 다뤘던 것과 대비). ①·②의 세부 구현으로 들어가기 전에, 먼저 인코더 레이어 전체 구조에서 DETR과 정확히 무엇이 달라지는지부터 본다. [[2020_ECCV_DETR|DETR]] 노트의 `TransformerEncoderLayer`와 나란히 놓으면 바뀐 지점이 드러난다.
+### DETR과 비교해 전체적으로 어디가 바뀌는가
+Encoder·decoder 6층씩이라는 바깥 구조는 [[2020_ECCV_DETR|DETR]]과 동일하다. 바뀌는 건 그 안의 attention 세 군데 중 두 곳뿐이다 — "attention이 이미지 feature map 크기(`HW`)에 비례해 커지는 지점"만 골라서 바꾼다는 게 이 선택의 기준이다.
+
+| | DETR | Deformable DETR |
+|---|---|---|
+| Encoder self-attention (픽셀끼리) | 표준(전체 HW개를 서로 다 봄, `O(H²W²C)`) | **Deformable attention으로 전량 교체** |
+| Decoder cross-attention (query→encoder memory) | 표준(query가 HW개 전부를 봄) | **Deformable attention으로 교체** |
+| Decoder self-attention (query끼리) | 표준 | **표준 그대로 유지** — query가 300개뿐이라 애초에 병목이 아님 |
+
+이 중 인코더 self-attention부터 본다. 이유는 이 논문이 스스로 지목한 두 병목(느린 수렴, 고해상도 처리 불가) 중 "고해상도 처리 불가"가 정확히 여기(`O(H²W²C)`)서 나오기 때문이다.
+
+### 인코더 레이어 코드에서 무엇이 바뀌는가
+[[2020_ECCV_DETR|DETR]] 노트의 `TransformerEncoderLayer.forward`와 나란히 놓으면, 바뀐 줄이 정확히 하나뿐임이 드러난다.
 
 ```python
 # DETR의 TransformerEncoderLayer.forward (비교 대상)
@@ -157,7 +168,7 @@ def forward(self, src, pos):
 # Deformable DETR의 인코더 레이어 — 바뀐 곳은 self_attn 호출 한 줄뿐
 def forward(self, src, pos, reference_points, spatial_shapes):
     query = src + pos
-    attn_out = self.ms_deform_attn(query, reference_points, src, spatial_shapes)  # <-- 교체
+    attn_out = self.ms_deform_attn(query, reference_points, src, spatial_shapes)  # <-- self_attn을 교체
     src = self.norm1(src + attn_out)
 
     ffn_out = self.linear2(F.relu(self.linear1(src)))   # (변경 없음)
@@ -165,16 +176,19 @@ def forward(self, src, pos, reference_points, spatial_shapes):
     return src
 ```
 
-Add&Norm·FFN·6층을 쌓는 바깥 구조(`TransformerEncoder`)는 전혀 안 바뀐다. 표준 self-attention 호출 한 줄이 `ms_deform_attn` 호출로 교체될 뿐이지만, 그 한 줄 안에서 벌어지는 연산은 근본적으로 다르다:
+Add&Norm·FFN·6층을 쌓는 바깥 구조(`TransformerEncoder`)는 전혀 안 바뀐다. 바뀐 건 `self.self_attn(...)` 호출이 `self.ms_deform_attn(...)` 호출로 교체된 것뿐이다 — 그렇다면 이 두 함수는 각각 정확히 어떤 함수인가.
 
-| | 표준 self-attention(`self.self_attn`) | Deformable attention(`self.ms_deform_attn`) |
+- **`self.self_attn`**: DETR 노트에 이미 있는 표준 `nn.MultiheadAttention`. Query·key 전체(`HW`개)를 내적으로 비교해 유사도(softmax)를 구하고, 그 가중치로 value를 가중합하는 연산. 여기서는 다시 설명하지 않는다.
+- **`self.ms_deform_attn`**: 이 논문이 새로 정의하는 함수로, DETR에는 없던 완전히 다른 연산이다. Query와 key를 비교하는 유사도 계산 자체가 없고, 대신 "어디를 볼지"(sampling location)와 "얼마나 중요한지"(attention weight)를 query feature 하나로부터 직접 선형 투영으로 예측한다. 이 함수가 정확히 어떻게 생겼는지가 아래 ①(단일 스케일 버전)·②(인코더에 실제로 쓰이는 멀티스케일 버전)의 내용이다.
+
+두 함수를 표로 대조하면:
+
+| | `self.self_attn` (표준) | `self.ms_deform_attn` (deformable) |
 |---|---|---|
 | key 후보 | `k`(=`src+pos`) 전체, 즉 HW개 픽셀 전부 | reference point 주변 레벨당 `K=4`개씩, 총 `L·K=16`개뿐 |
-| "어디를 볼지" 결정 방식 | q·k 내적으로 HW개 전부와 유사도 계산(softmax) | 유사도 계산 없음 — sampling location과 attention weight를 query feature에서 직접 선형 투영으로 예측 |
+| "어디를 볼지" 결정 방식 | q·k 내적으로 HW개 전부와 유사도 계산(softmax) | 유사도 계산 없음 — sampling location·attention weight를 query feature에서 직접 선형 투영으로 예측 |
 | 값을 가져오는 방식 | 정수 인덱스로 존재하는 key 값을 그대로 사용 | reference point+offset(분수 좌표)의 값을 bilinear interpolation으로 읽음 |
 | 연산량 | `O(H²W²C)` — 이미지 크기의 제곱 | `O(HWC²)` — 이미지 크기에 선형(아래 ① "구현 디테일" Appendix A.1 근거) |
-
-DETR 인코더가 겪던 `O(H²W²C)` 병목이 정확히 "HW개 전부를 서로 비교한다"는 지점에서 나왔기 때문에("정리" 표 문제②), 이 지점만 sparse sampling으로 바꾸는 것이 이 논문의 핵심 개입 지점이다. 이 표에서 "유사도 계산 없음"이라고 뭉뚱그린 부분, 즉 offset·attention weight를 실제로 어떻게 예측하는지가 아래 ①의 세부 구현이다.
 
 > [!info] 내 메모
 > 
