@@ -93,7 +93,7 @@ updatedAt: "2026-08-31T00:00:00.000Z"
 # 제안 방법
 
 <mark style="background: #FFF3A3A6;">원본 이미지에 대해 먼저 낮은 threshold로 coarse detection을 수행해 대략적인 객체 위치를 얻은 뒤, <span style="color:#c0392b; font-weight:bold;">ALSM</span>이 이 coarse box들을 IoU 기반 병합과 K-means 클러스터링으로 묶어 배경 비중이 최소화된 서브영역을 적응적으로 잘라내고, <span style="color:#c0392b; font-weight:bold;">FEM</span>이 그 서브영역에 recursive Gaussian filter로 배경을 흐리게 해 객체 대비를 강화하며, <span style="color:#c0392b; font-weight:bold;">CBM</span>이 tail 클래스 객체를 공간적 semantic을 고려해 좌우로 조건부 복제한다 — 세 모듈 모두 별도 학습 없이 기존 detector 출력 위에서 동작하는 비지도 후처리/전처리다.</mark>
-
+앞에 가 
 ## 전체 파이프라인 (Fig. 2 기준)
 
 ```

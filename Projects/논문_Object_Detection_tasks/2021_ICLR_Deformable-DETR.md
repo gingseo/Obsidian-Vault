@@ -117,10 +117,10 @@ Backbone (ResNet-50, ImageNet 사전학습)      → C3 (512, H₀/8, W₀/8)
 Positional Encoding + Scale-level Embedding 추가   → 레벨별 (H_l·W_l, 256) + 레벨 구분 정보
        │
        ▼
-① Multi-Scale Deformable Attention Encoder × 6층    → Σ(H_l·W_l), 256)   [encoder memory, self-attn 전량 교체]
+Multi-Scale Deformable Attention Encoder × 6층    → Σ(H_l·W_l), 256)   [encoder memory, self-attn 전량 교체]
        │
        ▼
-② Multi-Scale Deformable Attention Decoder × 6층
+Multi-Scale Deformable Attention Decoder × 6층
    (object query 300개, self-attn은 표준 attention 유지, cross-attn만 교체)
        │  reference point p̂_q = sigmoid(Linear(query))   ← query별 2D 정규화 좌표
        ▼
@@ -141,86 +141,98 @@ Prediction FFN (3-layer MLP + Linear)                → 클래스(300, K+1) + �
 > 
 
 ### DETR과 비교해 전체적으로 어디가 바뀌는가
-Encoder·decoder 6층씩이라는 바깥 구조는 [[2020_ECCV_DETR|DETR]]과 동일하다. 바뀌는 건 그 안의 attention 세 군데 중 두 곳뿐이다 — "attention이 이미지 feature map 크기(`HW`)에 비례해 커지는 지점"만 골라서 바꾼다는 게 이 선택의 기준이다.
+Encoder·decoder 6층씩이라는 바깥 구조는 [[2020_ECCV_DETR|DETR]]과 동일하다. DETR에서 표준 attention이 쓰이던 세 자리 중 두 자리가 deformable attention으로 바뀐다 — "attention이 이미지 feature map 크기(`HW`)에 비례해 커지는 자리"만 골라서 바꾼다는 게 이 선택의 기준이다.
 
-| | DETR | Deformable DETR |
-|---|---|---|
-| Encoder self-attention (픽셀끼리) | 표준(전체 HW개를 서로 다 봄, `O(H²W²C)`) | **Deformable attention으로 전량 교체** |
-| Decoder cross-attention (query→encoder memory) | 표준(query가 HW개 전부를 봄) | **Deformable attention으로 교체** |
-| Decoder self-attention (query끼리) | 표준 | **표준 그대로 유지** — query가 300개뿐이라 애초에 병목이 아님 |
+| Attention 자리                                   | DETR                | Deformable DETR                                        |
+| ---------------------------------------------- | ------------------- | ------------------------------------------------------ |
+| Encoder self-attention (픽셀끼리)                  | 전체 HW개 픽셀을 서로 다 봄   | reference point 주변 소수 지점만 봄                            |
+| Decoder cross-attention (query→encoder memory) | query가 HW개 전부를 봄    | query가 reference point 주변 소수 지점만 봄                     |
+| Decoder self-attention (query끼리)               | query 300개끼리 서로 다 봄 | (안 바뀜) query 300개끼리 서로 다 봄 — query가 300개뿐이라 애초에 병목이 아님 |
 
-이 중 인코더 self-attention부터 본다. 이유는 이 논문이 스스로 지목한 두 병목(느린 수렴, 고해상도 처리 불가) 중 "고해상도 처리 불가"가 정확히 여기(`O(H²W²C)`)서 나오기 때문이다.
-
-### 인코더 레이어 코드에서 무엇이 바뀌는가
-[[2020_ECCV_DETR|DETR]] 노트의 `TransformerEncoderLayer.forward`와 나란히 놓으면, 바뀐 줄이 정확히 하나뿐임이 드러난다.
-
-```python
-# DETR의 TransformerEncoderLayer.forward (비교 대상)
-def forward(self, src, pos):
-    q = k = src + pos
-    attn_out, _ = self.self_attn(q, k, value=src)   # 표준 multi-head self-attention
-    src = self.norm1(src + attn_out)
-
-    ffn_out = self.linear2(F.relu(self.linear1(src)))
-    src = self.norm2(src + ffn_out)
-    return src
-
-# Deformable DETR의 인코더 레이어 — 바뀐 곳은 self_attn 호출 한 줄뿐
-def forward(self, src, pos, reference_points, spatial_shapes):
-    query = src + pos
-    attn_out = self.ms_deform_attn(query, reference_points, src, spatial_shapes)  # <-- self_attn을 교체
-    src = self.norm1(src + attn_out)
-
-    ffn_out = self.linear2(F.relu(self.linear1(src)))   # (변경 없음)
-    src = self.norm2(src + ffn_out)                      # (변경 없음)
-    return src
-```
-
-Add&Norm·FFN·6층을 쌓는 바깥 구조(`TransformerEncoder`)는 전혀 안 바뀐다. 바뀐 건 `self.self_attn(...)` 호출이 `self.ms_deform_attn(...)` 호출로 교체된 것뿐이다 — 그렇다면 이 두 함수는 각각 정확히 어떤 함수인가.
-
-- **`self.self_attn`**: DETR 노트에 이미 있는 표준 `nn.MultiheadAttention`. Query·key 전체(`HW`개)를 내적으로 비교해 유사도(softmax)를 구하고, 그 가중치로 value를 가중합하는 연산. 여기서는 다시 설명하지 않는다.
-- **`self.ms_deform_attn`**: 이 논문이 새로 정의하는 함수로, DETR에는 없던 완전히 다른 연산이다. Query와 key를 비교하는 유사도 계산 자체가 없고, 대신 "어디를 볼지"(sampling location)와 "얼마나 중요한지"(attention weight)를 query feature 하나로부터 직접 선형 투영으로 예측한다. 이 함수가 정확히 어떻게 생겼는지가 아래 ①(단일 스케일 버전)·②(인코더에 실제로 쓰이는 멀티스케일 버전)의 내용이다.
-
-두 함수를 표로 대조하면:
-
-| | `self.self_attn` (표준) | `self.ms_deform_attn` (deformable) |
-|---|---|---|
-| key 후보 | `k`(=`src+pos`) 전체, 즉 HW개 픽셀 전부 | reference point 주변 레벨당 `K=4`개씩, 총 `L·K=16`개뿐 |
-| "어디를 볼지" 결정 방식 | q·k 내적으로 HW개 전부와 유사도 계산(softmax) | 유사도 계산 없음 — sampling location·attention weight를 query feature에서 직접 선형 투영으로 예측 |
-| 값을 가져오는 방식 | 정수 인덱스로 존재하는 key 값을 그대로 사용 | reference point+offset(분수 좌표)의 값을 bilinear interpolation으로 읽음 |
-| 연산량 | `O(H²W²C)` — 이미지 크기의 제곱 | `O(HWC²)` — 이미지 크기에 선형(아래 ① "구현 디테일" Appendix A.1 근거) |
+인코더·디코더 cross-attention 두 곳은 같은 새 연산(deformable attention)으로 바뀌지만, 등장하는 자리(인코더 레이어 안 vs 디코더 레이어 안)가 다르므로 아래에서 각각 따로 코드를 대조한다. 그 전에 먼저 "표준 attention"과 "deformable attention" 두 함수 자체가 어떻게 다른지부터 짚는다 — 이건 이 논문의 핵심 기여이자, 인코더·디코더 두 절이 공통으로 참조할 사전지식이다.
 
 > [!info] 내 메모
 > 
 
-### ① Deformable Attention Module
-- **역할**:
-  Transformer attention이 이미지 feature map을 처리할 때 겪는 근본 문제는 모든 spatial location을 다 봐야 한다는 점이다. Deformable attention module은 query feature로부터 예측한 reference point 주변의 고정된 소수 sampling point만 보게 해, feature map 크기와 무관하게 query당 연산량을 일정하게 유지한다. [[Deformable_Sampling_Offset]]에서 CNN에 도입된 오프셋 샘플링 개념을 Transformer attention의 sampling location으로 확장한 것이며, 표준 multi-head attention 자체는 [[Multi_Head_Self_Attention]] 참고.
-- **구현**:
-  Query feature `z_q`와 2D reference point `p_q`가 주어지면, `z_q`를 선형 투영해 `M`개 attention head 각각에 대해 `K`개의 sampling offset `Δp_mqk`와 이에 대응하는 attention weight `A_mqk`(softmax로 정규화, `Σ_k A_mqk=1`)를 동시에 예측한다. 각 head에서 `reference point + offset` 위치의 feature를 bilinear interpolation으로 읽어와 attention weight로 가중합한다. `M=8`, `K=4`가 기본값.
-- **입출력 shape**:
-  Query `z_q (256,)` + reference point `p_q (2,)` + feature map `x (256, H, W)` → 출력 `(256,)` (query 1개 기준, 실제로는 `N_q`개 query에 대해 배치 연산).
+## 사전지식 — 두 attention 함수의 구현 비교
+인코더·디코더 어느 쪽이든 "무엇이 바뀌는지"는 결국 이 두 함수 중 하나가 다른 하나로 교체되는 문제로 귀결된다. 함수 자체의 차이를 먼저 완전히 이해하면, 이후 인코더·디코더 절은 "이 함수가 어느 자리에 꽂히는가"만 보면 된다.
+
+
+%% col-start %%
+
+%% col-break:b:secondary %%
+
+### `self_attn` — 표준 Multi-Head Attention (DETR에서 그대로 가져온 사전지식)
+- **역할**: DETR의 `self.self_attn`/`self.cross_attn`이 실제로 하는 연산. Deformable attention이 정확히 무엇을 안 하는지 보려면 먼저 표준 attention이 뭘 하는지부터 코드로 짚어야 한다. 이 함수 자체는 이 논문의 기여가 아니라 사전지식이며, 이 논문에서는 디코더 self-attention 한 곳에만 그대로 남는다(자세한 배경은 [[Multi_Head_Self_Attention]]).
+- **핵심 아이디어**: Query 전체와 key 전체를 내적해 유사도를 구하고(→ softmax로 정규화된 attention weight), 그 weight로 value 전체를 가중합한다. Key 후보는 항상 "존재하는 모든 위치"이고, 그중 어디가 중요한지는 유사도 계산이 사후적으로 알아낸다 — "후보를 미리 좁히지 않고 전부 계산한 뒤 가중치로 걸러낸다"는 게 핵심.
 
 ```python
-# 논문 Eq.(2) 기반 의사코드
-def deform_attn(zq, pq, x, M=8, K=4):
-    offsets = linear_offset(zq)          # zq(256,) -> (M, K, 2), 2MK개 채널로 투영
-    weights = softmax(linear_weight(zq)) # zq(256,) -> (M, K), MK개 채널, head별로 K개 합=1
+def self_attn(query, key, value, M=8):
+    # query: (N_q, C), key/value: (N_k, C)
+    C = query.shape[-1]
+    d_head = C // M                        # head 하나가 담당하는 차원
     out = 0
-    for m in range(M):
-        head_out = 0
-        for k in range(K):
-            sample_loc = pq + offsets[m, k]                 # 2-d 실수 좌표 (분수 가능)
-            v = bilinear_interpolate(Wv[m] @ x, sample_loc)  # value projection 후 샘플링
-            head_out += weights[m, k] * v
-        out += Wm[m] @ head_out
-    return out
+    for m in range(M):                     # M개 head — 서로 다른 Wq/Wk/Wv로 다른 "관점"을 봄
+        q = Wq[m] @ query                   # (N_q, d_head)
+        k = Wk[m] @ key                     # (N_k, d_head)
+        v = Wv[m] @ value                   # (N_k, d_head)
+
+        scores = q @ k.T / sqrt(d_head)     # (N_q, N_k) — 모든 query-key 쌍의 유사도. N_k개 전부와 비교
+        weights = softmax(scores, dim=-1)   # (N_q, N_k) — 각 query 행마다 N_k개에 대해 합=1
+
+        head_out = weights @ v              # (N_q, d_head) — N_k개 value를 weights로 가중합
+        out += Wo[m] @ head_out             # head 결과를 출력 차원으로 되돌려 누적
+    return out                              # (N_q, C)
 ```
 
-> [!example]- 구현 디테일
+핵심은 `scores = q @ k.T`, 즉 **key 후보(`N_k`개) 전부와 유사도를 계산한다**는 점이다. 인코더 self-attention이면 `N_q=N_k=HW`라 이 한 줄이 이미 `O(HW·HW)=O(H²W²)`짜리 연산이고, 여기에 채널 `C`가 곱해져 `O(H²W²C)`가 된다. 디코더 cross-attention이면 `N_q=300`(query 수), `N_k=HW`(encoder memory 크기)라 `O(300·HW·C)`로 여전히 `HW`에 비례한다 — 두 자리 다 이 줄이 병목이다.
+
+%% col-break:b:secondary %%
+
+### `deform_attn` — Deformable Attention (단일 스케일 버전, 개념 이해용)
+- **역할**: `self_attn`을 대체할 새 연산의 최소 단위. Query feature로부터 예측한 reference point 주변의 고정된 소수(K개) sampling point만 보게 해, feature map 크기와 무관하게 query당 연산량을 일정하게 유지한다. [[Deformable_Sampling_Offset]]에서 CNN에 도입된 오프셋 샘플링 개념을 attention의 sampling location으로 확장한 것. 실제 모델에는 이 단일 스케일 버전이 그대로 쓰이지 않고, 아래 `ms_deform_attn`(멀티스케일 버전)으로 확장되어 쓰인다 — 여기서는 핵심 원리만 가장 단순한 형태로 본다.
+- **핵심 아이디어**: `self_attn`의 "후보 전체와 유사도를 계산"하는 절차 자체를 통째로 없앤다. 대신 query feature 하나로부터 "어디를 볼지"(offset)와 "얼마나 중요한지"(weight)를 곧바로 선형 투영으로 예측한다 — 비교할 key 후보 집합이 애초에 없다.
+
+```python
+# 논문 Eq.(2) 기반 의사코드. self_attn과 같은 M=8 헤드 구조를 그대로 유지.
+def deform_attn(zq, pq, x, M=8, K=4):
+    # zq: (C,) 이 query 하나의 feature.  pq: (2,) 이 query의 reference point(2D 좌표)
+    # x: (C, H, W) attend할 대상 feature map (self_attn의 key/value 대신 이 하나만 받음)
+    offsets = linear_offset(zq)          # zq(256,) -> (M, K, 2): head마다 K개 sampling point의 (Δx,Δy)
+    weights = softmax(linear_weight(zq)) # zq(256,) -> (M, K): head마다 K개 point의 중요도, head별로 합=1
+    # self_attn과 달리 이 두 줄이 유사도 계산(q@k.T)을 완전히 대체한다 — key라는 후보 집합 자체가 없다
+
+    out = 0
+    for m in range(M):                   # self_attn과 동일하게 M개 head를 돎
+        head_out = 0
+        for k in range(K):               # self_attn의 "N_k개 전부"가 여기서는 "K=4개뿐"로 축소됨
+            sample_loc = pq + offsets[m, k]                 # reference point + 학습된 offset → 분수 좌표
+            v = bilinear_interpolate(Wv[m] @ x, sample_loc)  # 정수 인덱싱이 아니라 보간으로 값을 읽음
+            head_out += weights[m, k] * v                    # softmax(scores)@v 대신 예측된 weight로 가중합
+        out += Wm[m] @ head_out          # self_attn의 Wo[m]와 동일한 역할 — head 출력을 다시 합침 
+    return out
+
+%% col-end %%
+`
+```
+> [!example]- Deform_atten 구현 디테일
 > 복잡도(Appendix A.1): `O(N_q C² + min(HWC², N_q KC²) + 5N_q KC + 3N_q CMK)`. `M=8, K≤4, C=256` 기본값에서 `5K+3MK < C`이므로 사실상 `O(N_q C² + min(HWC², N_q KC²))`로 근사된다. Encoder에서는 `N_q=HW`이므로 `O(HWC²)`로 spatial size에 선형(DETR encoder self-attention의 `O(H²W²C)`보다 낮은 차수), decoder에서는 `N_q=N=300`으로 spatial size와 무관해 `O(NKC²)`.
 >
 > Offset·weight 예측 선형 투영의 weight는 0, bias는 `M=8`개 head가 원형으로 서로 다른 방향을 향하도록 초기화(예: head별 `(±k,0),(0,±k),(±k,±k)` 방향, `K`개 지점을 균등 분산). Attention weight 초기값은 `A_mqk = 1/(LK)`로 균등.
+
+**`self_attn` vs `deform_attn` 대조**:
+
+| | `self_attn` (표준) | `deform_attn` (deformable) |
+|---|---|---|
+| Head 수 | `M=8` | `M=8` (동일) |
+| "어디를 볼지" 정하는 방법 | `scores = q @ k.T` — query가 key 후보 전부와 유사도를 계산해서 사후에 알아냄 | `offsets = linear_offset(zq)` — query feature에서 곧바로 "볼 위치"를 예측. 비교할 key 후보 자체가 없음 |
+| 후보 개수 | `N_k`개(인코더 self-attn이면 HW개, 디코더 cross-attn이면 HW개) | `K=4`개(고정, 이미지 크기와 무관) |
+| "얼마나 중요한지" 정하는 방법 | `softmax(scores)` — 계산된 유사도를 정규화 | `softmax(linear_weight(zq))` — 역시 query feature에서 직접 예측 |
+| 값을 읽는 방법 | `v = Wv[m] @ value`, 정수 인덱스로 이미 존재하는 key/value 사용 | `bilinear_interpolate(Wv[m] @ x, sample_loc)` — `sample_loc`이 분수 좌표라 보간 필요 |
+| head 결합 | `out += Wo[m] @ head_out` | `out += Wm[m] @ head_out` (표기만 다르고 역할 동일) |
+| 연산량 | `O(N_q · N_k · C)` | `O(N_q · K · C)` — `N_k` 대신 상수 `K` |
+
+한 문장으로: **`self_attn`은 "후보를 다 보고 계산으로 중요도를 알아내는" 방식이고, `deform_attn`은 "후보 자체를 아예 K개로 미리 정해버리고 그 위치와 중요도를 곧바로 예측하는" 방식이다.** `for m in range(M)` 바깥 구조, head를 나누고 합치는 방식은 두 코드가 완전히 동일하다 — 달라지는 건 그 안에서 "어디를, 얼마나 볼지"를 알아내는 절차뿐이다.
 
 <mark style="background: #FFF9D6A6;">Query별 key 후보를 소수로 제한하는 것은 deformable convolution의 sparse sampling 원리를 그대로 가져온 것이지만, offset과 함께 attention weight도 학습해 sampling point 간 상대적 중요도를 결정하므로("relation modeling"), deformable convolution에는 없던 요소 간 관계 모델링이 유지된다 — "정리" 표의 문제 ①(느린 수렴)을, attention이 처음부터 소수 위치에 sparse하게 집중하도록 만들어 "균일→sparse로 바뀌는 학습 부담" 자체를 없애는 방식으로 해결한다.</mark>
 
@@ -230,11 +242,10 @@ def deform_attn(zq, pq, x, M=8, K=4):
 > [!info] 내 메모
 > 
 
-### ② Multi-Scale Deformable Attention
-- **역할**:
-  Deformable attention module 하나만으로는 여전히 단일 스케일 feature만 다룬다. Multi-scale deformable attention은 이를 `L`개 feature level로 확장해, encoder·decoder가 레벨 간 정보 교환까지 attention 메커니즘 자체로 수행하게 만든다 — 별도의 top-down FPN 경로가 필요 없어진다.
+### `ms_deform_attn` — Multi-Scale Deformable Attention (실제 모델에 쓰이는 버전)
+- **역할**: `deform_attn`(단일 스케일) 하나만으로는 여전히 feature map 1개만 다룬다. `ms_deform_attn`은 이를 `L`개 feature level로 확장해, encoder·decoder가 레벨 간 정보 교환까지 attention 메커니즘 자체로 수행하게 만든다 — 별도의 top-down FPN 경로가 필요 없어진다. 개념적으로는 "`deform_attn`을 레벨마다 하나씩(L=4번) 적용해서 합친 것"과 동치이며, 실제 코드는 이를 `for l in range(L)` 루프 하나를 안쪽에 끼워 넣는 식으로 구현한다. **인코더 self-attention과 디코더 cross-attention 두 자리 모두 실제로 쓰이는 건 이 `ms_deform_attn`이다** — `deform_attn`은 원리를 보여주기 위한 중간 단계일 뿐 단독으로 모델에 배치되지 않는다.
 - **구현**:
-  ResNet의 C3~C5 stage feature를 1×1 conv로 채널 256 통일한 뒤, C5에 3×3 stride-2 conv를 추가로 적용한 C6까지 총 `L=4` 레벨을 encoder 입출력으로 동시 사용(Fig. 4: C3는 `H/8×W/8×512→H/8×W/8×256`, C4는 `H/16×W/16×1024→H/16×W/16×256`, C5는 `H/32×W/32×2048→H/32×W/32×256`, C6는 `H/64×W/64×256`). 각 query가 `L`개 레벨 각각에서 `K`개씩(총 `LK`개) sampling point를 attend한다. 레벨을 구분하기 위해 위치 임베딩에 더해 레벨별 scale-level embedding(랜덤 초기화, 학습됨)을 추가한다. Encoder는 self-attention 전체를, decoder cross-attention은 이 multi-scale deformable attention으로 교체한다(decoder self-attention은 object query 수가 적어(300개) 연산 부담이 없으므로 표준 [[Multi_Head_Self_Attention]] 유지).
+  ResNet의 C3~C5 stage feature를 1×1 conv로 채널 256 통일한 뒤, C5에 3×3 stride-2 conv를 추가로 적용한 C6까지 총 `L=4` 레벨을 encoder 입출력으로 동시 사용(Fig. 4: C3는 `H/8×W/8×512→H/8×W/8×256`, C4는 `H/16×W/16×1024→H/16×W/16×256`, C5는 `H/32×W/32×2048→H/32×W/32×256`, C6는 `H/64×W/64×256`). 각 query가 `L`개 레벨 각각에서 `K`개씩(총 `LK`개) sampling point를 attend한다. 레벨을 구분하기 위해 위치 임베딩에 더해 레벨별 scale-level embedding(랜덤 초기화, 학습됨)을 추가한다.
 - **입출력 shape**:
   4개 레벨 feature map `{x^l}, x^l∈(256, H_l, W_l)` + query별 정규화 reference point `p̂_q∈[0,1]²` → 출력 `(256,)` (query 1개 기준).
 
@@ -246,7 +257,7 @@ def ms_deform_attn(zq, p_hat_q, feature_levels, M=8, K=4, L=4):
     out = 0
     for m in range(M):
         head_out = 0
-        for l in range(L):
+        for l in range(L):               # deform_attn에서 새로 추가된 루프 — 레벨마다 반복
             for k in range(K):
                 loc = phi_l(p_hat_q) + offsets[m, l, k]
                 v = bilinear_interpolate(Wv[m] @ feature_levels[l], loc)
@@ -256,15 +267,87 @@ def ms_deform_attn(zq, p_hat_q, feature_levels, M=8, K=4, L=4):
 # K=1, L=1, Wv=I 로 축소하면 원조 deformable convolution과 수식적으로 동일
 ```
 
-> [!info] 내 메모
-> 
-
 <mark style="background: #FFF9D6A6;">"정리" 표 문제 ②(고해상도·멀티스케일 처리 불가)를, attention의 sampling location을 레벨마다 별도로 두는 것만으로 해결한다 — query당 연산량이 `min(HWC², N_qKC²)`로 feature map 크기에 무관해지므로 고해상도 feature도 그대로 입력 가능하고, Table 2 ablation에서 FPN을 추가로 결합해도 성능이 개선되지 않아(43.8→43.8 AP) cross-level 정보 교환이 attention 메커니즘 자체로 이미 충분함을 뒷받침한다.</mark>
 
 > [!info] 내 메모
 > 
 
-### ③④ Iterative Bounding Box Refinement & Two-Stage
+## 인코더: self-attention → Multi-Scale Deformable Attention
+[[2020_ECCV_DETR|DETR]] 노트의 `TransformerEncoderLayer.forward`와 나란히 놓으면, 인코더 레이어 전체에서 바뀐 줄이 정확히 하나뿐임이 드러난다.
+
+```python
+# DETR의 TransformerEncoderLayer.forward (비교 대상)
+def forward(self, src, pos):
+    q = k = src + pos
+    attn_out, _ = self.self_attn(q, k, value=src)   # 표준 multi-head self-attention, key=HW개 전부
+    src = self.norm1(src + attn_out)
+
+    ffn_out = self.linear2(F.relu(self.linear1(src)))
+    src = self.norm2(src + ffn_out)
+    return src
+
+# Deformable DETR의 인코더 레이어 — 바뀐 곳은 self_attn 호출 한 줄뿐
+def forward(self, src, pos, reference_points, spatial_shapes):
+    query = src + pos
+    attn_out = self.ms_deform_attn(query, reference_points, src, spatial_shapes)  # <-- self_attn을 ms_deform_attn으로 교체
+    src = self.norm1(src + attn_out)
+
+    ffn_out = self.linear2(F.relu(self.linear1(src)))   # (변경 없음)
+    src = self.norm2(src + ffn_out)                      # (변경 없음)
+    return src
+```
+
+Add&Norm·FFN·6층을 쌓는 바깥 구조(`TransformerEncoder`)는 전혀 안 바뀐다. `src`(자기 자신, 4레벨 feature 전체)가 query이자 동시에 `ms_deform_attn`의 `feature_levels` 인자로도 들어간다는 점이 "self"-attention이라는 이름의 근거다 — query와 attend 대상이 같은 소스에서 나온다.
+
+> [!info] 내 메모
+> 
+
+## 디코더: cross-attention → Multi-Scale Deformable Attention (self-attention은 그대로)
+[[2020_ECCV_DETR|DETR]] 노트의 `TransformerDecoderLayer.forward`와 나란히 놓으면, self-attention 블록은 완전히 그대로이고 cross-attention 블록만 바뀐 것이 드러난다.
+
+```python
+# DETR의 TransformerDecoderLayer.forward (비교 대상)
+def forward(self, tgt, memory, query_pos, pos):
+    # (1) Self-attention: 슬롯끼리 "누가 이미 담당 중인지" 공유 — query 300개끼리
+    q = k = tgt + query_pos
+    sa_out, _ = self.self_attn(q, k, value=tgt)          # 표준, key=query 300개
+    tgt = self.norm1(tgt + sa_out)
+
+    # (2) Cross-attention: 슬롯이 encoder memory(이미지 feature, HW개)를 조회
+    q = tgt + query_pos
+    k = memory + pos
+    ca_out, _ = self.cross_attn(q, k, value=memory)      # 표준, key=encoder memory HW개 전부
+    tgt = self.norm2(tgt + ca_out)
+
+    ffn_out = self.linear2(F.relu(self.linear1(tgt)))
+    tgt = self.norm3(tgt + ffn_out)
+    return tgt
+
+# Deformable DETR의 디코더 레이어 — 바뀐 곳은 cross_attn 호출 한 줄뿐
+def forward(self, tgt, memory, query_pos, reference_points, spatial_shapes):
+    # (1) Self-attention: DETR과 완전히 동일 — 안 바뀜
+    q = k = tgt + query_pos
+    sa_out, _ = self.self_attn(q, k, value=tgt)           # (변경 없음) query 300개끼리는 여전히 표준
+    tgt = self.norm1(tgt + sa_out)
+
+    # (2) Cross-attention: query가 encoder memory에서 reference point 주변만 봄
+    query = tgt + query_pos
+    ca_out = self.ms_deform_attn(query, reference_points, memory, spatial_shapes)  # <-- cross_attn을 교체
+    tgt = self.norm2(tgt + ca_out)
+
+    ffn_out = self.linear2(F.relu(self.linear1(tgt)))     # (변경 없음)
+    tgt = self.norm3(tgt + ffn_out)                        # (변경 없음)
+    return tgt
+```
+
+인코더와 대칭적으로, 여기서는 `tgt`(object query 300개)가 query이고 `memory`(encoder 출력, 4레벨)가 attend 대상이다 — query와 attend 대상이 서로 다른 소스라는 점이 "cross"-attention이라는 이름의 근거이며, 이것만 빼면 `ms_deform_attn` 호출 자체는 인코더에서 쓴 것과 완전히 같은 함수다. Self-attention 블록(query 300개끼리)은 병목이 아니라서 DETR과 한 글자도 다르지 않다.
+
+두 절을 합쳐서 보면: 인코더·디코더에서 바뀌는 자리는 서로 다르지만(각각 self-attn, cross-attn), 둘 다 정확히 같은 함수(`ms_deform_attn`)로 교체된다 — 다른 건 그 함수에 "무엇을 query로, 무엇을 feature_levels로 넣는가"뿐이다.
+
+> [!info] 내 메모
+> 
+
+### Iterative Bounding Box Refinement & Two-Stage
 - **역할**:
   Deformable attention은 "reference point 주변만 본다"는 설계이므로, reference point의 품질이 곧 attention 품질을 좌우한다. 두 변형 모두 reference point를 실제 객체 위치에 더 가깝게 정렬시켜 이 설계의 이점을 극대화한다.
   - Iterative bounding box refinement: optical flow의 반복적 정제 방식(Teed & Deng 2020, RAFT)에서 착안해, 각 decoder layer가 이전 layer의 예측 박스를 기준으로 상대 offset만 추가 예측.
@@ -301,12 +384,12 @@ decoder_query, reference_point = init_from(topk_proposals)  # decoder 2nd stage 
 | 단계 | 입력 shape | 출력 shape | 역할 | 구조/구현 |
 |---|---|---|---|---|
 | Backbone + 1×1 Conv | (3, H₀, W₀) | 4레벨 (256, H_l, W_l), l=1..4 | 멀티스케일 feature 추출·채널 통일 | ResNet-50 + [[1x1_Convolution]] + C6용 3×3 stride-2 conv |
-| ① Deformable Attention (encoder 기본 단위) | query z_q(256) + p_q(2) + x(256,H,W) | (256,) | Sparse spatial sampling, 연산량을 feature map 크기와 무관하게 | 선형 투영(offset+weight) + bilinear interpolation |
-| ② Multi-Scale Deformable Attention Encoder ×6 | 4레벨 (256, H_l, W_l) | 동일 shape, 값만 갱신 (encoder memory) | 레벨 간 정보 교환(FPN 대체) | ①을 L=4 레벨로 확장, self-attention 전체 교체 |
-| ② Multi-Scale Deformable Attention Decoder ×6 | query(300,256) + memory | (300, 256) | Object query가 reference point 주변 feature로 갱신 | Cross-attn만 교체, self-attn은 [[Multi_Head_Self_Attention]] 유지 |
+| `deform_attn` (단일 스케일, 개념 설명용) | query z_q(256) + p_q(2) + x(256,H,W) | (256,) | Sparse spatial sampling, 연산량을 feature map 크기와 무관하게 | 선형 투영(offset+weight) + bilinear interpolation |
+| `ms_deform_attn` — Encoder self-attn ×6 | 4레벨 (256, H_l, W_l) | 동일 shape, 값만 갱신 (encoder memory) | 레벨 간 정보 교환(FPN 대체) | `deform_attn`을 L=4 레벨로 확장, self-attention 전체 교체 |
+| `ms_deform_attn` — Decoder cross-attn ×6 | query(300,256) + memory | (300, 256) | Object query가 reference point 주변 feature로 갱신 | Cross-attn만 교체, self-attn은 `self_attn`([[Multi_Head_Self_Attention]]) 유지 |
 | Prediction FFN | (300, 256) | 클래스(300,K+1) + 박스(300,4) | 최종 예측 변환 | 3-layer MLP(box) + Linear(class), [[Bipartite_Matching_Hungarian_Algorithm]]로 학습 |
-| ③ Iterative Refinement (선택) | 층별 박스(N,4) | 정제된 박스(N,4) | Reference point를 예측에 맞춰 반복 정렬 | 층별 독립 head, 상대 offset 예측 |
-| ④ Two-Stage (선택) | encoder memory | proposal(N,4) → decoder 초기값 | 학습된 고정 query 대신 이미지 기반 초기 proposal 제공 | Encoder-only 픽셀별 박스·분류 head, top-K 선별 |
+| Iterative Refinement (선택) | 층별 박스(N,4) | 정제된 박스(N,4) | Reference point를 예측에 맞춰 반복 정렬 | 층별 독립 head, 상대 offset 예측 |
+| Two-Stage (선택) | encoder memory | proposal(N,4) → decoder 초기값 | 학습된 고정 query 대신 이미지 기반 초기 proposal 제공 | Encoder-only 픽셀별 박스·분류 head, top-K 선별 |
 
 > [!info] 내 메모
 > 

@@ -77,10 +77,10 @@ Project: [[논문_Small_Object_Detection|Small Object Detection]]
 
 # 해결 방법 요약
 
-| | 문제 ① — 고정된 query 개수의 부적합성 | 문제 ② — Query 위치의 이미지 무관성 |
-|---|---|---|
-| **해결 방법** | Categorical Counting Module(CCM)이 density map을 4단계로 분류해 decoder에 투입할 query 개수(K=300/500/900/1500)를 이미지별로 선택 | Counting-Guided Feature Enhancement(CGFE)로 density map을 encoder feature에 spatial+channel attention으로 주입한 뒤, 이 강화 feature에서 top-K를 선별해 query의 content·position을 생성(Dynamic Query Selection) |
-| **예상되는 문제점** | CCM의 분류 오류가 이후 파이프라인 전체에 연쇄적으로 영향(특히 N>500 구간처럼 학습 샘플이 적은 구간) | Query 수가 최대 1500까지 늘어나면 decoder self-attention의 이차 복잡도 문제가 재발할 위험이 있으나 논문은 FLOPs·FPS를 보고하지 않음 |
+|              | 문제 ① — 고정된 query 개수의 부적합성                                                                                   | 문제 ② — Query 위치의 이미지 무관성                                                                                                                                                                   |
+| ------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **해결 방법**    | Categorical Counting Module(CCM)이 density map을 4단계로 분류해 decoder에 투입할 query 개수(K=300/500/900/1500)를 이미지별로 선택 | Counting-Guided Feature Enhancement(CGFE)로 density map을 encoder feature에 spatial+channel attention으로 주입한 뒤, 이 강화 feature에서 top-K를 선별해 query의 content·position을 생성(Dynamic Query Selection) |
+| **예상되는 문제점** | CCM의 분류 오류가 이후 파이프라인 전체에 연쇄적으로 영향(특히 N>500 구간처럼 학습 샘플이 적은 구간)                                               | Query 수가 최대 1500까지 늘어나면 decoder self-attention의 이차 복잡도 문제가 재발할 위험이 있으나 논문은 FLOPs·FPS를 보고하지 않음                                                                                              |
 
 > [!info] 내 메모
 > 
@@ -150,7 +150,8 @@ K = {0: 300, 1: 500, 2: 900, 3: 1500}[N_class]
 > CCM의 분류 정확도는 전체 94.6%이지만, N>500 구간은 학습 샘플이 46장뿐이라 정확도가 56.6%까지 떨어진다(Table 7). 이 구간의 분류 오류는 곧바로 부적절한 query 개수 선택으로 이어져, DQ-DETR의 개선폭이 이 구간에서만 유독 작아지는(+1.2%p, 다른 구간은 +3.6~4.0%p) 원인이 된다 — 저자도 이를 직접 인정.
 
 > [!info] 내 메모
-> 
+> 그럼 학습샘플이 많아지면 분류정확도도 모든 구간에서 늘어남?
+>
 
 ### ③ Counting-Guided Feature Enhancement (CGFE)
 - **역할**: CCM이 만든 density map은 "어디에 객체가 밀집해 있는지"를 담고 있으므로, 이 정보를 attention map으로 변환해 encoder feature에 곱하면 전경(foreground) 영역이 명시적으로 강조된다. 즉 CCM이 "몇 개"를 정했다면, CGFE는 "어디"에 대한 정보를 feature 자체에 새겨 넣는 역할이다.
