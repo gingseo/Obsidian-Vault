@@ -20,10 +20,10 @@ dependencies: []
 year: 2026
 venue: "ICASSP"
 jcr_quartile: Q2
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, detr, dynamic-query, feature-enhancement, remote-sensing]
-source: "Projects/_pdf/Small_Object_Detection/2026_ICASSP_IG-DETR.pdf"
+source: "Projects/_pdf/Object_Detection/DETR/갈래6_쿼리개수/2026_ICASSP_IG-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:12:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"
@@ -306,7 +306,7 @@ Q_pos = B_init + delta_B                    # coarse grid 좌표에 offset을 �
 - [[Density_Guided_Dynamic_Query]] — DQ-DETR·Density-Aware DETR과 동일 계열(density/난이도 기반 query 개수 결정)의 세 번째 사례로 이미 "등장 논문"에 포함되어 있음. 다만 이 논문 고유의 additive residual injection·salient seed selection은 이 개념 문서보다는 IFE/IGQ라는 이 논문 특유의 구현 디테일 성격이 강해 별도 concept으로는 분리하지 않음.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — dynamic query DETR 계열 3번째 사례. DQ-DETR과 가장 직접적으로 비교(Table 1, 6)하며 근소하지만 일관된 우위를 보고.
+- 비교: [[Object_Detection_Approaches]] — dynamic query DETR 계열 3번째 사례. DQ-DETR과 가장 직접적으로 비교(Table 1, 6)하며 근소하지만 일관된 우위를 보고.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: Y.-X. Huang, H.-I. Liu, H.-H. Shuai, W.-H. Cheng, "DQ-DETR: DETR with dynamic query for tiny object detection" (ECCV 2024) [26] — 이미 위키에 추가됨: [[2024_ECCV_DQ-DETR|DQ-DETR]]. 이 논문이 Table 1·6에서 가장 직접적으로 비교하는 baseline.

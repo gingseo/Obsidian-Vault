@@ -20,10 +20,10 @@ dependencies: []
 year: 2025
 venue: "Remote Sensing (MDPI)"
 jcr_quartile: Q2
-task: [small-object-detection]
+task: [object-detection]
 direction: [novel-approach]
 paper_tags: [paper, small-object-detection, sar, remote-sensing, vision-language-model, clip, diffusion-model, label-assignment, bounding-box-regression]
-source: "Projects/_pdf/Small_Object_Detection/2025_RemoteSensing_CDATOD-Diff.pdf"
+source: "Projects/_pdf/Object_Detection/기타/2025_RemoteSensing_CDATOD-Diff.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-28T00:00:00.000Z"
@@ -336,7 +336,7 @@ L_BC_IoU = w * L_Corner + (1 - w) * L_IoU         # 식(19)
 - [[1x1_Convolution]] — CLIP feature 통합, spatial calibration 등 여러 지점에서 채널 재조합에 사용.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]]
+- 비교: [[Object_Detection_Approaches]]
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: C. Xu, J. Wang, W. Yang, H. Yu, L. Yu, G.-S. Xia, "RFLA: Gaussian receptive field based label assignment for tiny object detection" (ECCV 2022) [37] — 이 논문이 직접 확장하는 baseline. 여러 논문에서 반복 인용되는 만큼 우선순위가 매우 높음.

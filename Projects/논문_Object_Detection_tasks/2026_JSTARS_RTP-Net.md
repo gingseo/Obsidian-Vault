@@ -20,10 +20,10 @@ dependencies: []
 year: 2026
 venue: "IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing (JSTARS)"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, receptive-field, texture-preservation, attention-mechanism, feature-fusion, lightweight]
-source: "Projects/_pdf/Small_Object_Detection/2026_JSTARS_RTP-Net.pdf"
+source: "Projects/_pdf/Object_Detection/2Stage/2026_JSTARS_RTP-Net.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:31:00.000Z"
 updatedAt: "2026-08-24T03:31:00.000Z"
@@ -292,7 +292,7 @@ F_AWEM = ChannelAttention(Z)                            # SENet 방식
 - [[Collaborative_Receptive_Field_Texture_Optimization]] — 이 논문의 핵심 기여. 수용영역 확장(전역 문맥)과 texture 보존(국소 디테일)을 backbone 단계부터 병렬 브랜치로 동시에 추구해, 두 목표 간 근본적 trade-off 자체를 설계로 해소하는 프레임워크.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — feature 강화 계열, 유일하게 정확도 개선과 GFLOPs·파라미터·FPS 동시 개선을 모두 달성한 사례.
+- 비교: [[Object_Detection_Approaches]] — feature 강화 계열, 유일하게 정확도 개선과 GFLOPs·파라미터·FPS 동시 개선을 모두 달성한 사례.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: S. Tian, B. Zhang, L. Cao, S. Fan, K. Du, C. Fu, Y. Zhang, "Mfdaff-net: Multiscale frequency-aware dual attention-guided feature fusion network for uav object detection" (2025) [18] — 이 논문이 "필터 설계 어려움·GSD 일반화 한계"의 예로 직접 대조하는 주파수 인식 선행 연구.

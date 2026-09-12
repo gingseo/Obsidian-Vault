@@ -24,8 +24,8 @@ updated: 2026-08-05
 # 아직 못 채운 빈틈
 - lare2가 직접 비교하는 baseline DIRE(다단계 DDIM 기반 reconstruction error) 논문 자체가 아직 위키에 없음 — 이 분야의 출발점이므로 우선순위가 높음.
 - GAN 생성 이미지 탐지(CNNSpot, Spec, F3Net 등 lare2가 비교한 방법들)의 원 논문도 아직 없음 — diffusion 이전 시대의 접근법과 비교하려면 필요.
-- 이 분야와 [[Small_Object_Detection_Moc]]의 reconstruction 기반 feature 강화 계열(sr-tod 등)이 원리적으로 겹친다는 점을 발견했으나, 실제로 두 도메인을 교차 비교하는 논문은 아직 없다.
+- 이 분야와 [[Object_Detection_Moc]]의 reconstruction 기반 feature 강화 계열(sr-tod 등)이 원리적으로 겹친다는 점을 발견했으나, 실제로 두 도메인을 교차 비교하는 논문은 아직 없다.
 
 # 관련 MOC
 - [[000-Home]]
-- [[Small_Object_Detection_Moc]] — reconstruction 기반 신호 활용이라는 원리가 겹침
+- [[Object_Detection_Moc]] — reconstruction 기반 신호 활용이라는 원리가 겹침

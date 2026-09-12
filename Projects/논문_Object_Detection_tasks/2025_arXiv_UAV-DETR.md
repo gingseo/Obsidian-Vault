@@ -20,10 +20,10 @@ dependencies: []
 year: 2025
 venue: "arXiv"
 jcr_quartile: arXiv
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, uav, detr, frequency-domain, feature-fusion, real-time-detection]
-source: "Projects/_pdf/Small_Object_Detection/2025_arXiv_UAV-DETR.pdf"
+source: "Projects/_pdf/Object_Detection/DETR/작은객체/2025_arXiv_UAV-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"
@@ -307,7 +307,7 @@ VisDrone-2019-DET[24](학습 6,471 / 검증 548 / 테스트 3,190장, 10 클래�
 - 세 모듈을 모두 넣는 대신, FPS 예산이 빠듯한 배포 상황에서 "어떤 모듈이 정확도 대비 FPS 손실이 가장 적은지"를 기준으로 선택적으로 적용하는 것도 가능해 보인다 — Ablation 표를 보면 FD 단독 추가는 AP 개선이 거의 없어(28.4→28.4) 속도-정확도 트레이드오프가 가장 나쁜 모듈일 가능성이 있다.
 
 ### 내 주제와 연관된 후속 연구 아이디어
-- <mark style="background: #A6E3A1A6;">이 위키에서 다루는 "feature 강화" 계열 논문들([[2025_RemoteSensing_FANet|FANet]]의 DFT/DCT attention, [[2024_ECCV_SR-TOD|SR-TOD]]의 self-reconstruction difference map)과 UAV-DETR의 FF 모듈은 모두 "정보가 손실되기 쉬운 지점을 명시적으로 보강한다"는 공통 전략을 공유한다 — 다만 FANet·UAV-DETR은 주파수 도메인, SR-TOD는 reconstruction 오차라는 서로 다른 신호를 쓴다는 점에서, [[Small_Object_Detection_Approaches]]에서 지적한 "어떤 신호가 실제로 tiny object 위치를 가장 잘 드러내는가"라는 질문에 UAV-DETR도 하나의 데이터 포인트로 추가할 수 있다.</mark>
+- <mark style="background: #A6E3A1A6;">이 위키에서 다루는 "feature 강화" 계열 논문들([[2025_RemoteSensing_FANet|FANet]]의 DFT/DCT attention, [[2024_ECCV_SR-TOD|SR-TOD]]의 self-reconstruction difference map)과 UAV-DETR의 FF 모듈은 모두 "정보가 손실되기 쉬운 지점을 명시적으로 보강한다"는 공통 전략을 공유한다 — 다만 FANet·UAV-DETR은 주파수 도메인, SR-TOD는 reconstruction 오차라는 서로 다른 신호를 쓴다는 점에서, [[Object_Detection_Approaches]]에서 지적한 "어떤 신호가 실제로 tiny object 위치를 가장 잘 드러내는가"라는 질문에 UAV-DETR도 하나의 데이터 포인트로 추가할 수 있다.</mark>
 - [[2026_TIP_Unc-SOD|Unc-SOD]]의 label assignment 축(uncertainty 기반 동적 sampling)과 UAV-DETR의 feature 강화 축은 직교적이므로, RT-DETR류의 query selection 단계에 uncertainty 기반 동적 기준을 결합하는 방향도 고려할 만하다 — 다만 DETR은 anchor 기반 RPN sampling 구조 자체가 없어 그대로 이식은 어렵고, query selection 단계에 맞춘 재설계가 필요할 것으로 보인다.
 
 > [!info] 내 메모
@@ -317,7 +317,7 @@ VisDrone-2019-DET[24](학습 6,471 / 검증 548 / 테스트 3,190장, 10 클래�
 - [[Frequency_Domain_Feature_Enhancement]] — 이 논문이 "Frequency-Focused(FF) 모듈"로 정식화한 핵심 기법. MSFF-FE, FD, SAC 세 모듈 모두에서 반복 재사용되는 공통 빌딩 블록.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — end-to-end 구조 개선 축(이 비교 문서에서 유일한 DETR 계열, NMS-free/anchor-free)으로 분류되며, 실시간성-정확도 트레이드오프를 정면으로 보고하는 논문으로 언급됨.
+- 비교: [[Object_Detection_Approaches]] — end-to-end 구조 개선 축(이 비교 문서에서 유일한 DETR 계열, NMS-free/anchor-free)으로 분류되며, 실시간성-정확도 트레이드오프를 정면으로 보고하는 논문으로 언급됨.
 - Baseline: RT-DETR[6] (Zhao et al., CVPR 2024) — 아직 위키에 노트 없음 #pending:rt-detr
 
 # 읽어볼 만한 논문

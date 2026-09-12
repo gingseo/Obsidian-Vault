@@ -20,10 +20,10 @@ dependencies: []
 year: 2026
 venue: "arXiv"
 jcr_quartile: arXiv
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, low-resolution, super-resolution, detr, latent-regularization, token-routing, saliency]
-source: "Projects/_pdf/Small_Object_Detection/2026_arXiv_CoLR-Det.pdf"
+source: "Projects/_pdf/Object_Detection/2Stage/2026_arXiv_CoLR-Det.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:36:00.000Z"
 updatedAt: "2026-08-28T17:00:00.000Z"
@@ -434,7 +434,7 @@ for t in range(T_det + 1, T_tot + 1):               # Stage 2
 - [[1x1_Convolution]] — SR decoder의 이미지 재구성 conv, DINO encoder FFN의 기반 연산.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — feature/latent 강화 계열에 새로 추가. Dynamic query DETR 계열(DQ-DETR 등)과 달리 DINO의 query 개수·구성이 아니라 encoder 표현 자체를 SR로 정규화한다는 점에서 다른 개입 지점. 다음 comparison 갱신 시 반영 예정.
+- 비교: [[Object_Detection_Approaches]] — feature/latent 강화 계열에 새로 추가. Dynamic query DETR 계열(DQ-DETR 등)과 달리 DINO의 query 개수·구성이 아니라 encoder 표현 자체를 SR로 정규화한다는 점에서 다른 개입 지점. 다음 comparison 갱신 시 반영 예정.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: J. Wu, S. Xu, "From point to region: Accurate and efficient hierarchical small object detection in low-resolution images" (HSOD-Net, Remote Sens. 2021) [39] — 이 논문이 "selective 최적화"의 대표 선행 연구로 직접 비교·극복 대상으로 삼는 stepwise 파이프라인. CoLR-Det의 non-stepwise 설계와의 차이를 이해하는 데 필수.

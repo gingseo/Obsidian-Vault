@@ -20,16 +20,16 @@ dependencies: []
 year: 2026
 venue: "IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing (JSTARS)"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, oriented-object-detection, detr, dynamic-query, remote-sensing, query-aggregation, label-assignment]
-source: "Projects/_pdf/Small_Object_Detection/2026_JSTARS_DQA-DETR.pdf"
+source: "Projects/_pdf/Object_Detection/DETR/갈래6_쿼리개수/2026_JSTARS_DQA-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:17:00.000Z"
 updatedAt: "2026-08-28T18:20:00.000Z"
 ---
 
-Project: [[논문_Small_Object_Detection|Small Object Detection]]
+Project: [[논문_Object_Detection|Object Detection]]
 #paper #small-object-detection #oriented-object-detection #detr #dynamic-query #remote-sensing #query-aggregation #label-assignment
 
 > [!quote] 원제
@@ -307,7 +307,7 @@ L_total = 1.0 * focal_loss(cls, gt_cls) + 2.0 * rotated_iou_loss(box, gt_box) + 
 - [[Bipartite_Matching_Hungarian_Algorithm]] — 최종 예측-정답 매칭에 사용되는 one-to-one Hungarian matching.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — dynamic query DETR 계열 중 하나. Oriented object detection이라는 점에서 회전 박스를 다루는 유일한 사례이며, "병합(merge)"이라는 제3의 전략을 대표.
+- 비교: [[Object_Detection_Approaches]] — dynamic query DETR 계열 중 하나. Oriented object detection이라는 점에서 회전 박스를 다루는 유일한 사례이며, "병합(merge)"이라는 제3의 전략을 대표.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: Y.-X. Huang, H.-I. Liu, H.-H. Shuai, W.-H. Cheng, "DQ-DETR: DETR with dynamic query for tiny object detection" (ECCV 2024) [17] — 이미 위키에 추가됨: [[2024_ECCV_DQ-DETR|DQ-DETR]]. 이 논문이 "학습 불안정성과 연산 오버헤드"의 사례로 직접 비판하는 대상.

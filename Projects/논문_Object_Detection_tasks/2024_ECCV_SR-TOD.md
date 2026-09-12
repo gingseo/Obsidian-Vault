@@ -20,10 +20,10 @@ dependencies: []
 year: 2024
 venue: "ECCV"
 jcr_quartile: "Q1"
-task: [small-object-detection]
+task: [object-detection]
 direction: [novel-approach]
 paper_tags: [paper, small-object-detection, self-reconstruction, difference-map, feature-enhancement, anti-uav]
-source: "Projects/_pdf/Small_Object_Detection/2024_ECCV_SR-TOD.pdf"
+source: "Projects/_pdf/Object_Detection/2Stage/2024_ECCV_SR-TOD.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"
@@ -298,7 +298,7 @@ P2_ = M * P2                                 # element-wise attention (EA)
 - Reconstruction target을 원본 전체가 아니라 tiny object 영역만 선택적으로 재구성하도록 유도하면 filtration 없이도 노이즈를 줄일 수 있을 가능성 — 다만 이는 결국 위치 라벨을 다시 요구해 "label-free"라는 핵심 장점과 상충하는 trade-off.
 
 ### 내 주제와 연관된 후속 연구 아이디어
-- <mark style="background: #A6E3A1A6;">[[Small_Object_Detection_Approaches]]가 feature 강화 계열 여러 편(FANet의 주파수, Feature_Info_Driven_Gaussian의 정보량+위치, SR-TOD의 reconstruction 부산물, RS-TOD의 공간 attention 등)을 "어떤 신호가 tiny object 위치를 가장 잘 드러내는가" 축으로 묶어두었다. SR-TOD의 difference map(재구성 난이도 기반)과 다른 신호들을 동일 벤치마크에서 직접 비교하면 "정보 손실 진단의 여러 방식" 우열을 실증할 수 있다.</mark>
+- <mark style="background: #A6E3A1A6;">[[Object_Detection_Approaches]]가 feature 강화 계열 여러 편(FANet의 주파수, Feature_Info_Driven_Gaussian의 정보량+위치, SR-TOD의 reconstruction 부산물, RS-TOD의 공간 attention 등)을 "어떤 신호가 tiny object 위치를 가장 잘 드러내는가" 축으로 묶어두었다. SR-TOD의 difference map(재구성 난이도 기반)과 다른 신호들을 동일 벤치마크에서 직접 비교하면 "정보 손실 진단의 여러 방식" 우열을 실증할 수 있다.</mark>
 - [[2026_TIP_Unc-SOD|Unc-SOD]]는 sampling 축(어떤 proposal을 학습에 쓸지)에서 instance-level uncertainty를 도입하는데, difference map을 uncertainty의 또 다른 소스로 결합할 만하다 — "difference map 활성도가 큰 영역=정보가 불확실한 영역"이라는 해석은 Unc-SOD의 aleatoric uncertainty 개념과 방향이 통한다.
 
 > [!info] 내 메모
@@ -310,7 +310,7 @@ P2_ = M * P2                                 # element-wise attention (EA)
 # 관련 문서
 - 비교 후보: [[2026_TIP_Unc-SOD|Unc-SOD]] — 두 논문 모두 small/tiny object detection에서 baseline detector(Cascade R-CNN, RFLA, DetectoRS 등)에 plug-in 모듈을 추가하는 접근이며, `Unc-SOD.md`의 "관련 문서" 절에서도 이 논문을 비교 후보로 언급하고 있음. Unc-SOD는 sampling 축, SR-TOD는 feature 강화 축이라는 점에서 직교적.
 - 참고(혼동 주의): 이름이 유사한 [[2025_RSASE_RS-TOD|RS-TOD]](RS-TOD, 2025, YOLOv8+attention 기반)는 저자·방법론 모두 무관한 별개 논문이다 — `RS-TOD.md`에서도 이 문서를 언급하며 동일한 혼동 방지 각주를 남겨두었다.
-- 비교: [[Small_Object_Detection_Approaches]] — feature 강화 계열(self-reconstruction 축, 이 계열 중 가장 가벼운 방식)로 분류
+- 비교: [[Object_Detection_Approaches]] — feature 강화 계열(self-reconstruction 축, 이 계열 중 가장 가벼운 방식)로 분류
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: C. Xu, J. Wang, W. Yang, H. Yu, L. Yu, G.-S. Xia, "RFLA: Gaussian receptive field based label assignment for tiny object detection" [53] (ECCV 2022) — SR-TOD의 모든 실험에서 baseline이자 최고 성능 조합(RFLA w/ SR-TOD)의 기반이 되는 label assignment 기법. VisDrone2019/AI-TOD 실험 세팅도 이 논문을 그대로 따랐다.

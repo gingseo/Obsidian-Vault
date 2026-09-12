@@ -20,10 +20,10 @@ dependencies: []
 year: 2025
 venue: "Expert Systems With Applications"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, yolo, lightweight, attention-mechanism, uav]
-source: "Projects/_pdf/Small_Object_Detection/2025_ESWA_LSOD-YOLO.pdf"
+source: "Projects/_pdf/Object_Detection/YOLO/2025_ESWA_LSOD-YOLO.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"
@@ -335,7 +335,7 @@ sppfl_out = LSKA(sppf_out)                  # 수평/수직 1D conv + dilated co
 - P5를 제거하는 대신 경량화(채널 수 축소, depthwise separable conv 등)하는 대안도 가능 — 완전 제거보다 정보 손실이 적을 수 있지만 연산량 절감 폭은 작아지는 트레이드오프 예상.
 
 ### 내 주제와 연관된 후속 연구 아이디어
-- <mark style="background: #A6E3A1A6;">[[Small_Object_Detection_Approaches]] 비교 문서에서 이 논문은 "아키텍처 경량화" 축의 유일한 사례로 분류되어 있다. [[2026_TIP_Unc-SOD|Unc-SOD]](label assignment 축), feature 강화 계열([[2024_ECCV_SR-TOD|SR-TOD]], [[2025_RemoteSensing_FANet|FANet]], [[2025_CVPR_Feature_Info_Driven_Gaussian|Feature_Info_Driven_Gaussian]]) 등은 모두 정확도 개선에 집중하며 파라미터/FLOPs 증가를 감수하는데, 이들의 핵심 모듈(uncertainty branch, self-reconstruction head 등)을 LCOR처럼 "저기여 부분 제거로 상쇄"하는 방식으로 경량화할 수 있는지 검토해볼 가치가 있다.</mark>
+- <mark style="background: #A6E3A1A6;">[[Object_Detection_Approaches]] 비교 문서에서 이 논문은 "아키텍처 경량화" 축의 유일한 사례로 분류되어 있다. [[2026_TIP_Unc-SOD|Unc-SOD]](label assignment 축), feature 강화 계열([[2024_ECCV_SR-TOD|SR-TOD]], [[2025_RemoteSensing_FANet|FANet]], [[2025_CVPR_Feature_Info_Driven_Gaussian|Feature_Info_Driven_Gaussian]]) 등은 모두 정확도 개선에 집중하며 파라미터/FLOPs 증가를 감수하는데, 이들의 핵심 모듈(uncertainty branch, self-reconstruction head 등)을 LCOR처럼 "저기여 부분 제거로 상쇄"하는 방식으로 경량화할 수 있는지 검토해볼 가치가 있다.</mark>
 - Ablation에서 확인된 SPPFL-LCOR, Dysample-C2f-N 간 synergy 효과(구성 6, 7)는 "어떤 모듈 조합이 상호 보완적인지" 사전에 예측할 수 있는 원리가 있는지 궁금증을 남긴다 — 현재는 실험으로만 확인되었을 뿐 설계 원리로 제시되지 않는다.
 
 > [!info] 내 메모
@@ -348,7 +348,7 @@ sppfl_out = LSKA(sppf_out)                  # 수평/수직 1D conv + dilated co
 - [[Dysample_Dynamic_Upsampling]] — Neck의 경량 동적 업샘플러. Linear layer+pixel shuffle만으로 content-aware 샘플링 위치를 생성. Architecture Design으로 신규 작성.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — 8편 중 "아키텍처 경량화" 축을 정면으로 다루는 유일한 논문으로 분류. 파라미터/FLOPs/FPS를 명시적으로 보고하는 것도 이 논문이 유일함.
+- 비교: [[Object_Detection_Approaches]] — 8편 중 "아키텍처 경량화" 축을 정면으로 다루는 유일한 논문으로 분류. 파라미터/FLOPs/FPS를 명시적으로 보고하는 것도 이 논문이 유일함.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: K. W. Lau, L.-M. Po, Y. A. U. Rehman, "Large separable kernel attention: rethinking the large kernel attention design in CNN" (Expert Systems with Applications, 2024) — SPPFL이 채택한 LSKA의 원조 논문. SPPFL의 attention 메커니즘을 제대로 이해하려면 먼저 읽을 필요가 있음.

@@ -19,19 +19,22 @@ ResearchVault/MD_Files/
   Schema.md                이 문서
 
 Projects/                볼트 최상위. 논문 분석 노트와 PDF 원본 모두 여기 있다
-  논문_<Task>.md              task별 Project Manager 프로젝트 노트 (예: 논문_Small_Object_Detection.md, 논문_Anomaly_Detection.md). task 개수만큼 존재한다
+  논문_<Task>.md              task별 Project Manager 프로젝트 노트 (예: 논문_Object_Detection.md, 논문_Anomaly_Detection.md). task 개수만큼 존재한다
   논문_<Task>_tasks/          그 task 프로젝트에 속한 논문 분석 노트(task 노트)들 (논문 1편 = 파일 1개). 반드시 `<프로젝트파일명>_tasks` 형식이어야 한다(아래 참고)
   논문_PaperWiki.base         모든 논문_<Task>_tasks/ 논문 노트를 가로질러 테이블로 보여주는 Obsidian Bases 뷰 정의. task/status 등으로 필터링은 여기서 한다
   _pdf/                   논문 PDF 원본 (용량이 커서 `.gitignore`로 git 추적에서는 제외했지만 vault 안에는 있다)
     _inbox/                    아직 처리 안 한 원본 PDF, 직접 읽으려고 넣은 것 (다운받으면 여기에 넣는다) — 처리되면 `source_type: personal`
     _issue_paper/               아직 처리 안 한 원본 PDF, 커뮤니티 등에서 이슈가 된 논문을 트렌드 파악용으로 넣은 것 — 처리되면 `source_type: community`
     <Task>/                     처리 완료 후 이동되는 task별 PDF 폴더 (`_inbox/`·`_issue_paper/` 구분 없이 한 곳에 모인다 — 어디서 왔는지는 노트의 `source_type`으로 구분)
+      <구조>/                     (선택) task 내부를 아키텍처·방법론 축으로 더 세분화할 때만 만드는 하위 폴더. 예: Object_Detection/DETR/, Object_Detection/2Stage/, Object_Detection/YOLO/, Object_Detection/기타/
+        <갈래>/                     (선택) <구조> 하위를 다시 문제·개념 축으로 세분화할 때만 만드는 하위 폴더. 예: Object_Detection/DETR/갈래6_쿼리개수/. 해당 논문이 아직 없어도 "앞으로 이 갈래로 읽을 것"이라는 표시로 빈 폴더를 먼저 만들어 둘 수 있다
 ```
 
 - 새 PDF는 직접 읽고 싶은 논문이면 `Projects/_pdf/_inbox/`에, 커뮤니티에서 화제라 트렌드 파악 차원에서 챙겨두는 논문이면 `Projects/_pdf/_issue_paper/`에 넣는다. 둘 다 `/process-papers`의 처리 대상이다 — 넣은 폴더에 따라 노트의 `source_type`만 다르게 채워진다(아래 Frontmatter 절 참고).
-- 처리 완료되면 PDF 파일 자체를 `Projects/_pdf/<Task>/`로 **이동**한다 (`_inbox/`·`_issue_paper/` 어디서 왔든 동일하게 이동하고, 원래 폴더에는 남기지 않는다). "처리됐는지"는 이제 폴더 위치로도 바로 보인다 — `_inbox/`나 `_issue_paper/`에 남아있으면 미분류, `<Task>/`에 있으면 처리 완료.
-- `<Task>` 이름은 논문의 목적/과제를 가리키며, 아래 "폴더·파일 네이밍 규칙"을 따른다 (예: `Small_Object_Detection`, `Anomaly_Detection`). 기존에 없던 task면 프로젝트 노트(`Projects/논문_<Task>.md`)와 논문 노트 폴더(`Projects/논문_<Task>_tasks/`)를 함께 새로 만든다. 폐쇄 목록이 아니다 — 논문을 보고 적절한 task가 없으면 새로 만든다. `Projects/_pdf/<Task>/`(PDF 쪽)와 `Projects/논문_<Task>_tasks/`(노트 쪽)는 폴더명 규칙이 다르다는 점에 유의한다 — PDF 폴더는 접미사 없이 `<Task>` 그대로, 노트 폴더는 반드시 `<Task>_tasks`.
-- **`논문_<Task>_tasks/` 폴더명은 `_tasks` 접미사가 필수다.** Project Manager 플러그인이 프로젝트 노트 `Projects/논문_<Task>.md`의 task를 스캔할 때 폴더 경로를 `파일 경로에서 .md를 _tasks로 치환`해서 계산하도록 하드코딩되어 있다(플러그인 소스 `projectTaskFolder`). 즉 `논문_Small_Object_Detection.md`의 task 폴더는 반드시 `논문_Small_Object_Detection_tasks/`여야 하며, 접미사가 없거나 다르면(예: `논문_Small_Object_Detection/`) Project Manager가 그 폴더를 전혀 스캔하지 않아 프로젝트의 task 개수가 0으로 표시된다.
+- 처리 완료되면 PDF 파일 자체를 `Projects/_pdf/<Task>/`(또는 그 task가 `<구조>/<갈래>/` 세분화를 쓰는 경우 `Projects/_pdf/<Task>/<구조>/<갈래>/`)로 **이동**한다 (`_inbox/`·`_issue_paper/` 어디서 왔든 동일하게 이동하고, 원래 폴더에는 남기지 않는다). "처리됐는지"는 이제 폴더 위치로도 바로 보인다 — `_inbox/`나 `_issue_paper/`에 남아있으면 미분류, `<Task>/` 아래(하위 세분화 폴더 포함) 있으면 처리 완료.
+- `<Task>` 이름은 논문의 목적/과제를 가리키며, 아래 "폴더·파일 네이밍 규칙"을 따른다 (예: `Object_Detection`, `Anomaly_Detection`). 기존에 없던 task면 프로젝트 노트(`Projects/논문_<Task>.md`)와 논문 노트 폴더(`Projects/논문_<Task>_tasks/`)를 함께 새로 만든다. 폐쇄 목록이 아니다 — 논문을 보고 적절한 task가 없으면 새로 만든다. `Projects/_pdf/<Task>/`(PDF 쪽)와 `Projects/논문_<Task>_tasks/`(노트 쪽)는 폴더명 규칙이 다르다는 점에 유의한다 — PDF 폴더는 접미사 없이 `<Task>` 그대로, 노트 폴더는 반드시 `<Task>_tasks`.
+- **`<Task>/` 하위 `<구조>/<갈래>/` 세분화는 선택 사항이다.** 논문 수가 많고 방법론 축(아키텍처, 문제 갈래 등)으로 나눌 가치가 있는 task(예: `Object_Detection`)에서만 쓴다. 세분화를 쓰지 않는 task는 지금처럼 `<Task>/` 바로 아래에 PDF를 둔다. 세분화 기준(구조명·갈래명)은 task마다 다를 수 있고, 한번 정하면 되도록 유지한다 — 자주 바뀌면 기존 논문의 `source` 경로를 전부 다시 갱신해야 하는 비용이 크다. `<구조>/<갈래>/`를 쓰더라도 노트 쪽(`Projects/논문_<Task>_tasks/`)은 세분화하지 않고 항상 1단계 평면 구조를 유지한다 — Project Manager 플러그인이 `_tasks` 폴더를 재귀 스캔하지 않기 때문이다.
+- **`논문_<Task>_tasks/` 폴더명은 `_tasks` 접미사가 필수다.** Project Manager 플러그인이 프로젝트 노트 `Projects/논문_<Task>.md`의 task를 스캔할 때 폴더 경로를 `파일 경로에서 .md를 _tasks로 치환`해서 계산하도록 하드코딩되어 있다(플러그인 소스 `projectTaskFolder`). 즉 `논문_Object_Detection.md`의 task 폴더는 반드시 `논문_Object_Detection_tasks/`여야 하며, 접미사가 없거나 다르면(예: `논문_Object_Detection/`) Project Manager가 그 폴더를 전혀 스캔하지 않아 프로젝트의 task 개수가 0으로 표시된다.
 - 논문 하나가 여러 task에 걸치면(드묾) 가장 핵심적인 task 하나의 프로젝트·폴더에만 PDF와 노트를 두고, task 노트의 `task` 속성에는 해당되는 task를 전부 적는다.
 - 논문 분석 노트는 `ResearchVault/PaperStudy/` 안에 있지 않다 — Project Manager 플러그인과 통합 관리하기 위해 볼트 최상위 `Projects/논문_<Task>_tasks/`에 둔다. 자세한 내용은 아래 "Projects/논문_<Task>.md — 논문 분석 노트" 절 참고. `Concepts/`와 `Comparisons/`는 여러 task에 걸치는 경우가 많으므로 task로 나누지 않고 `PaperStudy/` 안에 폴더 하나로 모아둔다.
 
@@ -75,7 +78,7 @@ Projects/                볼트 최상위. 논문 분석 노트와 PDF 원본 �
 
 ### 프로젝트 구조
 
-- **task(분야)마다 별도 Project Manager 프로젝트**를 둔다: `Projects/논문_<Task>.md`(`pm-project: true` frontmatter, 예: `논문_Small_Object_Detection.md`, `논문_Anomaly_Detection.md`). Project Manager는 `Projects/` 바로 아래에 있는 프로젝트 노트만 인식하므로(하위 폴더 재귀 스캔 안 함), 프로젝트 노트 자체는 항상 `Projects/` 바로 밑에 둔다.
+- **task(분야)마다 별도 Project Manager 프로젝트**를 둔다: `Projects/논문_<Task>.md`(`pm-project: true` frontmatter, 예: `논문_Object_Detection.md`, `논문_Anomaly_Detection.md`). Project Manager는 `Projects/` 바로 아래에 있는 프로젝트 노트만 인식하므로(하위 폴더 재귀 스캔 안 함), 프로젝트 노트 자체는 항상 `Projects/` 바로 밑에 둔다.
   - 예전에는 모든 논문을 담는 단일 프로젝트(`논문 읽기.md`) 하나만 뒀었다. 하지만 Project Manager UI(Table/Kanban)가 프로젝트 하나를 열면 그 안의 모든 task를 분야 구분 없이 한 화면에 나열해서, 특정 분야에 집중해서 보기가 어려웠다 — 그래서 프로젝트 자체를 task 개수만큼 나눴다. Project Manager UI에서 프로젝트를 전환하는 것으로 분야를 구분해서 본다.
   - task가 새로 생기면 프로젝트 노트도 함께 새로 만든다(아래 "새 task 노트 생성 시 프로젝트 노트도 함께 갱신" 절 참고).
 - 논문 노트(task 노트): `Projects/논문_<Task>_tasks/<논문-슬러그>.md` — 그 task 프로젝트에 속한 논문 노트들을 모아두는, 프로젝트 노트와 이름이 같은 폴더. 이 폴더는(프로젝트 노트와 달리) 재귀적으로 스캔되므로 하위 폴더로 둬도 Project Manager가 정상 인식한다. 어느 분야인지는 어느 프로젝트에 속하는지(`projectId`)와 노트의 `task` 속성 둘 다로 확인 가능하고, `Projects/논문_PaperWiki.base`에서 `task` 컬럼으로 필터링해서도 본다(아래 "상태 확인하기" 절 참고).
@@ -583,7 +586,7 @@ updated: <YYYY-MM-DD>
 
 논문 2편 이상을 공통 축(예: 같은 문제를 푸는 다른 접근, 같은 벤치마크 성능, 시계열적 후속 관계)으로 비교할 가치가 있을 때 만든다. 모든 새 논문마다 만들 필요는 없다 — 명확히 비교되는 대상이 있을 때만.
 
-파일명: `Comparisons/<비교-주제-슬러그>.md` (슬러그는 위 "폴더·파일 네이밍 규칙"의 일반 서술형 이름 규칙을 따른다, 예: `Small_Object_Detection_Approaches`)
+파일명: `Comparisons/<비교-주제-슬러그>.md` (슬러그는 위 "폴더·파일 네이밍 규칙"의 일반 서술형 이름 규칙을 따른다, 예: `Object_Detection_Approaches`)
 
 ### Frontmatter
 
@@ -621,7 +624,7 @@ MOC는 두 계층으로 구성한다.
 
 ### Task MOC — `Moc/<Task>_Moc.md`
 
-`Projects/논문_<Task>_tasks/`, `Projects/_pdf/`에 존재하는 task 폴더마다 하나씩 만든다 (예: `Moc/Small_Object_Detection_Moc.md`).
+`Projects/논문_<Task>_tasks/`, `Projects/_pdf/`에 존재하는 task 폴더마다 하나씩 만든다 (예: `Moc/Object_Detection_Moc.md`).
 
 파일명: `Moc/<Task>_Moc.md`
 
@@ -671,7 +674,7 @@ updated: <YYYY-MM-DD>
 # 연구 지도
 
 ## Task별 MOC
-- [[Small_Object_Detection_Moc]]
+- [[Object_Detection_Moc]]
 - [[Anomaly_Detection_Moc]]
 - ...
 
@@ -716,8 +719,8 @@ task 경계와 무관하게 여러 분야에서 반복 등장하는 개념·신�
 
 Obsidian의 **Bases** 플러그인을 쓰면 Notion 데이터베이스 뷰처럼 모든 `Projects/논문_<Task>_tasks/`(task 프로젝트마다 있는 논문 노트 폴더 전체)를 가로질러 테이블로 보면서 `status`, `task`, `direction`, `jcr_quartile` 컬럼으로 필터·정렬할 수 있다. `Projects/논문_PaperWiki.base` 파일이 `task != null` 필터(PaperWiki 논문 노트에만 있는 고유 필드라 다른 프로젝트 노트와 섞이지 않는다)로 이 뷰들을 미리 정의해 둔 것이므로, Obsidian에서 그 파일을 열면 바로 확인 가능하다. "해야할 것/진행 중/추가 공부 요청/완료" 뷰로 진행 상태를, "Q1만"/"JCR 등급 확인 필요" 뷰로 저널 등급을 걸러볼 수 있다.
 
-분야(task)별로 집중해서 보고 싶을 땐 "Task별" 뷰(전체를 `task` 기준 정렬만 함)보다, task마다 있는 `<Task폴더명> (year)` / `<Task폴더명> (venue)` 뷰 쌍(예: "Small_Object_Detection (year)", "Small_Object_Detection (venue)")을 쓴다 — 이 뷰들은 그 분야의 논문만 걸러서 보여주고, 이름 그대로 `year` 또는 `venue` 기준으로 정렬(`sort`)되어 있으므로 화면에 다른 분야가 섞이지 않는다. 새 task 폴더가 생기면 `논문_PaperWiki.base`에 `task.contains("<task-slug>")` 필터를 쓰는 `(year)`/`(venue)` 뷰 한 쌍을 추가한다(`task-slug`는 그 task 노트들의 `task` frontmatter 값, kebab-case).
+분야(task)별로 집중해서 보고 싶을 땐 "Task별" 뷰(전체를 `task` 기준 정렬만 함)보다, task마다 있는 `<Task폴더명> (year)` / `<Task폴더명> (venue)` 뷰 쌍(예: "Object_Detection (year)", "Object_Detection (venue)")을 쓴다 — 이 뷰들은 그 분야의 논문만 걸러서 보여주고, 이름 그대로 `year` 또는 `venue` 기준으로 정렬(`sort`)되어 있으므로 화면에 다른 분야가 섞이지 않는다. 새 task 폴더가 생기면 `논문_PaperWiki.base`에 `task.contains("<task-slug>")` 필터를 쓰는 `(year)`/`(venue)` 뷰 한 쌍을 추가한다(`task-slug`는 그 task 노트들의 `task` frontmatter 값, kebab-case).
 
-**Project Manager 플러그인 자체 UI**(Table/Kanban/Gantt)로 분야별로 나눠 보려면, task마다 있는 프로젝트 노트(`Projects/논문_<Task>.md`, 예: `논문_Small_Object_Detection.md`, `논문_Anomaly_Detection.md`)를 열면 된다 — Project Manager UI의 프로젝트 목록/드롭다운에서 원하는 분야의 프로젝트를 선택하면 그 분야 논문만 나열되고, task를 클릭하면 분석 노트 본문이 그대로 렌더링되며 `status`를 드래그 앤 드롭으로 바꿀 수 있다. (예전에는 모든 논문이 `논문 읽기.md`라는 단일 프로젝트 안에 있어서 분야 구분 없이 다 섞여 보였는데, 그 문제 때문에 프로젝트 자체를 task별로 나눴다 — 위 "프로젝트 구조" 절 참고.) **title은 이 UI에서 편집하지 않는다** (위 경고 참고).
+**Project Manager 플러그인 자체 UI**(Table/Kanban/Gantt)로 분야별로 나눠 보려면, task마다 있는 프로젝트 노트(`Projects/논문_<Task>.md`, 예: `논문_Object_Detection.md`, `논문_Anomaly_Detection.md`)를 열면 된다 — Project Manager UI의 프로젝트 목록/드롭다운에서 원하는 분야의 프로젝트를 선택하면 그 분야 논문만 나열되고, task를 클릭하면 분석 노트 본문이 그대로 렌더링되며 `status`를 드래그 앤 드롭으로 바꿀 수 있다. (예전에는 모든 논문이 `논문 읽기.md`라는 단일 프로젝트 안에 있어서 분야 구분 없이 다 섞여 보였는데, 그 문제 때문에 프로젝트 자체를 task별로 나눴다 — 위 "프로젝트 구조" 절 참고.) **title은 이 UI에서 편집하지 않는다** (위 경고 참고).
 
 폴더 자체로도 확인 가능하다 — `Projects/_pdf/_inbox/`나 `_issue_paper/`에 파일이 남아있으면 아직 위키에 반영 안 된 논문, `Projects/_pdf/<Task>/`에 있으면 처리 완료. 개인적으로 읽으려던 논문인지 커뮤니티 트렌드 추적용이었는지는 `논문_PaperWiki.base`에서 `source_type` 컬럼으로 구분해서 본다.

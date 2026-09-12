@@ -20,10 +20,10 @@ dependencies: []
 year: 2026
 venue: "Neural Networks (Elsevier)"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, aerial-image, coarse-to-fine, long-tailed-detection, plug-in, unsupervised]
-source: "Projects/_pdf/Small_Object_Detection/2026_Neural-Networks_YOFOR.pdf"
+source: "Projects/_pdf/Object_Detection/YOLO/2026_Neural-Networks_YOFOR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:24:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"
@@ -371,7 +371,7 @@ blurred = rgf_backward(rgf_forward(subregion, *coeffs), *coeffs)   # 반복 횟�
 - [[Class_Balanced_Spatial_Copy_Paste]] — 이 논문의 CBM이 제안한 핵심 기여. Tail class 객체를 원 객체 주변의 공간적 문맥(방향·거리)을 보존한 채 조건부로 좌우 복제해, semantic 모순 없이 long-tailed 클래스 불균형을 완화하는 기법.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — 기존 비교표의 어느 축에도 완전히 속하지 않는 독특한 위치(coarse-to-fine 서브영역 localization + 배경 억제 + long-tailed 완화 3종 결합). 연산 가속(sparse computation)/서브영역 국소화 계열에 함께 분류됨.
+- 비교: [[Object_Detection_Approaches]] — 기존 비교표의 어느 축에도 완전히 속하지 않는 독특한 위치(coarse-to-fine 서브영역 localization + 배경 억제 + long-tailed 완화 3종 결합). 연산 가속(sparse computation)/서브영역 국소화 계열에 함께 분류됨.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: C. Yang, Z. Huang, N. Wang, "QueryDet: Cascaded sparse query for accelerating high-resolution small object detection" (CVPR 2022) — 이미 위키에 추가됨: [[2022_CVPR_QueryDet|QueryDet]]. "어디를 볼지 좁힌다"는 문제의식을 feature pyramid 레벨에서 다루는 대조군으로 비교 가치가 높음.

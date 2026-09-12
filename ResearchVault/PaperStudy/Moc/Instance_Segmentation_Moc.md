@@ -25,4 +25,4 @@ updated: 2026-08-19
 
 # 관련 MOC
 - [[000-Home]]
-- [[Small_Object_Detection_Moc]] — [[Self_Reconstruction_Difference_Map]] 개념을 공유하는 인접 분야. 소형 객체 정보 손실이라는 문제의식이 겹친다.
+- [[Object_Detection_Moc]] — [[Self_Reconstruction_Difference_Map]] 개념을 공유하는 인접 분야. 소형 객체 정보 손실이라는 문제의식이 겹친다.

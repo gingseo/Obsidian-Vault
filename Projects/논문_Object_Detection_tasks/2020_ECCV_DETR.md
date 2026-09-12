@@ -33,7 +33,7 @@ paper_tags:
   - bipartite-matching
   - end-to-end
   - panoptic-segmentation
-source: Projects/_pdf/Object_Detection/2020_ECCV_DETR.pdf
+source: "Projects/_pdf/Object_Detection/DETR/2020_ECCV_DETR.pdf"
 source_type: personal
 createdAt: 2026-08-18T11:00:00.000Z
 updatedAt: 2026-08-28T16:40:00.000Z

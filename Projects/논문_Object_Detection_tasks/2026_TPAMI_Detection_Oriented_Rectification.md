@@ -20,10 +20,10 @@ dependencies: []
 year: 2026
 venue: "IEEE TPAMI"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement, novel-approach]
 paper_tags: [paper, small-object-detection, restoration, degradation-modeling, mixture-of-experts, multi-task-learning]
-source: "Projects/_pdf/Small_Object_Detection/2026_TPAMI_Detection-Oriented-Rectification.pdf"
+source: "Projects/_pdf/Object_Detection/기타/2026_TPAMI_Detection-Oriented-Rectification.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-28T17:30:00.000Z"
@@ -348,7 +348,7 @@ L_dora = L_det + lambda_deg * L_deg + lambda_rec * L_rec         # Eq.19
 # 관련 문서
 - 같은 저자 그룹(Xiang Yuan, Gong Cheng, Junwei Han)의 관련 논문: [[2026_TIP_Unc-SOD|Unc-SOD]] — RPN sampling과 feature hierarchy 불일치를 다루는 다른 각도의 SOD 개선 연구. 두 논문 모두 "인스턴스 단위 신호를 어떻게 학습 신호로 쓸 것인가"를 다룬다는 점에서 상통.
 - 직접 비교 대상(TABLE I~III에서 baseline 병기): [[2024_ECCV_SR-TOD|SR-TOD]] — 동일한 restoration/reconstruction 계열이지만 difference map 기반이라는 점에서 이 논문(degradation basis 기반)과 접근이 다르며, 대부분의 벤치마크·detector 조합에서 DORA가 더 큰 개선폭을 보임.
-- 비교: [[Small_Object_Detection_Approaches]] — feature 복원 축으로 분류되어 있으며, 이 문서의 비교표에 이미 이 논문 항목이 반영되어 있음.
+- 비교: [[Object_Detection_Approaches]] — feature 복원 축으로 분류되어 있으며, 이 문서의 비교표에 이미 이 논문 항목이 반영되어 있음.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: B. Cao, H. Yao, P. Zhu, Q. Hu, "Visible and clear: Finding tiny objects in difference map" (SR-TOD) [20] (ECCV 2024) — 이 논문이 TABLE I~III에서 직접 비교하는 핵심 baseline. 같은 reconstruction 계열이지만 difference map 기반 접근이라 DORA의 degradation basis 접근과 대조하며 읽기 좋음. 위키에 이미 [[2024_ECCV_SR-TOD|SR-TOD]] 노트 있음.

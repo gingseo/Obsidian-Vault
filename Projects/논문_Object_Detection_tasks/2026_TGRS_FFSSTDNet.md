@@ -20,10 +20,10 @@ dependencies: []
 year: 2026
 venue: "IEEE Transactions on Geoscience and Remote Sensing (TGRS)"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, full-scene-image, focus-detection, super-resolution, region-filtering]
-source: "Projects/_pdf/Small_Object_Detection/2026_TGRS_FFSSTD-Net.pdf"
+source: "Projects/_pdf/Object_Detection/기타/2026_TGRS_FFSSTD-Net.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"
@@ -357,7 +357,7 @@ L_s = ||G - G_FSR||_1                                           # L1 loss, 추�
 - (없음 — CFD/FSR은 이 논문 안에서만 의미 있는 구현 디테일로 판단, 별도 concept 문서로 만들지 않음)
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]]
+- 비교: [[Object_Detection_Approaches]]
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: G. Cheng et al., "Towards large-scale small object detection: Survey and benchmarks" (IEEE TPAMI 2023) [14] — 이 논문이 참조하는 4갈래 분류(scale-aware/contextual/focused/sample-oriented) 체계의 원 서베이. [[2024_ECCV_SR-TOD|SR-TOD]] 노트에서도 동일 서베이가 이미 5갈래 분류로 인용되어 교차 확인 가치가 있음.

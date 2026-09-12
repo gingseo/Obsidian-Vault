@@ -20,10 +20,10 @@ dependencies: []
 year: 2024
 venue: "IEEE TGRS"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, yolo, lightweight, attention-mechanism, feature-fusion]
-source: "Projects/_pdf/Small_Object_Detection/2024_TGRS_FFCA-YOLO.pdf"
+source: "Projects/_pdf/Object_Detection/YOLO/2024_TGRS_FFCA-YOLO.pdf"
 source_type: personal
 createdAt: "2026-08-20T00:00:00.000Z"
 updatedAt: "2026-08-28T00:00:00.000Z"
@@ -285,7 +285,7 @@ Q = P + channel_context * spatial_context                # broadcast Hadamard pr
 
 ### 내 주제와 연관된 후속 연구 아이디어
 - <mark style="background: #A6E3A1A6;">[[2025_ESWA_LSOD-YOLO|LSOD-YOLO]]는 "저기여 헤드 제거로 경량화"를, FFCA-YOLO는 "PConv로 backbone을 재구성해 경량화"를 택했다 — 두 경량화 전략이 상호 배타적이지 않아 보이므로, LCOR(P5 제거)와 PConv 기반 L-FFCA-YOLO backbone을 함께 적용하면 추가 경량화 여지가 있는지 검토할 가치가 있다.</mark>
-- <mark style="background: #A6E3A1A6;">[[Small_Object_Detection_Approaches]]의 feature 강화 계열 중 [[2024_ECCV_SR-TOD|SR-TOD]]·[[2024_TGRS_ORFENet|ORFENet]]은 reconstruction 기반 신호를, FFCA-YOLO는 순수 attention/융합 기반 신호를 쓴다 — SCAM의 전역 문맥 정보를 SR-TOD류의 difference map과 결합해 "어디를 강조할지"를 두 신호로 교차 검증하는 방향도 가능해 보인다.</mark>
+- <mark style="background: #A6E3A1A6;">[[Object_Detection_Approaches]]의 feature 강화 계열 중 [[2024_ECCV_SR-TOD|SR-TOD]]·[[2024_TGRS_ORFENet|ORFENet]]은 reconstruction 기반 신호를, FFCA-YOLO는 순수 attention/융합 기반 신호를 쓴다 — SCAM의 전역 문맥 정보를 SR-TOD류의 difference map과 결합해 "어디를 강조할지"를 두 신호로 교차 검증하는 방향도 가능해 보인다.</mark>
 
 > [!info] 내 메모
 > 
@@ -299,7 +299,7 @@ Q = P + channel_context * spatial_context                # broadcast Hadamard pr
 - [[Remote_Sensing_Attention_Module]] — RS-TOD의 채널+공간 attention과 개념적으로 유사(둘 다 detection head 주변에 attention 삽입). SCAM은 GCNet/SCP 계보의 전역 문맥 모델링이라는 점에서 구현 방식은 다르나, "원격탐사 특화 attention으로 배경 억제"라는 목적은 공유. RS-TOD 노트의 "등장 논문"에 이번 논문 추가 갱신함.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — feature 강화(FEM/FFM/SCAM) + 아키텍처 경량화(L-FFCA-YOLO) 이중 축으로 분류, [[2025_ESWA_LSOD-YOLO|LSOD-YOLO]]와 경량화 축에서 직접 대응.
+- 비교: [[Object_Detection_Approaches]] — feature 강화(FEM/FFM/SCAM) + 아키텍처 경량화(L-FFCA-YOLO) 이중 축으로 분류, [[2025_ESWA_LSOD-YOLO|LSOD-YOLO]]와 경량화 축에서 직접 대응.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: Y. Cao, J. Xu, S. Lin, F. Wei, H. Hu, "GCNet: Non-local networks meet squeeze-excitation networks and beyond" (ICCV Workshop 2019) [14] — SCAM이 계승한 전역 문맥 모델링의 원조. SCAM의 GAP/GMP 확장을 이해하려면 먼저 읽을 필요가 있음.

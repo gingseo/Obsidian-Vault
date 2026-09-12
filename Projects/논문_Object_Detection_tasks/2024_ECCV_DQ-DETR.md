@@ -20,16 +20,16 @@ dependencies: []
 year: 2024
 venue: "ECCV"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, detr, dynamic-query, density-map, remote-sensing]
-source: "Projects/_pdf/Small_Object_Detection/2024_ECCV_DQ-DETR.pdf"
+source: "Projects/_pdf/Object_Detection/DETR/갈래6_쿼리개수/2024_ECCV_DQ-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:07:00.000Z"
 updatedAt: "2026-08-28T18:00:00.000Z"
 ---
 
-Project: [[논문_Small_Object_Detection|Small Object Detection]]
+Project: [[논문_Object_Detection|Object Detection]]
 #paper #small-object-detection #tiny-object-detection #detr #dynamic-query #density-map #remote-sensing
 
 > [!quote] 원제
@@ -331,7 +331,7 @@ L_total = L_hungarian + L_aux + cross_entropy(N_class_pred, N_class_gt)   # L_co
 - [[Bipartite_Matching_Hungarian_Algorithm]] — 예측-정답 매칭에 사용되는 Hungarian loss의 기반.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — dynamic query DETR 계열(DQ-DETR 외 여러 편)의 첫 사례로 새 소그룹에 편입 예정.
+- 비교: [[Object_Detection_Approaches]] — dynamic query DETR 계열(DQ-DETR 외 여러 편)의 첫 사례로 새 소그룹에 편입 예정.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: X. Zhu, W. Su, L. Lu, B. Li, X. Wang, J. Dai, "Deformable DETR: Deformable transformers for end-to-end object detection" (ICLR 2021) [31] — 이미 위키에 있음: [[2021_ICLR_Deformable-DETR|Deformable-DETR]]. 이 논문의 직접 baseline이자 5-scale deformable attention 구조 전체를 그대로 계승.

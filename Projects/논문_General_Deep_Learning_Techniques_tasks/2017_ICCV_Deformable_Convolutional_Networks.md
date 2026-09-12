@@ -426,7 +426,7 @@ def deformable_roi_pooling(x, roi, fc_weight, k=7):
 - [[Dilated_Convolution]] — "선행 연구 접근"에서 대조 대상인 atrous convolution의 정체, Table 3에서 deformable convolution과 직접 비교됨.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — DETR과 마찬가지로 "기존 detector에 개입하는 방식" 비교축의 대상이 아니라, 이후 Deformable DETR 등이 계승하는 foundational 아키텍처 모듈로 별도 취급.
+- 비교: [[Object_Detection_Approaches]] — DETR과 마찬가지로 "기존 detector에 개입하는 방식" 비교축의 대상이 아니라, 이후 Deformable DETR 등이 계승하는 foundational 아키텍처 모듈로 별도 취급.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: M. Jaderberg, K. Simonyan, A. Zisserman, K. Kavukcuoglu, "Spatial transformer networks" (NeurIPS 2015) [26] — 이 논문이 가장 직접적으로 대조하는 선행 연구. 전역 파라메트릭 변환과 로컬·조밀 변환의 차이를 이해하는 데 필수.

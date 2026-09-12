@@ -20,16 +20,16 @@ dependencies: []
 year: 2025
 venue: "IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing (JSTARS)"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, detr, dynamic-query, density-estimation, remote-sensing, label-assignment]
-source: "Projects/_pdf/Small_Object_Detection/2025_JSTARS_Density-Aware-DETR.pdf"
+source: "Projects/_pdf/Object_Detection/DETR/갈래6_쿼리개수/2025_JSTARS_Density-Aware-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:09:00.000Z"
 updatedAt: "2026-08-28T19:00:00.000Z"
 ---
 
-Project: [[논문_Small_Object_Detection|Small Object Detection]]
+Project: [[논문_Object_Detection|Object Detection]]
 #paper #small-object-detection #tiny-object-detection #detr #dynamic-query #density-estimation #remote-sensing #label-assignment
 
 > [!quote] 원제
@@ -342,7 +342,7 @@ L_total = lam1*L_cls + lam2*L_box + lam3*L_IOU + lam_dm*L_density   # Eq.7, lam1
 - [[Bipartite_Matching_Hungarian_Algorithm]] — 예측-정답 매칭에 anchor L1 measure를 cost로 사용하는 Hungarian 알고리즘의 기반.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — dynamic query DETR 계열 중 "이산 분류 vs 연속 회귀" 축을 대표하는 사례. [[2024_ECCV_DQ-DETR|DQ-DETR]]과 동일 baseline·유사 조건으로 직접 비교된다는 점에서 비교 문서 갱신 시 최우선 반영 대상.
+- 비교: [[Object_Detection_Approaches]] — dynamic query DETR 계열 중 "이산 분류 vs 연속 회귀" 축을 대표하는 사례. [[2024_ECCV_DQ-DETR|DQ-DETR]]과 동일 baseline·유사 조건으로 직접 비교된다는 점에서 비교 문서 갱신 시 최우선 반영 대상.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: Y.-X. Huang, H.-I. Liu, H.-H. Shuai, W.-H. Cheng, "DQ-DETR: DETR with dynamic query for tiny object detection" (ECCV 2024) [22] — 이미 위키에 있음: [[2024_ECCV_DQ-DETR|DQ-DETR]]. 이 논문이 Table III에서 직접 대조 실험하는 핵심 비교 대상.

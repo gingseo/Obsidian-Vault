@@ -20,10 +20,10 @@ dependencies: []
 year: 2025
 venue: "CVPR"
 jcr_quartile: "Q1"
-task: [small-object-detection]
+task: [object-detection]
 direction: [novel-approach, improvement]
 paper_tags: [paper, small-object-detection, feature-enhancement, information-entropy, gaussian-mixture, plug-and-play]
-source: "Projects/_pdf/Small_Object_Detection/2025_CVPR_Feature-Information-Driven-Position-Gaussian.pdf"
+source: "Projects/_pdf/Object_Detection/기타/2025_CVPR_Feature-Information-Driven-Position-Gaussian.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"
@@ -319,7 +319,7 @@ L = L_det + lambda1 * L_IE + lambda2 * L_pred     # lambda1=0.01, lambda2=1.0
 - Position Gaussian map의 스케일링 factor α(4,6,8,10)는 AI-TOD 크기 구간에 고정된 하이퍼파라미터 — 데이터셋마다 크기 분포가 다르면 분위수 기반 자동 추정이 더 일반화될 수 있을지 검토해볼 만함.
 
 ### 내 주제와 연관된 후속 연구 아이디어
-- <mark style="background: #A6E3A1A6;">이 논문의 정보량 기반 σ는 [[2026_TIP_Unc-SOD|Unc-SOD]]의 instance-level uncertainty와 접근 축이 다르지만(전자는 feature 강화용 attention prior, 후자는 sampling 기준) 상호 보완 가능성이 있다 — "σ가 작아 특징이 흐릿한 영역의 proposal일수록 sampling 기준을 더 관대하게" 만드는 식으로 결합하면 feature 강화 축과 label assignment 축을 잇는 다리가 될 수 있다.</mark> [[Small_Object_Detection_Approaches]]에서 두 계열이 직교적으로 분류된 것과 맞닿아 있다.
+- <mark style="background: #A6E3A1A6;">이 논문의 정보량 기반 σ는 [[2026_TIP_Unc-SOD|Unc-SOD]]의 instance-level uncertainty와 접근 축이 다르지만(전자는 feature 강화용 attention prior, 후자는 sampling 기준) 상호 보완 가능성이 있다 — "σ가 작아 특징이 흐릿한 영역의 proposal일수록 sampling 기준을 더 관대하게" 만드는 식으로 결합하면 feature 강화 축과 label assignment 축을 잇는 다리가 될 수 있다.</mark> [[Object_Detection_Approaches]]에서 두 계열이 직교적으로 분류된 것과 맞닿아 있다.
 - [[2024_ECCV_SR-TOD|SR-TOD]]와의 직접 비교에서 이 논문이 더 크게 이긴 이유가 "difference map은 정보 손실의 일부만 포착"이라는 서술뿐 — σ와 difference map의 공간적 correlation을 직접 시각화·정량 비교하면 결합 지점을 더 구체적으로 찾을 수 있을 것이다.
 
 > [!info] 내 메모
@@ -330,7 +330,7 @@ L = L_det + lambda1 * L_IE + lambda2 * L_pred     # lambda1=0.01, lambda2=1.0
 - [[Gaussian_Box_Uncertainty_Modeling]] — 같은 "Gaussian으로 객체를 모델링"하는 계열이지만 용도가 다름(박스 회귀 좌표의 예측 불확실성 모델링 vs. 이 논문의 위치 saliency/attention prior). 서로 다른 개념으로 유지.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — feature 강화 계열(정보이론+위치 축)로 분류
+- 비교: [[Object_Detection_Approaches]] — feature 강화 계열(정보이론+위치 축)로 분류
 - [[2024_ECCV_SR-TOD|SR-TOD]] — 이 논문이 직접 비교 대상으로 삼는 가장 가까운 선행 연구(difference map 기반 정보 손실 탐지)
 - [[2026_TIP_Unc-SOD|Unc-SOD]] — 같은 task를 다른 축(label assignment/sampling)에서 개선하는 논문. Discussion 참고
 

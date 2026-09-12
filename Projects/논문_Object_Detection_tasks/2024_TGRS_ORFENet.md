@@ -20,10 +20,10 @@ dependencies: []
 year: 2024
 venue: "IEEE Transactions on Geoscience and Remote Sensing (TGRS)"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, self-supervision, multi-receptive-field, feature-enhancement, fcos]
-source: "Projects/_pdf/Small_Object_Detection/2024_TGRS_ORFENet.pdf"
+source: "Projects/_pdf/Object_Detection/2Stage/2024_TGRS_ORFENet.pdf"
 source_type: personal
 createdAt: "2026-08-19T00:00:00.000Z"
 updatedAt: "2026-08-19T00:00:00.000Z"
@@ -256,7 +256,7 @@ F_plus = F + Conv1x1(W1*F1 + W2*F2 + W3*F3)
 - <mark style="background: #A6E3A1A6;">MRFAFEM의 "여러 receptive field를 동적 가중합"하는 설계는 [[2025_RemoteSensing_FANet|FANet]]의 multi-patch-size FFEM 분기 병렬 융합과 구조적으로 유사한 사상(서로 다른 스케일/범위의 정보를 병렬로 뽑아 학습된 가중치로 합친다)을 공유한다 — 하나는 공간(receptive field), 하나는 주파수(patch size) 축에서 같은 아이디어를 반복한다.</mark>
 
 ### 내 주제와 연관된 후속 연구 아이디어
-- <mark style="background: #A6E3A1A6;">Table III에서 "동적 가중치 없이 단순 합"만으로도 AP가 17.3→18.2로 대부분의 이득을 차지하고, 동적 가중치 추가는 +0.2뿐이다 — [[Small_Object_Detection_Approaches]]의 "feature 강화 계열"에서 반복적으로 관찰되는 패턴(다중 소스/스케일 정보를 "쓴다"는 것 자체가 가장 큰 이득이고, "동적으로 조정한다"는 정교화는 부가적)과 일치한다.</mark>
+- <mark style="background: #A6E3A1A6;">Table III에서 "동적 가중치 없이 단순 합"만으로도 AP가 17.3→18.2로 대부분의 이득을 차지하고, 동적 가중치 추가는 +0.2뿐이다 — [[Object_Detection_Approaches]]의 "feature 강화 계열"에서 반복적으로 관찰되는 패턴(다중 소스/스케일 정보를 "쓴다"는 것 자체가 가장 큰 이득이고, "동적으로 조정한다"는 정교화는 부가적)과 일치한다.</mark>
 - <mark style="background: #A6E3A1A6;">ORB(단순 이진 마스크 재구성)와 [[2024_ECCV_SR-TOD|SR-TOD]]의 difference map(연속값 정보 손실 신호)을 같은 백본에서 직접 비교하면, "위치만 아는 것"과 "정보 손실 정도까지 아는 것" 중 어느 신호가 tiny object feature 강화에 더 유효한지 실증할 수 있는 좋은 대조군이 된다.</mark>
 
 > [!info] 내 메모
@@ -267,7 +267,7 @@ F_plus = F + Conv1x1(W1*F1 + W2*F2 + W3*F3)
 - [[1x1_Convolution]] — MRFAFEM의 세 브랜치 가중합 이후 잔차 결합 직전 채널 정리에 사용.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]]
+- 비교: [[Object_Detection_Approaches]]
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: C. Xu, J. Wang, W. Yang, H. Yu, L. Yu, G.-S. Xia, "RFLA: Gaussian receptive field based label assignment for tiny object detection" (ECCV 2022) [17] — 이 위키에서 여러 논문(CDATOD-Diff, FANet, SR-TOD, Feature_Info_Driven_Gaussian)이 반복적으로 baseline·비교 대상으로 삼는 핵심 선행 연구. ORFENet도 관련 연구에서 label assignment 갈래의 대표작으로 인용하며, 원 논문 자체가 아직 위키에 없어 우선순위가 매우 높다.

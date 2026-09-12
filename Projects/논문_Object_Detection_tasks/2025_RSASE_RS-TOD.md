@@ -20,10 +20,10 @@ dependencies: []
 year: 2025
 venue: "Remote Sensing Applications: Society and Environment (Elsevier)"
 jcr_quartile: Q2
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, yolo, attention-module, detection-head]
-source: "Projects/_pdf/Small_Object_Detection/2025_RSASE_RS-TOD.pdf"
+source: "Projects/_pdf/Object_Detection/기타/2025_RSASE_RS-TOD.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-18T11:09:08.271Z"
@@ -265,7 +265,7 @@ output = I * M                                          # element-wise 곱 (rewe
 
 # 관련 문서
 - 주의(혼동 방지): 이름이 유사한 [[2024_ECCV_SR-TOD|SR-TOD]](difference-map 기반 tiny object detection, 2024 ECCV)와는 저자·방법론이 전혀 무관한 별개 논문이다 — RS-TOD는 YOLOv8 기반 attention+head 확장, SR-TOD는 self-reconstruction difference map 기반 feature 강화. 다만 RS-TOD의 Table 8에서 "DetectoRS w/ SR-TOD"가 AI-TOD 비교 대상 중 하나로 실제로 인용되므로, 두 논문은 이름만 비슷한 게 아니라 같은 벤치마크(AI-TOD)에서 실제로 비교되는 관계이기도 하다.
-- 비교: [[Small_Object_Detection_Approaches]] — feature 강화(attention) + 헤드 추가 축, 원격탐사 특화 계열로 분류
+- 비교: [[Object_Detection_Approaches]] — feature 강화(attention) + 헤드 추가 축, 원격탐사 특화 계열로 분류
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: Z. Li, Y. Wang, D. Xu, Y. Gao, T. Zhao, "TBNet: A texture and boundary-aware network for small weak object detection in remote-sensing imagery" (Pattern Recognition, 2025) — RS-TOD가 AI-TOD에서 mAP50 기준 직접 비교하는 가장 근접한 경쟁 모델(59.00 vs 59.84). texture/boundary를 명시적으로 다루는 접근이라 RSAM의 spatial attention과 대비하며 읽을 만하다.

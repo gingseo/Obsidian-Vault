@@ -20,10 +20,10 @@ dependencies: []
 year: 2025
 venue: "Remote Sensing (MDPI)"
 jcr_quartile: Q2
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, frequency-domain, attention, two-stage-detector, class-imbalance]
-source: "Projects/_pdf/Small_Object_Detection/2025_RemoteSensing_FANet.pdf"
+source: "Projects/_pdf/Object_Detection/기타/2025_RemoteSensing_FANet.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-28T00:00:00.000Z"
@@ -383,7 +383,7 @@ for c in [dominant_category]:            # vehicle
 - SAS의 R_log(k) 분석은 카테고리 간 주파수 특성이 다름을 보였을 뿐, 카테고리별 최적 증강 배수까지 최적화하지는 않는다 — 현재는 인스턴스 수 반비례 휴리스틱(×1~×8)인데, R_log(k) 유사도 자체를 증강 강도에 반영하는 것도 가능해 보인다.
 
 ### 내 주제와 연관된 후속 연구 아이디어
-- <mark style="background: #A6E3A1A6;">[[Frequency_Domain_Feature_Attention]]으로 분류된 MSFFEM/CAREM은 [[Small_Object_Detection_Approaches]] 비교표 기준 "feature 강화(주파수 영역)" 축에 속한다. [[2026_TIP_Unc-SOD|Unc-SOD]]의 instance-level uncertainty 기반 sampling(label assignment 축)과는 직교적 개선이므로, RFLA에 FANet을 얹었을 때 이미 상호 보완적 이득이 확인된 것처럼(Table 2, RFLA AP50 50.4→52.4) 두 축을 결합하면 추가 이득 여지가 있다.</mark>
+- <mark style="background: #A6E3A1A6;">[[Frequency_Domain_Feature_Attention]]으로 분류된 MSFFEM/CAREM은 [[Object_Detection_Approaches]] 비교표 기준 "feature 강화(주파수 영역)" 축에 속한다. [[2026_TIP_Unc-SOD|Unc-SOD]]의 instance-level uncertainty 기반 sampling(label assignment 축)과는 직교적 개선이므로, RFLA에 FANet을 얹었을 때 이미 상호 보완적 이득이 확인된 것처럼(Table 2, RFLA AP50 50.4→52.4) 두 축을 결합하면 추가 이득 여지가 있다.</mark>
 - <mark style="background: #A6E3A1A6;">[[2024_ECCV_SR-TOD|SR-TOD]]의 self-reconstruction difference map은 정보 손실이 큰 영역을 공간적으로 찾는 방식인데, FANet의 R_log(k) 같은 주파수 통계와 결합하면 "공간적으로 어디에" + "주파수적으로 어떤 대역에" 정보가 몰려 있는지 동시에 활용하는 하이브리드 강화가 가능할 것으로 보인다.</mark>
 
 > [!info] 내 메모
@@ -395,7 +395,7 @@ for c in [dominant_category]:            # vehicle
 - [[Squeeze_And_Excitation_Channel_Attention]] — CAREM의 채널 attention 서브모듈이 그대로 따르는 범용 구조(GMP/GAP → 1×1 conv → sigmoid → 채널별 스케일링).
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — feature 강화 계열 중 "주파수 영역" 축으로 분류되며, label assignment 축인 [[2026_TIP_Unc-SOD|Unc-SOD]], self-reconstruction 축인 [[2024_ECCV_SR-TOD|SR-TOD]] 등과 대비됨.
+- 비교: [[Object_Detection_Approaches]] — feature 강화 계열 중 "주파수 영역" 축으로 분류되며, label assignment 축인 [[2026_TIP_Unc-SOD|Unc-SOD]], self-reconstruction 축인 [[2024_ECCV_SR-TOD|SR-TOD]] 등과 대비됨.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: Z. Shi et al., "HS-FPN: High Frequency and Spatial Perception FPN for Tiny Object Detection" [44] (AAAI 2025) — FANet의 CAREM이 필터 설계(0-1 필터 비교)를 참고한 논문으로, 고주파 응답을 attention으로 활용하는 가장 직접적인 선행 연구. MSFFEM/CAREM과의 차이(feature map+RoI 이중 적용 vs 단일 지점)를 이해하는 데 필수적.

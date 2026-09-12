@@ -20,10 +20,10 @@ dependencies: []
 year: 2022
 venue: "CVPR"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [novel-approach, foundational]
 paper_tags: [paper, small-object-detection, sparse-convolution, inference-acceleration, feature-pyramid, query-mechanism]
-source: "Projects/_pdf/Small_Object_Detection/2022_CVPR_QueryDet.pdf"
+source: "Projects/_pdf/Object_Detection/2Stage/2022_CVPR_QueryDet.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-18T11:07:50.810Z"
@@ -264,7 +264,7 @@ cls, reg, query_next = sparse_head(P_v_l_minus_1)                      # 해당 
 - [[Cascade_Sparse_Query]] — 이 논문의 핵심 기여.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]]
+- 비교: [[Object_Detection_Approaches]]
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: A. Kirillov, Y. Wu, K. He, R. Girshick, "PointRend: Image segmentation as rendering" (CVPR 2020) [19] — QueryDet과 유사하게 sparse한 위치만 골라 고해상도 예측을 하지만 point-wise MLP를 쓴다는 점에서 대조되는 접근. Sparse 연산 설계의 대안 이해에 도움.

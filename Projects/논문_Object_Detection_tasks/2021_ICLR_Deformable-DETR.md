@@ -23,7 +23,7 @@ jcr_quartile: Q1
 task: [object-detection]
 direction: [improvement, foundational]
 paper_tags: [paper, object-detection, transformer, deformable-attention, multi-scale-feature, sparse-attention, end-to-end]
-source: "Projects/_pdf/Object_Detection/2021_ICLR_Deformable-DETR.pdf"
+source: "Projects/_pdf/Object_Detection/DETR/2021_ICLR_Deformable-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:03:00.000Z"
 updatedAt: "2026-08-24T03:03:00.000Z"
@@ -489,7 +489,7 @@ decoder_query, reference_point = init_from(topk_proposals)  # decoder 2nd stage 
 - [[Bipartite_Matching_Hungarian_Algorithm]] — DETR과 동일하게 예측-정답 1:1 매칭과 Hungarian loss로 학습(anchor·NMS 불필요라는 DETR의 이점을 그대로 계승).
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — DETR·Deformable Convolutional Networks와 함께 foundational 계열로 별도 취급(비교표 대상 아님). 이후 dynamic query DETR 계열(DQ-DETR 등) 다수의 직접 baseline.
+- 비교: [[Object_Detection_Approaches]] — DETR·Deformable Convolutional Networks와 함께 foundational 계열로 별도 취급(비교표 대상 아님). 이후 dynamic query DETR 계열(DQ-DETR 등) 다수의 직접 baseline.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: N. Carion, F. Massa, G. Synnaeve, N. Usunier, A. Kirillov, S. Zagoruyko, "End-to-end object detection with transformers" (DETR, ECCV 2020) — 이미 이 위키의 [[2020_ECCV_DETR|DETR]] 노트로 존재. 이 논문이 직접 개선하는 원조.

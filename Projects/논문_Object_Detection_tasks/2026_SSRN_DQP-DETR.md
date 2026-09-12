@@ -20,16 +20,16 @@ dependencies: []
 year: 2026
 venue: "SSRN (preprint, submitted to Elsevier, not peer-reviewed)"
 jcr_quartile: arXiv
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, tiny-object-detection, detr, dynamic-query, density-map, uav, query-ranking]
-source: "Projects/_pdf/Small_Object_Detection/2026_SSRN_DQP-DETR.pdf"
+source: "Projects/_pdf/Object_Detection/DETR/갈래6_쿼리개수/2026_SSRN_DQP-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:19:00.000Z"
 updatedAt: "2026-08-28T18:40:00.000Z"
 ---
 
-Project: [[논문_Small_Object_Detection|Small Object Detection]]
+Project: [[논문_Object_Detection|Object Detection]]
 #paper #small-object-detection #tiny-object-detection #detr #dynamic-query #density-map #uav #query-ranking
 
 > [!quote] 원제
@@ -350,7 +350,7 @@ L_total = L_det + L_density                                         # Eq.19
 - [[Bipartite_Matching_Hungarian_Algorithm]] — 최종 예측-정답 매칭에 사용되는 D-Fine-S 표준 구조의 기반.
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — dynamic query DETR 계열 중 density 정보를 가장 포괄적으로 활용하는 사례.
+- 비교: [[Object_Detection_Approaches]] — dynamic query DETR 계열 중 density 정보를 가장 포괄적으로 활용하는 사례.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: Y.-X. Huang, H.-I. Liu, H.-H. Shuai, W.-H. Cheng, "DQ-DETR: DETR with dynamic query for tiny object detection" (ECCV 2024) [24] — 이미 위키에 있음: [[2024_ECCV_DQ-DETR|DQ-DETR]]. 이 논문이 직접 비교 대상으로 삼는 dynamic query DETR의 원조.

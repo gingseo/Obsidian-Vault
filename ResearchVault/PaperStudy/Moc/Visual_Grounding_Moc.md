@@ -27,4 +27,4 @@ updated: 2026-08-24
 
 # 관련 MOC
 - [[000-Home]]
-- [[Small_Object_Detection_Moc]] — 원격탐사 도메인과 소형 타겟이라는 문제의식을 공유하는 인접 분야. VGRSS의 LVFE가 dynamic query DETR 계열의 "feature 사전 강화" 패턴과 구조적으로 유사하다는 점에서 교차 참조 가치가 있다.
+- [[Object_Detection_Moc]] — 원격탐사 도메인과 소형 타겟이라는 문제의식을 공유하는 인접 분야. VGRSS의 LVFE가 dynamic query DETR 계열의 "feature 사전 강화" 패턴과 구조적으로 유사하다는 점에서 교차 참조 가치가 있다.

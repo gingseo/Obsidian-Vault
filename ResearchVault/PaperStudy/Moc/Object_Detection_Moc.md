@@ -1,9 +1,9 @@
 ---
-title: "Small/Tiny Object Detection MOC"
+title: "Object Detection MOC"
 tags: [moc]
-task: small-object-detection
+task: object-detection
 created: 2026-08-04
-updated: 2026-08-24
+updated: 2026-09-11
 ---
 
 # 이 분야가 다루는 핵심 질문
@@ -12,7 +12,7 @@ updated: 2026-08-24
 - 성능 개선은 대부분 연산량 증가를 동반한다 — 실제 배포(엣지/UAV) 관점에서 정확도와 경량화를 동시에 만족할 수 있는가?
 
 # 지금까지 다룬 흐름
-지금까지 읽은 26편 중 17편은 "기존 detector(YOLO, Faster R-CNN, RT-DETR, FCOS, DetectoRS, DINO)에 plug-in 모듈을 추가"하는 방식, 6편은 Deformable DETR을 baseline으로 삼아 object query를 동적으로 조정하는 "dynamic query DETR" 계열, 나머지 3편([[2020_ECCV_DETR|DETR]], [[2017_ICCV_Deformable_Convolutional_Networks|Deformable_Convolutional_Networks]], [[2021_ICLR_Deformable-DETR|Deformable-DETR]])은 이후 흐름이 기반하는 순수 foundational 논문이다. 개입 지점에 따라 아래 계열로 나뉜다. 자세한 축별 비교는 [[Small_Object_Detection_Approaches]] 참고.
+지금까지 읽은 26편 중 17편은 "기존 detector(YOLO, Faster R-CNN, RT-DETR, FCOS, DetectoRS, DINO)에 plug-in 모듈을 추가"하는 방식, 6편은 Deformable DETR을 baseline으로 삼아 object query를 동적으로 조정하는 "dynamic query DETR" 계열, 나머지 3편([[2020_ECCV_DETR|DETR]], [[2017_ICCV_Deformable_Convolutional_Networks|Deformable_Convolutional_Networks]], [[2021_ICLR_Deformable-DETR|Deformable-DETR]])은 이후 흐름이 기반하는 순수 foundational 논문이다. 개입 지점에 따라 아래 계열로 나뉜다. 자세한 축별 비교는 [[Object_Detection_Approaches]] 참고.
 
 **Foundational 계열** — 이후 흐름 전체의 출발점이 된 원조 논문.
 - [[2020_ECCV_DETR|DETR]] — anchor·NMS 없이 객체 탐지를 직접적인 집합 예측으로 재정의한 최초의 end-to-end transformer 탐지기. [[2025_arXiv_UAV-DETR|UAV-DETR]]이 기반하는 RT-DETR의 계보상 원조에 해당하며, "소형 객체 성능이 약하다"는 한계를 스스로 처음 명시한 논문이기도 하다 — 이 위키의 feature 강화 계열 다수가 정확히 이 한계를 다른 아키텍처(YOLO, R-CNN)에서 다루고 있다는 점에서, DETR 계열에도 동일 문제의식이 적용될 여지가 있는지가 흥미로운 교차점.
@@ -50,7 +50,7 @@ updated: 2026-08-24
 **End-to-end 구조 계열**
 - [[2025_arXiv_UAV-DETR|UAV-DETR]] — 유일한 DETR(anchor-free, NMS-free) 계열. 위 주파수 도메인 활용과 별개로, 구조 자체가 다른 논문들(대부분 YOLO/R-CNN/FCOS 기반)과 궤를 달리한다.
 
-**Dynamic Query DETR 계열** — Deformable DETR을 공통 baseline으로 삼아, object query의 개수·구성을 이미지 내용에 따라 동적으로 조정하는 6편. 두 하위 갈래로 나뉜다(자세한 비교는 [[Small_Object_Detection_Approaches]]의 전용 절 참고).
+**Dynamic Query DETR 계열** — Deformable DETR을 공통 baseline으로 삼아, object query의 개수·구성을 이미지 내용에 따라 동적으로 조정하는 6편. 두 하위 갈래로 나뉜다(자세한 비교는 [[Object_Detection_Approaches]]의 전용 절 참고).
 - *하위 갈래 A(전역 밀도 기반, [[Density_Guided_Dynamic_Query]])*: [[2024_ECCV_DQ-DETR|DQ-DETR]](density map 4단계 분류로 query 수 결정, 원조) → [[2025_JSTARS_Density-Aware-DETR|Density-Aware-DETR]](분류를 연속 회귀로 대체, DQ-DETR과 직접 대조 실험) → [[2026_ICASSP_IG-DETR|IG-DETR]](6단계 세분화 + 덧셈 residual feature 강화) → [[2026_SSRN_DQP-DETR|DQP-DETR]](density를 encoder memory 주입·토큰 순위 학습까지 확장, 가장 포괄적).
 - *하위 갈래 B(query 개수가 아니라 query 자체를 재구성)*: [[2025_arXiv_PaQ-DETR|PaQ-DETR]](공유 패턴 기반 query 표현 재구성 + 품질 기반 1:多 assignment, [[Pattern_Quality_Aware_Query_Refinement]], 유일하게 COCO 일반 탐지 검증) → [[2026_JSTARS_DQA-DETR|DQA-DETR]](유일한 oriented detection, one-to-one matching의 gradient 왜곡을 이론적으로 증명하고 attention 기반 병합으로 해결 — PaQ-DETR과는 서로 다른 문제를 다룸).
 - 6편 모두에서 반복되는 패턴: "다중 신호를 쓴다는 것 자체"의 기여가 "그 신호를 얼마나 정교화하는가"보다 일관되게 크다(DQP-DETR의 RCS, Density-Aware DETR의 IDE&QA 등). DQA-DETR의 query 900→2400 확장 실험(baseline mAP 붕괴)은 "query를 늘리는 것 자체는 위험하다"는 이 계열 전체의 문제의식을 가장 극적으로 보여준다.
@@ -73,7 +73,7 @@ updated: 2026-08-24
 - [[Latent_Restoration_Regularization]] — CoLR-Det의 핵심 기여. SR을 명시적 복원이 아니라 학습 전용 latent 정규화로 재정의, "학습시에만 존재하는 auxiliary branch" 계보의 네 번째 변형.
 
 # 비교 문서
-- [[Small_Object_Detection_Approaches]]
+- [[Object_Detection_Approaches]]
 
 # 아직 못 채운 빈틈
 - unc-sod, sr-tod, cdatod-diff, feature-info-driven-gaussian, orfenet 등 다수 논문에서 반복적으로 비교 대상·관련 연구로 언급된 RFLA(ECCV 2022) 논문 자체가 아직 위키에 없음 — 여러 논문이 baseline으로 직접 확장하는 핵심 선행 연구라 우선순위가 매우 높음. CFINet 논문도 마찬가지.

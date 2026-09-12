@@ -20,10 +20,10 @@ dependencies: []
 year: 2026
 venue: "IEEE TIP"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, small-object-detection, uncertainty, two-stage-detector, rpn]
-source: "Projects/_pdf/Small_Object_Detection/2026_TIP_Unc-SOD.pdf"
+source: "Projects/_pdf/Object_Detection/기타/2026_TIP_Unc-SOD.pdf"
 source_type: personal
 createdAt: "2026-08-18T11:00:00.000Z"
 updatedAt: "2026-08-31T00:00:00.000Z"
@@ -289,7 +289,7 @@ F_pi = phi_re(F_ci) + F_a          # 최종 표현
 - Hierarchy-level uncertainty를 사후 융합이 아니라 애초에 일관된 pyramid level을 쓰도록 구조를 바꾸는 대안도 가능(연산 비용 트레이드오프 예상) — 실제로 Ablation(Table XIV)에서 P2 고정 레벨도 근소한 차이(−0.2%p)로 원본 설계에 근접했다는 점이 이 대안의 여지를 뒷받침한다.
 
 ### 내 주제와 연관된 후속 연구 아이디어
-- <mark style="background: #A6E3A1A6;">[[Gaussian_Box_Uncertainty_Modeling]]의 instance-level uncertainty를 [[Self_Reconstruction_Difference_Map]]·[[Frequency_Domain_Feature_Enhancement]] 같은 feature 강화 계열과 결합 가능 — 불확실성 큰 영역에 feature 강화를 더 강하게 적용.</mark> 두 축은 [[Small_Object_Detection_Approaches]]에서 직교적 개선으로 분류됨.
+- <mark style="background: #A6E3A1A6;">[[Gaussian_Box_Uncertainty_Modeling]]의 instance-level uncertainty를 [[Self_Reconstruction_Difference_Map]]·[[Frequency_Domain_Feature_Enhancement]] 같은 feature 강화 계열과 결합 가능 — 불확실성 큰 영역에 feature 강화를 더 강하게 적용.</mark> 두 축은 [[Object_Detection_Approaches]]에서 직교적 개선으로 분류됨.
 - Epistemic uncertainty 결합은 ensemble/MC dropout이 흔한 방식 — 비용 대비 이득 검증 필요.
 
 > [!info] 내 메모
@@ -302,7 +302,7 @@ F_pi = phi_re(F_ci) + F_a          # 최종 표현
 # 관련 문서
 - 비교 후보: [[2024_ECCV_SR-TOD|SR-TOD]] (동일 저자 그룹이 인용하는 SODA-D/SODA-A 비교 대상). RFLA[28] #pending:rfla, CFINet[16] #pending:cfinet 도 비교군으로 언급되지만 아직 위키에 노트 없음.
 - 같은 저자 그룹: [[2026_TPAMI_Detection_Oriented_Rectification|Detection_Oriented_Rectification]] — feature 열화/복원 관점의 다른 각도 연구.
-- 비교: [[Small_Object_Detection_Approaches]] — label assignment/sampling 축으로 분류.
+- 비교: [[Object_Detection_Approaches]] — label assignment/sampling 축으로 분류.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: C. Xu et al., "RFLA: Gaussian receptive field based label assignment for tiny object detection" [28] (ECCV 2022) — Unc-SOD의 sampling 전략과 직접 비교되는 baseline.

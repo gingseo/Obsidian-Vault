@@ -31,4 +31,4 @@ updated: 2026-08-24
 
 # 관련 MOC
 - [[000-Home]]
-- [[Small_Object_Detection_Moc]] — 원격탐사 도메인을 공유하는 인접 분야. AIMRINet의 MRFI(곱셈+residual 통합)와 [[2024_TGRS_ORFENet|ORFENet]]의 MRFAFEM(동적 가중합)이 "여러 소스를 결합하되 원본 정보를 잃지 않는다"는 유사한 상위 패턴을 공유한다.
+- [[Object_Detection_Moc]] — 원격탐사 도메인을 공유하는 인접 분야. AIMRINet의 MRFI(곱셈+residual 통합)와 [[2024_TGRS_ORFENet|ORFENet]]의 MRFAFEM(동적 가중합)이 "여러 소스를 결합하되 원본 정보를 잃지 않는다"는 유사한 상위 패턴을 공유한다.

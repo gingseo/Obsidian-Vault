@@ -20,16 +20,16 @@ dependencies: []
 year: 2025
 venue: "IEEE Transactions on Geoscience and Remote Sensing (TGRS)"
 jcr_quartile: Q1
-task: [small-object-detection]
+task: [object-detection]
 direction: [novel-approach, improvement]
 paper_tags: [paper, small-object-detection, remote-sensing, attention-mechanism, feature-fusion, boundary-supervision, auxiliary-task]
-source: "Projects/_pdf/Small_Object_Detection/2025_TGRS_BAFNet.pdf"
+source: "Projects/_pdf/Object_Detection/2Stage/2025_TGRS_BAFNet.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:28:00.000Z"
 updatedAt: "2026-08-28T17:30:00.000Z"
 ---
 
-Project: [[논문_Small_Object_Detection|Small Object Detection]]
+Project: [[논문_Object_Detection|Object Detection]]
 #paper #small-object-detection #remote-sensing #attention-mechanism #feature-fusion #boundary-supervision #auxiliary-task
 
 > [!quote] 원제
@@ -261,7 +261,7 @@ L_total = alpha * L_b + L_cls + L_reg                      # alpha=0.5(ablation 
 - [[Dilated_Convolution]] — DSAM에서 전경·배경 강조 feature로부터 다양한 크기의 문맥을 포착하는 데 사용(rate 3/5/7).
 
 # 관련 문서
-- 비교: [[Small_Object_Detection_Approaches]] — feature 강화 계열에 새로 추가. attention(전경+배경 이중 스트림) + auxiliary boundary supervision 결합이라는 조합은 이 위키에서 처음.
+- 비교: [[Object_Detection_Approaches]] — feature 강화 계열에 새로 추가. attention(전경+배경 이중 스트림) + auxiliary boundary supervision 결합이라는 조합은 이 위키에서 처음.
 
 # 읽어볼 만한 논문
 - 참고문헌 기반: S. Qiao, L.-C. Chen, A. Yuille, "DetectoRS: Detecting objects with recursive feature pyramid and switchable atrous convolution" (CVPR 2021) [31] — 이 논문의 detector 및 neck(RFP) 뼈대. BAFNet의 모듈이 어디에 삽입되는지 이해하려면 필수.

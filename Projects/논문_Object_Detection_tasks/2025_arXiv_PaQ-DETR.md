@@ -23,7 +23,7 @@ jcr_quartile: arXiv
 task: [object-detection]
 direction: [improvement]
 paper_tags: [paper, object-detection, detr, dynamic-query, clustering, query-pruning, general-detection]
-source: "Projects/_pdf/Object_Detection/2025_arXiv_PaQ-DETR.pdf"
+source: "Projects/_pdf/Object_Detection/DETR/2025_arXiv_PaQ-DETR.pdf"
 source_type: personal
 createdAt: "2026-08-24T03:14:00.000Z"
 updatedAt: "2026-08-24T03:14:00.000Z"
