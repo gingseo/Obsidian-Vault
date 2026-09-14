@@ -26,7 +26,7 @@ customFields:
 teamMembers: []
 savedViews: []
 createdAt: "2026-08-31T03:48:07.000Z"
-updatedAt: "2026-08-31T03:48:07.000Z"
+updatedAt: "2026-09-14T01:21:47.523Z"
 ---
 
 # 🔍 Scientific Critique Automation
@@ -34,4 +34,4 @@ updatedAt: "2026-08-31T03:48:07.000Z"
 PaperWiki — Scientific Critique Automation 분야 논문
 
 ## Tasks
-- [ ] [[2026_arXiv_Tree-of-Concerns|Tree-of-Concerns: Hierarchical Multi-Agent Debate for Unstated-Limitation Extraction in Scientific Critique]]
+- [ ] [[tree-of-concerns--hierarchical-multi-agent-debate-for-unstat|Tree-of-Concerns: Hierarchical Multi-Agent Debate for Unstated-Limitation Extraction in Scientific Critique]]

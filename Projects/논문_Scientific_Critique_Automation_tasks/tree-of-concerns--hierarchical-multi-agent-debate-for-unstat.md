@@ -8,28 +8,19 @@ type: "task"
 status: "in-progress"
 priority: "medium"
 start: "2026-08-27"
-due:
+due: ""
 progress: 0
 assignees: []
 tags: []
-customFields:
-  "5hw2d9iih70nm11y": 2026
-  "g4v63dhvsx8j4vo9": "arXiv"
 subtaskIds: []
 dependencies: []
-year: 2026
-venue: "arXiv"
-jcr_quartile: arXiv
-task: [scientific-critique-automation]
-direction: [novel-approach]
-paper_tags: [paper, multi-agent-debate, llm-agent, scientific-critique, peer-review-automation, benchmark]
-source: "Projects/_pdf/Scientific_Critique_Automation/2026_arXiv_Tree-of-Concerns.pdf"
-source_type: community
 createdAt: "2026-08-31T03:48:07.000Z"
-updatedAt: "2026-08-31T03:48:07.000Z"
+updatedAt: "2026-09-14T01:21:47.486Z"
+customFields:
+  5hw2d9iih70nm11y: 2026
+  g4v63dhvsx8j4vo9: "arXiv"
 ---
 
-Project: [[논문_Scientific_Critique_Automation|Scientific Critique Automation]]
 #paper #multi-agent-debate #llm-agent #scientific-critique #peer-review-automation #benchmark
 
 > [!quote] 원제
@@ -281,3 +272,5 @@ Project: [[논문_Scientific_Critique_Automation|Scientific Critique Automation]
 
 ---
 **보안 참고**: PDF 전체를 확인했으며, 프롬프트 인젝션이나 지시문처럼 보이는 텍스트는 발견되지 않았다.
+
+Project: [[논문_Scientific_Critique_Automation|Scientific Critique Automation]]
