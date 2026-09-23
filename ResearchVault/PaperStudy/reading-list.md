@@ -67,6 +67,10 @@
 - [ ] S. Woo, J. Park, J.-Y. Lee, I. Kweon, "CBAM: Convolutional block attention module" (ECCV 2018) [23] — RTP-Net의 MSAF가 채택한 CBAM의 원조 논문 (출처: [[2026_JSTARS_RTP-Net|RTP-Net]])
 - [ ] J. Hu, L. Shen, G. Sun, "Squeeze-and-excitation networks" (TPAMI 2020) [22] — RTP-Net의 AWEM·GLEM 채널 attention이 기반하는 SENet 원조 (출처: [[2026_JSTARS_RTP-Net|RTP-Net]])
 - [ ] (검증 필요) Depthwise separable convolution 기반 large-kernel 설계가 파라미터 효율성과 정확도를 동시에 달성하는 다른 경량 backbone 연구 — 검색 키워드: `large kernel depthwise separable convolution lightweight backbone efficiency accuracy tradeoff` (출처: [[2026_JSTARS_RTP-Net|RTP-Net]])
+- [ ] Z. Xu, C. Xu, J. Yang, Z. Yu, "MLP-DINO: Category modeling and query graphing with deep MLP for object detection" (Proc. 33rd Int. Joint Conf. Artif. Intell., 2024) [4] — Cross-DINO 저자 일부가 참여한 직접적인 선행 연구로, deep MLP를 DINO에 결합하는 아이디어의 직계 계보 (출처: [[2025_TMM_Cross-DINO|Cross-DINO]])
+- [ ] G. Cao et al., "Strip-MLP: Efficient token interaction for vision MLP" (Proc. IEEE/CVF Int. Conf. Comput. Vis., 2023) [5] — Cross-DINO의 Deep MLP 백본이 직접 기반으로 삼는 원조 아키텍처 (출처: [[2025_TMM_Cross-DINO|Cross-DINO]])
+- [ ] Y.-X. Huang, H.-I Liu, H.-H. Shuai, W.-H. Cheng, "DQ-DETR: DETR with dynamic query for tiny object detection" (Proc. Eur. Conf. Comput. Vis., 2025) [24] — 이 위키에 이미 있는 [[2024_ECCV_DQ-DETR|DQ-DETR]]. Cross-DINO의 Related Work가 직접 비교 대상으로 인용 (출처: [[2025_TMM_Cross-DINO|Cross-DINO]])
+- [ ] (검증 필요) DINO 계열에 주파수 도메인 feature 강화를 결합한 후속 연구 — 검색 키워드: `DINO DETR frequency domain feature enhancement small object detection` (출처: [[2025_TMM_Cross-DINO|Cross-DINO]])
 
 ## ai-generated-image-detection
 - [ ] Z. Wang, J. Bao, W. Zhou, W. Wang, H. Hu, H. Chen, H. Li, "DIRE for diffusion-generated image detection" (2023) [40] — LaRE²가 직접 비교·극복하는 baseline. 모든 개선점이 이 논문 대비 설명되므로 배경 이해에 필수 (출처: [[2024_CVPR_LaRE2|LaRE2]])

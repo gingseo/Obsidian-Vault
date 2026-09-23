@@ -3,7 +3,7 @@ title: "Object Detection MOC"
 tags: [moc]
 task: object-detection
 created: 2026-08-04
-updated: 2026-09-11
+updated: 2026-09-15
 ---
 
 # 이 분야가 다루는 핵심 질문
@@ -12,7 +12,7 @@ updated: 2026-09-11
 - 성능 개선은 대부분 연산량 증가를 동반한다 — 실제 배포(엣지/UAV) 관점에서 정확도와 경량화를 동시에 만족할 수 있는가?
 
 # 지금까지 다룬 흐름
-지금까지 읽은 26편 중 17편은 "기존 detector(YOLO, Faster R-CNN, RT-DETR, FCOS, DetectoRS, DINO)에 plug-in 모듈을 추가"하는 방식, 6편은 Deformable DETR을 baseline으로 삼아 object query를 동적으로 조정하는 "dynamic query DETR" 계열, 나머지 3편([[2020_ECCV_DETR|DETR]], [[2017_ICCV_Deformable_Convolutional_Networks|Deformable_Convolutional_Networks]], [[2021_ICLR_Deformable-DETR|Deformable-DETR]])은 이후 흐름이 기반하는 순수 foundational 논문이다. 개입 지점에 따라 아래 계열로 나뉜다. 자세한 축별 비교는 [[Object_Detection_Approaches]] 참고.
+지금까지 읽은 27편 중 18편은 "기존 detector(YOLO, Faster R-CNN, RT-DETR, FCOS, DetectoRS, DINO)에 plug-in 모듈을 추가"하는 방식, 6편은 Deformable DETR을 baseline으로 삼아 object query를 동적으로 조정하는 "dynamic query DETR" 계열, 나머지 3편([[2020_ECCV_DETR|DETR]], [[2017_ICCV_Deformable_Convolutional_Networks|Deformable_Convolutional_Networks]], [[2021_ICLR_Deformable-DETR|Deformable-DETR]])은 이후 흐름이 기반하는 순수 foundational 논문이다. 개입 지점에 따라 아래 계열로 나뉜다. 자세한 축별 비교는 [[Object_Detection_Approaches]] 참고.
 
 **Foundational 계열** — 이후 흐름 전체의 출발점이 된 원조 논문.
 - [[2020_ECCV_DETR|DETR]] — anchor·NMS 없이 객체 탐지를 직접적인 집합 예측으로 재정의한 최초의 end-to-end transformer 탐지기. [[2025_arXiv_UAV-DETR|UAV-DETR]]이 기반하는 RT-DETR의 계보상 원조에 해당하며, "소형 객체 성능이 약하다"는 한계를 스스로 처음 명시한 논문이기도 하다 — 이 위키의 feature 강화 계열 다수가 정확히 이 한계를 다른 아키텍처(YOLO, R-CNN)에서 다루고 있다는 점에서, DETR 계열에도 동일 문제의식이 적용될 여지가 있는지가 흥미로운 교차점.
@@ -31,6 +31,7 @@ updated: 2026-09-11
 - [[2025_TGRS_BAFNet|BAFNet]] — 전경 attention과 그 여집합인 배경 attention을 동시에 생성하는 이중 스트림(DSAM)으로 배경 억제를 명시적으로 모델링한 첫 사례. 여기에 Laplacian pyramid 기반 경계 GT로 supervision하는 Boundary-Aware Branch를 더해, [[2024_TGRS_ORFENet|ORFENet]]의 ORB·[[2026_TGRS_FFSSTDNet|FFSSTDNet]]의 FSR과 같은 "학습시에만 관여하는 auxiliary branch" 계보의 세 번째 변형(대상이 영역/이미지가 아니라 경계)을 제시.
 - [[2026_JSTARS_RTP-Net|RTP-Net]] — "수용영역 확장과 texture 보존이 근본적으로 상충한다"는 문제의식을 backbone 소스 단계부터 대·소 커널 병렬 브랜치(GLEM)로 정면 돌파. FFT 없이 spatial domain의 down/up-sampling residual만으로 고/저주파를 근사 분리(CRM)한다는 점이 [[2025_RemoteSensing_FANet|FANet]]·[[2025_arXiv_UAV-DETR|UAV-DETR]]의 FFT 기반 접근과 대비된다. 유일하게 정확도 개선과 GFLOPs·파라미터·FPS 동시 개선을 모두 달성.
 - [[2026_arXiv_CoLR-Det|CoLR-Det]] — SR을 명시적 이미지 복원이 아니라 학습 전용 latent 정규화로 재정의(추론 시 SR 브랜치 완전 제거). [[2024_TGRS_ORFENet|ORFENet]]의 ORB·[[2026_TGRS_FFSSTDNet|FFSSTDNet]]의 FSR·[[2025_TGRS_BAFNet|BAFNet]]의 Boundary-Aware Branch와 같은 "학습시에만 존재하는 auxiliary branch" 계보의 네 번째 변형이지만, 이 원리를 "복원이 탐지를 지배해서는 안 된다"는 명제로 가장 명시적으로 정식화하고 saliency 기반 non-destructive token routing으로 배경 텍스처 오염을 능동적으로 차단한다는 점에서 한 단계 더 나아간다. 저해상도(2× downsampling) 원격탐사 특화.
+- [[2025_TMM_Cross-DINO|Cross-DINO]] — DINO(DETR 계열) 위에서 feature를 강화한다는 점은 [[2025_arXiv_UAV-DETR|UAV-DETR]]과 같은 계보이지만, 신호와 개입 지점이 다르다 — UAV-DETR이 주파수 도메인 신호로 fusion·다운샘플링·정렬 세 지점을 보강하는 반면, Cross-DINO는 backbone feature 자체(short+long range MLP)를 강화하고 이를 encoder feature에 두 단계 gating으로 재주입하는 [[Cross_Coding_Twice_Module]](CCTM)으로 encoder의 feature blurring을 정면 겨냥한다. 여기에 객체 크기·클래스를 결합한 Category-Size 소프트 라벨 기반 Boost Loss로 "박스·클래스 예측을 독립적으로 다뤄 소형 객체의 클래스 점수가 낮아지는" 문제까지 별도로 다룬다는 점에서, 이 위키 최초로 DETR 계열에서 feature 강화와 label/loss 재설계를 한 논문 안에서 동시에 시도한 사례.
 
 **연산 가속(sparse computation) / 서브영역 국소화 계열** — "어디를 계산할지/어디를 양성 샘플로 볼지/어디를 잘라낼지"를 좁혀 연산을 줄이거나 배경 간섭을 억제한다는 공통점이 있다.
 - [[2022_CVPR_QueryDet|QueryDet]] — 저해상도 feature 예측으로 고해상도 sparse convolution 위치를 좁히는 Cascade Sparse Query. 정확도 손실 없이 고해상도 feature 연산 비용을 74%→1%로 절감. FPN 레벨 간 coarse-to-fine의 원조 격.
@@ -48,7 +49,7 @@ updated: 2026-09-11
 - [[2026_JSTARS_RTP-Net|RTP-Net]] — 별도 경량판을 만들지 않고 기본 설계(depthwise separable 병렬 커널) 자체로 정확도 개선과 GFLOPs 27.2% 감소를 동시에 달성 — LSOD-YOLO·FFCA-YOLO가 "경량화 vs 정확도"의 균형을 관리하는 데 그친 것과 달리 둘 다 개선한 예외적 사례.
 
 **End-to-end 구조 계열**
-- [[2025_arXiv_UAV-DETR|UAV-DETR]] — 유일한 DETR(anchor-free, NMS-free) 계열. 위 주파수 도메인 활용과 별개로, 구조 자체가 다른 논문들(대부분 YOLO/R-CNN/FCOS 기반)과 궤를 달리한다.
+- [[2025_arXiv_UAV-DETR|UAV-DETR]], [[2025_TMM_Cross-DINO|Cross-DINO]] — DETR(anchor-free, NMS-free) 계열. 위 feature 강화 계열에도 동시에 속하지만, 구조 자체가 다른 논문들(대부분 YOLO/R-CNN/FCOS 기반)과 궤를 달리한다는 점에서 이 축에도 함께 표시한다.
 
 **Dynamic Query DETR 계열** — Deformable DETR을 공통 baseline으로 삼아, object query의 개수·구성을 이미지 내용에 따라 동적으로 조정하는 6편. 두 하위 갈래로 나뉜다(자세한 비교는 [[Object_Detection_Approaches]]의 전용 절 참고).
 - *하위 갈래 A(전역 밀도 기반, [[Density_Guided_Dynamic_Query]])*: [[2024_ECCV_DQ-DETR|DQ-DETR]](density map 4단계 분류로 query 수 결정, 원조) → [[2025_JSTARS_Density-Aware-DETR|Density-Aware-DETR]](분류를 연속 회귀로 대체, DQ-DETR과 직접 대조 실험) → [[2026_ICASSP_IG-DETR|IG-DETR]](6단계 세분화 + 덧셈 residual feature 강화) → [[2026_SSRN_DQP-DETR|DQP-DETR]](density를 encoder memory 주입·토큰 순위 학습까지 확장, 가장 포괄적).
@@ -71,13 +72,14 @@ updated: 2026-09-11
 - [[Dual_Stream_Foreground_Background_Attention]] — BAFNet의 DSAM 핵심 기여. 전경 attention의 여집합으로 배경 attention을 별도 파라미터 없이 유도하는 경량 설계.
 - [[Collaborative_Receptive_Field_Texture_Optimization]] — RTP-Net의 핵심 기여. 수용영역 확장과 texture 보존의 trade-off를 backbone 소스 단계 병렬 브랜치로 해소.
 - [[Latent_Restoration_Regularization]] — CoLR-Det의 핵심 기여. SR을 명시적 복원이 아니라 학습 전용 latent 정규화로 재정의, "학습시에만 존재하는 auxiliary branch" 계보의 네 번째 변형.
+- [[Cross_Coding_Twice_Module]] — Cross-DINO의 핵심 기여. Backbone feature와 encoder feature를 두 단계 gating으로 교차 인코딩해 DETR encoder의 feature blurring을 완화. [[Frequency_Domain_Feature_Enhancement]](UAV-DETR)와 "정보 손실 지점에 원본 신호를 재주입한다"는 상위 전략은 유사하나, 신호 소스(backbone feature vs 주파수)와 적용 지점(encoder-decoder 사이 vs fusion/다운샘플링)이 달라 별개 개념으로 유지.
 
 # 비교 문서
 - [[Object_Detection_Approaches]]
 
 # 아직 못 채운 빈틈
 - unc-sod, sr-tod, cdatod-diff, feature-info-driven-gaussian, orfenet 등 다수 논문에서 반복적으로 비교 대상·관련 연구로 언급된 RFLA(ECCV 2022) 논문 자체가 아직 위키에 없음 — 여러 논문이 baseline으로 직접 확장하는 핵심 선행 연구라 우선순위가 매우 높음. CFINet 논문도 마찬가지.
-- DETR·Deformable Convolutional Networks·Deformable DETR은 들어왔지만 YOLO, Faster R-CNN, RT-DETR, FCOS 등 이 위키의 다른 논문들이 실제로 baseline으로 삼는 원조 아키텍처 자체는 아직 하나도 없음(모두 #pending 마커나 텍스트 인용으로만 존재) — RT-DETR은 [[2025_arXiv_UAV-DETR|UAV-DETR]]에 `#pending:rt-detr`로 마킹되어 있어 우선순위가 높다.
+- DETR·Deformable Convolutional Networks·Deformable DETR은 들어왔지만 YOLO, Faster R-CNN, RT-DETR, FCOS, DINO 등 이 위키의 다른 논문들이 실제로 baseline으로 삼는 원조 아키텍처 자체는 아직 하나도 없음(모두 #pending 마커나 텍스트 인용으로만 존재) — RT-DETR은 [[2025_arXiv_UAV-DETR|UAV-DETR]]에 `#pending:rt-detr`로, DINO는 [[2025_TMM_Cross-DINO|Cross-DINO]]에 `#pending:dino`로 마킹되어 있어 우선순위가 높다.
 - 원격탐사/드론뷰(FANet, RS-TOD, UAV-DETR, FFSSTD-Net)와 SAR(CDATOD-Diff), 지상 시나리오(SODA-D 등)를 모두 다루는 unc-sod 외에, 여러 센서 도메인(광학/SAR/적외선)을 직접 비교하는 논문은 없음.
 - 연산 가속 계열(querydet)과 feature 강화 계열을 실제로 결합한 논문은 아직 없음 — MOC 상에서만 결합 가능성을 언급한 상태.
 - DETR이 스스로 인정한 "소형 객체 성능 열세"를 이 위키의 feature 강화 기법(주파수 도메인, reconstruction 등)으로 보완하려는 시도가 DETR 계열 자체에는 아직 없음 — UAV-DETR이 유사한 방향이지만 RT-DETR 기반이라 원조 DETR과는 한 단계 떨어져 있다.

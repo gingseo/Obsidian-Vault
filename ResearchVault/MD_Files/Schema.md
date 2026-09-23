@@ -33,7 +33,9 @@ Projects/                볼트 최상위. 논문 분석 노트와 PDF 원본 �
 - 새 PDF는 직접 읽고 싶은 논문이면 `Projects/_pdf/_inbox/`에, 커뮤니티에서 화제라 트렌드 파악 차원에서 챙겨두는 논문이면 `Projects/_pdf/_issue_paper/`에 넣는다. 둘 다 `/process-papers`의 처리 대상이다 — 넣은 폴더에 따라 노트의 `source_type`만 다르게 채워진다(아래 Frontmatter 절 참고).
 - 처리 완료되면 PDF 파일 자체를 `Projects/_pdf/<Task>/`(또는 그 task가 `<구조>/<갈래>/` 세분화를 쓰는 경우 `Projects/_pdf/<Task>/<구조>/<갈래>/`)로 **이동**한다 (`_inbox/`·`_issue_paper/` 어디서 왔든 동일하게 이동하고, 원래 폴더에는 남기지 않는다). "처리됐는지"는 이제 폴더 위치로도 바로 보인다 — `_inbox/`나 `_issue_paper/`에 남아있으면 미분류, `<Task>/` 아래(하위 세분화 폴더 포함) 있으면 처리 완료.
 - `<Task>` 이름은 논문의 목적/과제를 가리키며, 아래 "폴더·파일 네이밍 규칙"을 따른다 (예: `Object_Detection`, `Anomaly_Detection`). 기존에 없던 task면 프로젝트 노트(`Projects/논문_<Task>.md`)와 논문 노트 폴더(`Projects/논문_<Task>_tasks/`)를 함께 새로 만든다. 폐쇄 목록이 아니다 — 논문을 보고 적절한 task가 없으면 새로 만든다. `Projects/_pdf/<Task>/`(PDF 쪽)와 `Projects/논문_<Task>_tasks/`(노트 쪽)는 폴더명 규칙이 다르다는 점에 유의한다 — PDF 폴더는 접미사 없이 `<Task>` 그대로, 노트 폴더는 반드시 `<Task>_tasks`.
-- **`<Task>/` 하위 `<구조>/<갈래>/` 세분화는 선택 사항이다.** 논문 수가 많고 방법론 축(아키텍처, 문제 갈래 등)으로 나눌 가치가 있는 task(예: `Object_Detection`)에서만 쓴다. 세분화를 쓰지 않는 task는 지금처럼 `<Task>/` 바로 아래에 PDF를 둔다. 세분화 기준(구조명·갈래명)은 task마다 다를 수 있고, 한번 정하면 되도록 유지한다 — 자주 바뀌면 기존 논문의 `source` 경로를 전부 다시 갱신해야 하는 비용이 크다. `<구조>/<갈래>/`를 쓰더라도 노트 쪽(`Projects/논문_<Task>_tasks/`)은 세분화하지 않고 항상 1단계 평면 구조를 유지한다 — Project Manager 플러그인이 `_tasks` 폴더를 재귀 스캔하지 않기 때문이다.
+- **`<Task>/` 하위 `<구조>/<갈래>/` 세분화는 선택 사항이다.** 논문 수가 많고 방법론 축(아키텍처, 문제 갈래 등)으로 나눌 가치가 있는 task(예: `Object_Detection`)에서만 쓴다. 세분화를 쓰지 않는 task는 지금처럼 `<Task>/` 바로 아래에 PDF를 둔다. 세분화 기준(구조명·갈래명)은 task마다 다를 수 있고, 한번 정하면 되도록 유지한다 — 자주 바뀌면 기존 논문의 `source` 경로를 전부 다시 갱신해야 하는 비용이 크다. `<구조>/<갈래>/`를 쓰는 task는 노트 쪽(`Projects/논문_<Task>_tasks/`)도 PDF와 **동일한 하위 폴더 구조**를 미러링한다 — 논문 하나의 PDF와 노트가 항상 같은 상대 경로(`<구조>/<갈래>/<파일명>`)에 있도록 유지한다.
+  > [!warning] Project Manager가 `_tasks/` 하위 폴더를 재귀 스캔하지 않을 수 있다
+  > Project Manager 플러그인은 `Projects/논문_<Task>.md`의 task를 스캔할 때 `_tasks/` 폴더를 재귀적으로 훑지 않고 바로 아래 레벨만 볼 수 있다(미검증 위험 — 실제로 이렇게 세분화한 뒤에는 Project Manager UI에서 그 프로젝트의 task 개수가 실제 노트 수와 일치하는지 확인한다). 개수가 어긋나면 PM UI 표시가 부정확해지는 것일 뿐 노트 자체나 `논문_PaperWiki.base`(파일 시스템을 직접 훑는 Bases 뷰) 동작에는 영향이 없다 — 이 프로젝트는 "PDF·노트 폴더 구조 일치"를 "Project Manager UI의 정확한 집계"보다 우선하기로 결정했다.
 - **`논문_<Task>_tasks/` 폴더명은 `_tasks` 접미사가 필수다.** Project Manager 플러그인이 프로젝트 노트 `Projects/논문_<Task>.md`의 task를 스캔할 때 폴더 경로를 `파일 경로에서 .md를 _tasks로 치환`해서 계산하도록 하드코딩되어 있다(플러그인 소스 `projectTaskFolder`). 즉 `논문_Object_Detection.md`의 task 폴더는 반드시 `논문_Object_Detection_tasks/`여야 하며, 접미사가 없거나 다르면(예: `논문_Object_Detection/`) Project Manager가 그 폴더를 전혀 스캔하지 않아 프로젝트의 task 개수가 0으로 표시된다.
 - 논문 하나가 여러 task에 걸치면(드묾) 가장 핵심적인 task 하나의 프로젝트·폴더에만 PDF와 노트를 두고, task 노트의 `task` 속성에는 해당되는 task를 전부 적는다.
 - 논문 분석 노트는 `ResearchVault/PaperStudy/` 안에 있지 않다 — Project Manager 플러그인과 통합 관리하기 위해 볼트 최상위 `Projects/논문_<Task>_tasks/`에 둔다. 자세한 내용은 아래 "Projects/논문_<Task>.md — 논문 분석 노트" 절 참고. `Concepts/`와 `Comparisons/`는 여러 task에 걸치는 경우가 많으므로 task로 나누지 않고 `PaperStudy/` 안에 폴더 하나로 모아둔다.
@@ -192,6 +194,7 @@ updatedAt: "<ISO 8601>"
 - Remote Sensing (MDPI): `Q2`
 - Remote Sensing Applications: Society and Environment (Elsevier): `Q2`
 - Sensors (MDPI): `Q2`
+- IEEE Transactions on Multimedia (IEEE TMM): `Q1`
 
 ### 새 task 노트 생성 시 프로젝트 노트도 함께 갱신
 

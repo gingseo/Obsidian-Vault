@@ -5,7 +5,7 @@ title: "Object Detection"
 description: "PaperWiki — Object Detection 분야 논문 (small/tiny object detection 포함, 구조별(DETR/2Stage/YOLO)로 PDF·노트를 분류)"
 color: "#5b8dd6"
 icon: "🎯"
-taskIds: ["t-detr-j94vuetv7h", "t-deformable-detr-8orhgsop6w", "t-paq-detr-eorc184hrk", "t-querydet-bjcya1z67y", "t-dq-detr-dkys1fdsbz", "t-orfenet-fxrkkwmysi", "t-sr-tod-mx52anrm32", "t-ffca-yolo-o8q40id3q1", "t-rs-tod-gwovwgdzjk", "t-lsod-yolo-bwwbsaqyex", "t-density-aware-detr-3c88bcqs6i", "t-feature_info_driven_gaussian-4nq0hyxu3d", "t-bafnet-9wfeflzzfm", "t-fanet-aufqv4u9nn", "t-cdatod-diff-9qzk8ozqjp", "t-ig-detr-mmgdtbr6lk", "t-rtp-net-9fyytojodp", "t-dqa-detr-8sx57vf3n4", "t-uav-detr-kp95bpp5e9", "t-yofor-3b9q73o0pb", "t-ffsstdnet-xbe5j57ns9", "t-dqp-detr-bdupxqtsg1", "t-detection_oriented_rectification-eakvz8d5p1", "t-unc-sod-6pqpf7y57o", "t-colr-det-d6nrnr1pzn", "t-da-detr-x7k2m9pqrt", "t-dimd-detr-b3n8w1zqxc"]
+taskIds: ["t-detr-j94vuetv7h", "t-deformable-detr-8orhgsop6w", "t-paq-detr-eorc184hrk", "t-querydet-bjcya1z67y", "t-dq-detr-dkys1fdsbz", "t-orfenet-fxrkkwmysi", "t-sr-tod-mx52anrm32", "t-ffca-yolo-o8q40id3q1", "t-rs-tod-gwovwgdzjk", "t-lsod-yolo-bwwbsaqyex", "t-density-aware-detr-3c88bcqs6i", "t-feature_info_driven_gaussian-4nq0hyxu3d", "t-bafnet-9wfeflzzfm", "t-fanet-aufqv4u9nn", "t-cdatod-diff-9qzk8ozqjp", "t-ig-detr-mmgdtbr6lk", "t-rtp-net-9fyytojodp", "t-dqa-detr-8sx57vf3n4", "t-uav-detr-kp95bpp5e9", "t-yofor-3b9q73o0pb", "t-ffsstdnet-xbe5j57ns9", "t-dqp-detr-bdupxqtsg1", "t-detection_oriented_rectification-eakvz8d5p1", "t-unc-sod-6pqpf7y57o", "t-colr-det-d6nrnr1pzn", "t-da-detr-x7k2m9pqrt", "t-dimd-detr-b3n8w1zqxc", "t-cross-dino-4037l83x0k"]
 customFields:
   - id: "nh3oelhxmtcnb377"
     name: "Year"
@@ -61,3 +61,4 @@ PaperWiki — Object Detection 분야 논문 (small/tiny object detection 포함
 - [ ] [[2026_Neural-Networks_YOFOR|YOFOR : You only focus on object regions for tiny object detection in aerial images]]
 - [ ] [[2025_AUTEEE_DA-DETR|DA-DETR: Depth-Augmented Detection Transformer for Small Object Detection in Drone Imagery]]
 - [ ] [[2025_JSTARS_DIMD-DETR|DIMD-DETR: DDQ-DETR With Improved Metric Space for End-to-End Object Detector on Remote Sensing Aircrafts]]
+- [ ] [[2025_TMM_Cross-DINO|Cross-DINO: Cross the Deep MLP and Transformer for Small Object Detection]]
