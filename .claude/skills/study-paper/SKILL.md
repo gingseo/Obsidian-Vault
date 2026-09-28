@@ -10,8 +10,8 @@ description: 사용자와 함께 논문 한 편을 읽고 공부하기 전에, �
 ## 대상 논문 파악
 
 1. 사용자가 가리키는 논문이 다음 중 어디에 있는지 확인한다:
-   - 이미 위키에 처리된 노트(`Projects/논문_<Task>_tasks/<Slug>.md`) — 이미 읽었거나 부분적으로 읽은 논문을 다시 공부하는 경우
-   - 아직 처리 안 된 PDF(`Projects/_pdf/_inbox/` 또는 `_issue_paper/`) — 완전히 새로운 논문
+   - 이미 위키에 처리된 노트(`ResearchVault/Papers/<Task>_notes/<Slug>.md`) — 이미 읽었거나 부분적으로 읽은 논문을 다시 공부하는 경우
+   - 아직 처리 안 된 PDF(`ResearchVault/Papers/_pdf/_inbox/` 또는 `_issue_paper/`) — 완전히 새로운 논문
    - 사용자가 이번에 직접 준 PDF 파일 경로
 2. 어느 경우든 이 스킬은 `/process-papers`가 하는 정식 노트 생성·frontmatter 채우기 작업을 대신하지 않는다 — 순수하게 "같이 읽기 전 맥락 잡기"가 목적이다. 노트 생성이 필요하면(아직 위키에 없는 논문이라 사용자가 이번에 정식으로 추가하고 싶어 하면) `/process-papers`를 대신 안내하거나, 사용자가 명시적으로 요청하면 그 스킬의 절차를 따른다.
 
@@ -23,7 +23,7 @@ description: 사용자와 함께 논문 한 편을 읽고 공부하기 전에, �
    - 같은 task의 `ResearchVault/PaperStudy/Moc/<Task>_Moc.md`가 있으면 전체를 읽는다 — "지금까지 다룬 흐름", "이 분야를 관통하는 개념" 절에서 이 논문과 메커니즘·문제의식이 겹치는 기존 논문·개념을 찾는다.
    - `ResearchVault/PaperStudy/Concepts/`와 `ResearchVault/Architecture Design/`을 이 논문의 핵심 키워드로 훑어(파일명, 각 문서의 "정의"/"역할" 절) 재사용되는 범용 구조·개념이 있는지 확인한다 — task가 달라도 개념은 겹칠 수 있다(예: reconstruction error 기반 신호는 detection/segmentation/AI-image-detection에 걸쳐 반복 등장).
    - `ResearchVault/PaperStudy/Comparisons/`에 이 논문과 비교할 만한 기존 비교 문서가 있는지 확인한다.
-   - 같은 task 폴더(`Projects/논문_<Task>_tasks/`) 안의 다른 노트들도, Moc에 아직 안 반영된 최신 논문이 있을 수 있으니 파일 목록으로 한 번 더 확인한다.
+   - 같은 task 폴더(`ResearchVault/Papers/<Task>_notes/`) 안의 다른 노트들도, Moc에 아직 안 반영된 최신 논문이 있을 수 있으니 파일 목록으로 한 번 더 확인한다.
 3. **다른 task 논문과의 연결도 적극적으로 찾는다** — 표면적 분야가 달라도, 같은 메커니즘(예: attention 방식, loss 설계, 데이터 증강 전략)을 다른 문제에 적용한 경우가 많다. task 경계에 갇히지 않는다.
 
 ## 연관 정보 제시

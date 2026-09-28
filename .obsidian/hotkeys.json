@@ -42,5 +42,22 @@
   "editing-toolbar:workplace-fullscreen-focus": [],
   "editing-toolbar:fullscreen-focus": [],
   "obsidian-icon-folder:iconize:set-icon-for-file": [],
-  "templater-obsidian:jump-to-next-cursor-location": []
+  "templater-obsidian:jump-to-next-cursor-location": [],
+  "canvas-mindmap:create-child-node": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "ArrowRight"
+    }
+  ],
+  "canvas-mindmap:create-next-sibling-node": [
+    {
+      "modifiers": [
+        "Mod"
+      ],
+      "key": "ArrowDown"
+    }
+  ],
+  "obsidian-outliner:unfold": []
 }

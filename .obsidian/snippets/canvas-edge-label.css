@@ -1,0 +1,4 @@
+/* Canvas 연결선 라벨 글자 크기 */
+.canvas-path-label {
+    font-size: 10px !important;
+}
